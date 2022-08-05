@@ -1,0 +1,163 @@
+package net.connect;
+
+import com.google.protobuf.ByteString;
+import com.google.protobuf.Message;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerAdapter;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.pool.ChannelHealthChecker;
+import io.netty.channel.pool.ChannelPool;
+import io.netty.channel.pool.ChannelPoolHandler;
+import io.netty.channel.pool.FixedChannelPool;
+import io.netty.channel.pool.FixedChannelPool.AcquireTimeoutAction;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
+import io.netty.handler.timeout.IdleStateHandler;
+import net.client.ClientFactory;
+import net.client.Sender;
+import net.handler.Handlers;
+import net.message.Maker;
+import net.message.Parser;
+import net.message.Transfer;
+import net.proto.SysProto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+public class ConnectPool<M> implements Sender<ConnectPool, M> {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectPool.class);
+	private final SocketAddress socketAddress;
+	private final ClientFactory clientFactory;
+	private final EventLoopGroup eventLoopGroup;
+	private ChannelPool pool;
+	private final int maxSize;
+	private Maker maker;
+
+	public ConnectPool(int maxSize, SocketAddress socketAddress, EventLoopGroup eventLoopGroup, Maker maker, Transfer transfer, Parser parser, Handlers handlers) {
+		this(maxSize, socketAddress, (channel) -> {
+			List<ChannelHandlerAdapter> h = new ArrayList();
+			h.add(new ProtobufVarint32LengthFieldPrepender());
+			h.add(new ProtobufEncoder());
+			h.add(new IdleStateHandler(0, 180, 0));
+			h.add(new ProtobufVarint32FrameDecoder());
+			h.add(new ProtobufDecoder(SysProto.SysMessage.getDefaultInstance()));
+			h.add(new ConnectHandler(transfer, parser, handlers));
+			return h;
+		}, eventLoopGroup, maker);
+	}
+
+	public ConnectPool(int maxSize, SocketAddress socketAddress, ClientFactory clientFactory, EventLoopGroup eventLoopGroup, Maker maker) {
+		this.maxSize = maxSize;
+		this.socketAddress = socketAddress;
+		this.clientFactory = clientFactory;
+		this.eventLoopGroup = eventLoopGroup;
+		this.maker = maker;
+	}
+
+	public void initPool() {
+		Bootstrap bootstrap = ((Bootstrap) ((Bootstrap) ((Bootstrap) ((Bootstrap) (new Bootstrap()).group(this.eventLoopGroup)).channel(NioSocketChannel.class)).option(ChannelOption.SO_KEEPALIVE, true)).option(ChannelOption.TCP_NODELAY, true)).remoteAddress(this.socketAddress);
+		this.pool = new FixedChannelPool(bootstrap, new InnerChannelPoolHandler(), ChannelHealthChecker.ACTIVE, AcquireTimeoutAction.NEW, 0L, this.maxSize, 2147483647);
+	}
+
+	public void sendMessage(Integer msgId, Message msg, Map<Long, String> attachments) {
+		Channel channel = null;
+
+		try {
+			channel = (Channel) this.pool.acquire().get();
+			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
+		} catch (Exception var9) {
+			LOGGER.error("id:{} msg:{}", new Object[]{msgId, msg.toString(), var9});
+		} finally {
+			if (null != channel) {
+				this.pool.release(channel);
+			}
+
+		}
+
+	}
+
+	public void sendMessage(Integer msgId, ByteString msg, Map<Long, String> attachments) {
+		Channel channel = null;
+
+		try {
+			channel = (Channel) this.pool.acquire().get();
+			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
+		} catch (Exception var9) {
+			LOGGER.error("id:{} msg:{}", new Object[]{msgId, msg.toString(), var9});
+		} finally {
+			if (null != channel) {
+				this.pool.release(channel);
+			}
+
+		}
+
+	}
+
+	public void sendMessage(Long sequence, Integer msgId, Message msg, Map<Long, String> attachments) {
+		Channel channel = null;
+
+		try {
+			channel = (Channel) this.pool.acquire().get();
+			channel.writeAndFlush(this.maker.wrap(sequence, msgId, msg, attachments));
+		} catch (Exception var10) {
+			LOGGER.error("id:{} msg:{}", new Object[]{msgId, msg.toString(), var10});
+		} finally {
+			if (null != channel) {
+				this.pool.release(channel);
+			}
+
+		}
+
+	}
+
+	public void sendMessage(M msg) {
+		Channel channel = null;
+
+		try {
+			channel = (Channel) this.pool.acquire().get();
+			channel.writeAndFlush(msg);
+		} catch (Exception var7) {
+			LOGGER.error("{}", msg.toString(), var7);
+		} finally {
+			if (null != channel) {
+				this.pool.release(channel);
+			}
+
+		}
+
+	}
+
+	class InnerChannelPoolHandler implements ChannelPoolHandler {
+		InnerChannelPoolHandler() {
+		}
+
+		public void channelReleased(Channel channel) throws Exception {
+		}
+
+		public void channelAcquired(Channel channel) throws Exception {
+		}
+
+		public void channelCreated(Channel channel) throws Exception {
+			ChannelPipeline p = channel.pipeline();
+			Iterator var3 = ConnectPool.this.clientFactory.create(channel).iterator();
+
+			while (var3.hasNext()) {
+				ChannelHandlerAdapter c = (ChannelHandlerAdapter) var3.next();
+				p.addLast(new ChannelHandler[]{c});
+			}
+
+		}
+	}
+}

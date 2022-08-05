@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource="default_druid.properties"/>
+    <environments default="default">
+        <environment id="default">
+            <transactionManager type="JDBC"/>
+            <dataSource type="db.mysql.DruidFactory">
+                <property name="driverClassName" value="${driverClassName}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+                <property name="initialSize" value="${initialSize}"/>
+                <property name="maxActive" value="${maxActive}"/>
+                <property name="minIdle" value="${minIdle}"/>
+                <property name="maxWait" value="${maxWait}"/>
+                <property name="timeBetweenEvictionRunMillis" value="${timeBetweenEvictionRunMillis}"/>
+                <property name="minEvictableIdleTimeMillis" value="${minEvictableIdleTimeMillis}"/>
+                <property name="validationQuery" value="${validationQuery}"/>
+                <property name="testWhileIdle" value="${testWhileIdle}"/>
+                <property name="testOnBorrow" value="${testOnBorrow}"/>
+                <property name="testOnReturn" value="${testOnReturn}"/>
+                <property name="removeAbandoned" value="${removeAbandoned}"/>
+                <property name="removeAbandonedTimeout" value="${removeAbandonedTimeout}"/>
+                <property name="initConnectionSqls" value="set names 'utf8mb4';"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+    </mappers>
+</configuration>
