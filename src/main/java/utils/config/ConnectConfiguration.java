@@ -93,7 +93,7 @@ public class ConnectConfiguration {
     public List<Long> getConnectList() {
         if (null != this.connectId && !this.connectId.isEmpty()) {
             String[] ids = this.connectId.split(";");
-            List<Long> connectId = new ArrayList(ids.length);
+            List<Long> connectId = new ArrayList<>(ids.length);
             int i = 0;
 
             for(int iSize = ids.length; i < iSize; ++i) {
@@ -118,7 +118,7 @@ public class ConnectConfiguration {
     public List<SocketAddress> getAddressList() {
         if (null != this.connectString && !this.connectString.isEmpty()) {
             String[] hosts = this.connectString.split(";");
-            List<SocketAddress> addresses = new ArrayList(hosts.length);
+            List<SocketAddress> addresses = new ArrayList<>(hosts.length);
             return getSocketAddresses(hosts, addresses);
         } else {
             return null;
