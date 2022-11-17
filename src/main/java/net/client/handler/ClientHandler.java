@@ -1,5 +1,10 @@
 package net.client.handler;
 
+import java.net.InetSocketAddress;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
@@ -25,13 +30,6 @@ import net.message.Transfer;
 import net.safe.Safe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static net.proto.SysProto.SysMessage;
 
@@ -293,8 +291,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 	private static class ClientManager {
 		private static final ClientManager INSTANCE = new ClientManager();
 		private final AtomicLong ID = new AtomicLong(0L);
-		private final Map<Long, ClientHandler> clientMap = new HashMap(4096);
-		private final ReadWriteLock lock = new ReentrantReadWriteLock(false);
+		private final Map<Long, ClientHandler> clientMap = new ConcurrentHashMap<>(4096);
 
 		private ClientManager() {
 		}
@@ -304,14 +301,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 		}
 
 		private void addClient(ClientHandler client) {
-			this.lock.writeLock().lock();
-
-			try {
-				this.clientMap.put(client.getId(), client);
-			} finally {
-				this.lock.writeLock().unlock();
-			}
-
+			this.clientMap.put(client.getId(), client);
 		}
 
 		private void removeClient(ClientHandler client) {
@@ -319,27 +309,12 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 		}
 
 		private void removeClient(long id) {
-			this.lock.writeLock().lock();
-
-			try {
-				this.clientMap.remove(id);
-			} finally {
-				this.lock.writeLock().unlock();
-			}
+			this.clientMap.remove(id);
 
 		}
 
 		private ClientHandler getClient(long id) {
-			this.lock.readLock().lock();
-
-			ClientHandler var3;
-			try {
-				var3 = this.clientMap.get(id);
-			} finally {
-				this.lock.readLock().unlock();
-			}
-
-			return var3;
+			return this.clientMap.get(id);
 		}
 	}
 }
