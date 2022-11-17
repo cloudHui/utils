@@ -3,24 +3,34 @@ package utils.utils;
 import java.util.Random;
 
 public class RandomUtils {
-    private static final Random random = new Random(System.nanoTime());
-
-    public RandomUtils() {
-    }
+    private final static Random random = new Random(System.currentTimeMillis());
 
     public static int Random(int min, int max) {
         return Random(min, max, random);
     }
 
     public static int Random(int min, int max, Random r) {
-        return (int)(r.nextDouble() * (double)(max - min + 1)) + min;
+        return (int) (r.nextDouble() * (max - min + 1)) + min;
     }
 
-    public static long Random(long min, long max) {
-        return Random(min, max, random);
+    /**
+     * 符合随机概率
+     *
+     * @param rate 概率的整数
+     * @return true 符合 false 不符合
+     */
+    public static boolean fitRandomRate(int rate) {
+        //随机产生[0,100)的整数，每个数字出现的概率为1%
+        int num = random.nextInt(100);
+        //前20个数字的区间，代表20%的几率
+        return num <= rate;
     }
 
-    public static long Random(long min, long max, Random r) {
-        return (long)(r.nextDouble() * (double)(max - min + 1L)) + min;
+
+    /**
+     * 乱序byte
+     */
+    public static void randomByte(byte[] bytes) {
+        random.nextBytes(bytes);
     }
 }
