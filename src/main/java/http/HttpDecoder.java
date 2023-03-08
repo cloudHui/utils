@@ -1,5 +1,7 @@
 package http;
 
+import java.net.InetSocketAddress;
+
 import http.handler.Handler;
 import http.handler.Maker;
 import io.netty.buffer.ByteBuf;
@@ -14,16 +16,13 @@ import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
-
-/**
- * Created by xiangxiaosong on 2019/3/5.
- */
 public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implements Linker {
 	private final static Logger LOGGER = LoggerFactory.getLogger(HttpDecoder.class);
 	public final static String WEB_SOCKET = "websocket";
 	private Channel channel;
 	private String ip;
+
+	private long lastMsgStamp;
 
 	private Maker maker;
 
@@ -50,6 +49,11 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object o) throws Exception {
 		try {
+			long now = System.currentTimeMillis();
+			if (lastMsgStamp != 0 && now - lastMsgStamp < 2000) {
+				return;
+			}
+			lastMsgStamp = now;
 			if (o instanceof FullHttpRequest) {
 				FullHttpRequest request = (FullHttpRequest) o;
 				try {
@@ -59,7 +63,7 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 					}
 
 					String[] data = path.split("\\?");
-					if (null != data && data.length > 0) {
+					if (data.length > 0) {
 						if (HttpMethod.POST.equals(request.getMethod())) {
 							Handler handler = getHandler(data[0]);
 							if (null != handler) {
@@ -94,8 +98,6 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 				} catch (Throwable e) {
 					LOGGER.error("", e);
 					ctx.close();
-				} finally {
-					//request.release();
 				}
 			} else if (o instanceof WebSocketFrame) {
 				WebSocketFrame frame = (WebSocketFrame) o;
@@ -182,7 +184,6 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 
 	private <T> void sendMsg(T t) {
 		channel.writeAndFlush(t);
-//                .addListener(ChannelFutureListener.CLOSE);
 	}
 
 	public abstract Handler getHandler(String path);

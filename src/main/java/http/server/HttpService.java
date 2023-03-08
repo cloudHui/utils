@@ -58,7 +58,7 @@ public class HttpService {
 				});
 
 		try {
-			// sync追踪代码可以得到：this.await()，实现阻塞
+			// sync追踪代码可以得到：DefaultPromise.await() 调用  object.wait()，实现阻塞
 			ChannelFuture channelFuture = service.bind(socketAddress).sync();
 
 			// 启动失败则关闭线程组
