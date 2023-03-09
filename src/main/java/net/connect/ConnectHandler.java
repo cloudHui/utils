@@ -1,5 +1,18 @@
 package net.connect;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Consumer;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
@@ -20,19 +33,6 @@ import net.message.Transfer;
 import net.proto.SysProto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Consumer;
 
 public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundHandlerAdapter implements Sender<T, M> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectHandler.class);
@@ -145,20 +145,20 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 					innerMsg = this.parser.parser(msg.getMsgId(), msg.getInnerMsg().toByteArray());
 				}
 
-				if (msg.hasSequence() && 0 != (msg.getMsgId() & -2147483648)) {
-					completer = this.completerGroup.popCompleter(msg.getSequence());
-					if (null != completer) {
-						completer.msg = innerMsg;
-						ctx.channel().eventLoop().execute(completer);
-					}
+//				if (msg.hasSequence() && 0 != (msg.getMsgId() & -2147483648)) {
+//					completer = this.completerGroup.popCompleter(msg.getSequence());
+//					if (null != completer) {
+//						completer.msg = innerMsg;
+//						ctx.channel().eventLoop().execute(completer);
+//					}
+//				} else {
+				handler = this.handlers.getHandler(msg.getMsgId());
+				if (null != handler) {
+					handler.handler(this, msg.hasSequence() ? msg.getSequence() : null, innerMsg);
 				} else {
-					handler = this.handlers.getHandler(msg.getMsgId());
-					if (null != handler) {
-						handler.handler(this, msg.hasSequence() ? msg.getSequence() : null, innerMsg);
-					} else {
-						LOGGER.error("[{}] ERROR! can not find handler for message({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()));
-					}
+					LOGGER.error("[{}] ERROR! can not find handler for message({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()));
 				}
+//				}
 			} catch (Exception var7) {
 				LOGGER.error("[{}] ERROR! failed for process message({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()), var7);
 			}
@@ -315,7 +315,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 		}
 
 		public Completer popCompleter(long sequence) {
-			return (Completer) this.completerMap.remove(sequence);
+			return this.completerMap.remove(sequence);
 		}
 
 		public void destroy() {
@@ -326,7 +326,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 			} catch (Exception var6) {
 			}
 
-			Completer completer = null;
+			Completer completer;
 
 			while (!this.completerMap.isEmpty()) {
 				Throwable ex = new RuntimeException("Unknown exception occurred！");
@@ -335,7 +335,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 
 				while (var4.hasNext()) {
 					Long id = (Long) var4.next();
-					completer = (Completer) this.completerMap.remove(id);
+					completer = this.completerMap.remove(id);
 					if (null != completer) {
 						completer.ex = ex;
 						this.executors.execute(completer);
@@ -357,19 +357,19 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 
 				});
 				if (!seq.isEmpty()) {
-					Completer completer = null;
+					Completer completer;
 					Iterator var5 = seq.iterator();
 
 					while (var5.hasNext()) {
 						Long id = (Long) var5.next();
-						completer = (Completer) this.completerMap.remove(id);
+						completer = this.completerMap.remove(id);
 						if (null != completer) {
 							completer.ex = TIMEOUT;
 							this.executors.execute(completer);
 						}
 					}
 				}
-			} catch (Exception var7) {
+			} catch (Exception ignored) {
 			}
 
 		}
@@ -446,7 +446,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 
 			ConnectHandler var3;
 			try {
-				var3 = (ConnectHandler) this.connectMap.get(id);
+				var3 = this.connectMap.get(id);
 			} finally {
 				this.lock.readLock().unlock();
 			}

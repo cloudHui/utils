@@ -222,20 +222,20 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 				return;
 			}
 
+			Message msg;
+			if (sysMsg.hasInnerMsg()) {
+				msg = this.parser.parser(sysMsg.getMsgId(), sysMsg.getInnerMsg().toByteArray());
+			} else {
+				msg = this.parser.parser(sysMsg.getMsgId(), DEFAULT_DATA);
+			}
+			LOGGER.debug("msg = [{}]", msg);
+
 			Handler handler = this.handlers.getHandler(sysMsg.getMsgId());
 			if (null == handler) {
 				LOGGER.error("[{}] ERROR! can not find handler for message({})", this.channel, String.format("0x%08x", sysMsg.getMsgId()));
 				return;
 			}
 
-			Message msg = null;
-			if (sysMsg.hasInnerMsg()) {
-				msg = this.parser.parser(sysMsg.getMsgId(), sysMsg.getInnerMsg().toByteArray());
-			} else {
-				msg = this.parser.parser(sysMsg.getMsgId(), DEFAULT_DATA);
-			}
-
-			LOGGER.debug("msg = [{}]", msg);
 			if (handler.handler(this, sysMsg.hasSequence() ? sysMsg.getSequence() : null, msg)) {
 				return;
 			}
@@ -259,17 +259,17 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 				return;
 			}
 
-			Handler handler = this.handlers.getHandler(tcpMessage.getMessageId());
-			if (null == handler) {
-				LOGGER.error("[{}] ERROR! can not find handler for message({})", this.channel, String.format("0x%08x", tcpMessage.getMessageId()));
-				return;
-			}
-
-			Message msg = null;
+			Message msg;
 			if (null != tcpMessage.getMessage() && tcpMessage.getMessage().length > 0) {
 				msg = this.parser.parser(tcpMessage.getMessageId(), tcpMessage.getMessage());
 			} else {
 				msg = this.parser.parser(tcpMessage.getMessageId(), DEFAULT_DATA);
+			}
+
+			Handler handler = this.handlers.getHandler(tcpMessage.getMessageId());
+			if (null == handler) {
+				LOGGER.error("[{}] ERROR! can not find handler for message({})", this.channel, String.format("0x%08x", tcpMessage.getMessageId()));
+				return;
 			}
 
 			if (handler.handler(this, (long) tcpMessage.getSequence(), msg)) {
