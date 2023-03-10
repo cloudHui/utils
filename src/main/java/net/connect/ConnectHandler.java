@@ -112,6 +112,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 		this.completerGroup.destroy();
 		this.completerGroup = null;
 		this.channel = null;
+
 	}
 
 	@Override
@@ -313,6 +314,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 			}
 		});
 
+		@Override
 		public int compareTo(CompleterGroup o) {
 			return this.equals(o) ? 0 : 1;
 		}
@@ -362,6 +364,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 			this.executors = null;
 		}
 
+		@Override
 		public void run() {
 			try {
 				Set<Long> seq = new HashSet();
@@ -408,6 +411,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 			return time >= this.timeout;
 		}
 
+		@Override
 		public void run() {
 			try {
 				if (null != this.ex) {
