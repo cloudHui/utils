@@ -5,10 +5,23 @@ public class TCPMessage {
 	private int version;
 	private int messageId;
 	private int sequence;
+	private int mapId;
 	private byte[] message;
 
 	public static TCPMessage newInstance(int version, int messageId, int sequence, byte[] message) {
 		return new TCPMessage(version, messageId, sequence, message);
+	}
+
+	public static TCPMessage newInstance(int version, int messageId, int sequence, byte[] message, int mapId) {
+		return new TCPMessage(version, messageId, sequence, message,mapId);
+	}
+
+	public TCPMessage(int version, int messageId, int sequence, byte[] message, int mapId) {
+		this.version = version;
+		this.messageId = messageId;
+		this.sequence = sequence;
+		this.message = message;
+		this.mapId = mapId;
 	}
 
 	public TCPMessage(int version, int messageId, int sequence, byte[] message) {
@@ -48,5 +61,13 @@ public class TCPMessage {
 
 	public void setMessage(byte[] message) {
 		this.message = message;
+	}
+
+	public int getMapId() {
+		return mapId;
+	}
+
+	public void setMapId(int mapId) {
+		this.mapId = mapId;
 	}
 }

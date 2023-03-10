@@ -189,16 +189,21 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 
 	}
 
-	public void sendMessage(Integer msgId, Message msg, Map<Long, String> attachments) {
+	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments) {
 		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
 	}
 
-	public void sendMessage(Integer msgId, ByteString msg, Map<Long, String> attachments) {
+	@Override
+	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments, int mapId) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId));
+	}
+
+	public void sendMessage(int msgId, ByteString msg, Map<Long, String> attachments) {
 		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
 	}
 
-	public void sendMessage(Long sequence, Integer msgId, Message message, Map<Long, String> attachments) {
-		if (null == sequence) {
+	public void sendMessage(int sequence, Integer msgId, Message message, Map<Long, String> attachments) {
+		if (0 == sequence) {
 			this.sendMessage(msgId, message, attachments);
 		} else {
 			this.channel.writeAndFlush(this.maker.wrap(sequence, msgId, message, attachments));

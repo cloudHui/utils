@@ -1,5 +1,11 @@
 package net.connect;
 
+import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import io.netty.bootstrap.Bootstrap;
@@ -29,12 +35,6 @@ import net.message.Transfer;
 import net.proto.SysProto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 public class ConnectPool<M> implements Sender<ConnectPool, M> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectPool.class);
@@ -67,15 +67,16 @@ public class ConnectPool<M> implements Sender<ConnectPool, M> {
 	}
 
 	public void initPool() {
-		Bootstrap bootstrap = ((Bootstrap) ((Bootstrap) ((Bootstrap) ((Bootstrap) (new Bootstrap()).group(this.eventLoopGroup)).channel(NioSocketChannel.class)).option(ChannelOption.SO_KEEPALIVE, true)).option(ChannelOption.TCP_NODELAY, true)).remoteAddress(this.socketAddress);
+		Bootstrap bootstrap = (new Bootstrap()).group(this.eventLoopGroup).channel(NioSocketChannel.class).option(ChannelOption.SO_KEEPALIVE, true).option(ChannelOption.TCP_NODELAY, true).remoteAddress(this.socketAddress);
 		this.pool = new FixedChannelPool(bootstrap, new InnerChannelPoolHandler(), ChannelHealthChecker.ACTIVE, AcquireTimeoutAction.NEW, 0L, this.maxSize, 2147483647);
 	}
 
-	public void sendMessage(Integer msgId, Message msg, Map<Long, String> attachments) {
+	@Override
+	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments) {
 		Channel channel = null;
 
 		try {
-			channel = (Channel) this.pool.acquire().get();
+			channel = this.pool.acquire().get();
 			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
 		} catch (Exception var9) {
 			LOGGER.error("id:{} msg:{}", new Object[]{msgId, msg.toString(), var9});
@@ -88,11 +89,29 @@ public class ConnectPool<M> implements Sender<ConnectPool, M> {
 
 	}
 
-	public void sendMessage(Integer msgId, ByteString msg, Map<Long, String> attachments) {
+	@Override
+	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments, int mapId) {
 		Channel channel = null;
 
 		try {
-			channel = (Channel) this.pool.acquire().get();
+			channel = this.pool.acquire().get();
+			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId));
+		} catch (Exception var9) {
+			LOGGER.error("id:{} msg:{}", new Object[]{msgId, msg.toString(), var9});
+		} finally {
+			if (null != channel) {
+				this.pool.release(channel);
+			}
+
+		}
+	}
+
+	@Override
+	public void sendMessage(int msgId, ByteString msg, Map<Long, String> attachments) {
+		Channel channel = null;
+
+		try {
+			channel = this.pool.acquire().get();
 			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
 		} catch (Exception var9) {
 			LOGGER.error("id:{} msg:{}", new Object[]{msgId, msg.toString(), var9});
@@ -105,11 +124,12 @@ public class ConnectPool<M> implements Sender<ConnectPool, M> {
 
 	}
 
-	public void sendMessage(Long sequence, Integer msgId, Message msg, Map<Long, String> attachments) {
+	@Override
+	public void sendMessage(int sequence, Integer msgId, Message msg, Map<Long, String> attachments) {
 		Channel channel = null;
 
 		try {
-			channel = (Channel) this.pool.acquire().get();
+			channel = this.pool.acquire().get();
 			channel.writeAndFlush(this.maker.wrap(sequence, msgId, msg, attachments));
 		} catch (Exception var10) {
 			LOGGER.error("id:{} msg:{}", new Object[]{msgId, msg.toString(), var10});
@@ -122,11 +142,12 @@ public class ConnectPool<M> implements Sender<ConnectPool, M> {
 
 	}
 
+	@Override
 	public void sendMessage(M msg) {
 		Channel channel = null;
 
 		try {
-			channel = (Channel) this.pool.acquire().get();
+			channel = this.pool.acquire().get();
 			channel.writeAndFlush(msg);
 		} catch (Exception var7) {
 			LOGGER.error("{}", msg.toString(), var7);
@@ -143,12 +164,15 @@ public class ConnectPool<M> implements Sender<ConnectPool, M> {
 		InnerChannelPoolHandler() {
 		}
 
+		@Override
 		public void channelReleased(Channel channel) throws Exception {
 		}
 
+		@Override
 		public void channelAcquired(Channel channel) throws Exception {
 		}
 
+		@Override
 		public void channelCreated(Channel channel) throws Exception {
 			ChannelPipeline p = channel.pipeline();
 			Iterator var3 = ConnectPool.this.clientFactory.create(channel).iterator();

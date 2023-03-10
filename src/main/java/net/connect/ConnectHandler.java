@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -90,6 +91,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 		return this.serverId;
 	}
 
+	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		this.channel = ctx.channel();
 		connectManager.addConnect(this);
@@ -104,6 +106,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 
 	}
 
+	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		connectManager.removeConnect(this.getId());
 		this.completerGroup.destroy();
@@ -111,6 +114,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 		this.channel = null;
 	}
 
+	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object event) throws Exception {
 		if (IdleStateEvent.class.isAssignableFrom(event.getClass())) {
 			IdleStateEvent idle = (IdleStateEvent) event;
@@ -128,6 +132,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 
 	}
 
+	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object o) throws Exception {
 		Message innerMsg;
 		Handler handler;
@@ -145,6 +150,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 					innerMsg = this.parser.parser(msg.getMsgId(), msg.getInnerMsg().toByteArray());
 				}
 
+				//有双序号保证消息发送成功
 //				if (msg.hasSequence() && 0 != (msg.getMsgId() & -2147483648)) {
 //					completer = this.completerGroup.popCompleter(msg.getSequence());
 //					if (null != completer) {
@@ -176,20 +182,21 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 					innerMsg = this.parser.parser(msg.getMessageId(), this.MSG_DEFAULT);
 				}
 
-				if (msg.getSequence() > 0 && 0 != (msg.getMessageId() & -2147483648)) {
-					completer = this.completerGroup.popCompleter((long) msg.getSequence());
-					if (null != completer) {
-						completer.msg = innerMsg;
-						ctx.channel().eventLoop().execute(completer);
-					}
+				//有双序号保证消息发送成功
+//				if (msg.getSequence() > 0 && 0 != (msg.getMessageId() & -2147483648)) {
+//					completer = this.completerGroup.popCompleter((long) msg.getSequence());
+//					if (null != completer) {
+//						completer.msg = innerMsg;
+//						ctx.channel().eventLoop().execute(completer);
+//					}
+//				} else {
+				handler = this.handlers.getHandler(msg.getMessageId());
+				if (null != handler) {
+					handler.handler(this, (long) msg.getSequence(), innerMsg);
 				} else {
-					handler = this.handlers.getHandler(msg.getMessageId());
-					if (null != handler) {
-						handler.handler(this, (long) msg.getSequence(), innerMsg);
-					} else {
-						LOGGER.error("[{}] ERROR! can not find handler for message({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()));
-					}
+					LOGGER.error("[{}] ERROR! can not find handler for message({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()));
 				}
+//				}
 			} catch (Exception var6) {
 				LOGGER.error("[{}] ERROR! failed for process message({})", new Object[]{ctx.channel(), String.format("0x%08x", msg.getMessageId()), var6});
 			}
@@ -199,16 +206,24 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 
 	}
 
-	public void sendMessage(Integer msgId, Message msg, Map<Long, String> attachments) {
+	@Override
+	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments) {
 		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
 	}
 
-	public void sendMessage(Integer msgId, ByteString msg, Map<Long, String> attachments) {
+	@Override
+	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments, int mapId) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId));
+	}
+
+	@Override
+	public void sendMessage(int msgId, ByteString msg, Map<Long, String> attachments) {
 		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
 	}
 
-	public void sendMessage(Long sequence, Integer msgId, Message msg, Map<Long, String> attachments) {
-		if (null == sequence) {
+	@Override
+	public void sendMessage(int sequence, Integer msgId, Message msg, Map<Long, String> attachments) {
+		if (0 == sequence) {
 			this.sendMessage(msgId, msg, attachments);
 		} else {
 			this.channel.writeAndFlush(this.maker.wrap(sequence, msgId, msg, attachments));
@@ -216,12 +231,13 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 
 	}
 
+	@Override
 	public void sendMessage(M msg) {
 		this.channel.writeAndFlush(msg);
 	}
 
 	public CompletableFuture sendMessage(int msgId, Message msg, Map<Long, String> attachments, long timeout) {
-		long sequence = this.completerGroup.getSequence();
+		int sequence = this.completerGroup.getSequence();
 		Completer completer = new Completer(timeout);
 		this.completerGroup.addCompleter(sequence, completer);
 		this.sendMessage(sequence, msgId, msg, attachments);
@@ -236,7 +252,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 		private static final Throwable TIMEOUT = new RuntimeException("timeout");
 		private Map<Long, Completer> completerMap = new ConcurrentHashMap(128);
 		private EventLoop executors;
-		private static final AtomicLong sequence = new AtomicLong(0L);
+		private static final AtomicInteger sequence = new AtomicInteger(0);
 		private static final Set<Runnable> runners = new ConcurrentSkipListSet();
 		private static final Thread checker = new Thread(() -> {
 			long waitTime = 0L;
@@ -306,7 +322,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 			runners.add(this);
 		}
 
-		public long getSequence() {
+		public int getSequence() {
 			return sequence.incrementAndGet();
 		}
 
