@@ -19,6 +19,7 @@ public class TCPMessageEncoder extends MessageToByteEncoder<TCPMessage> {
 		int length = msg.getMessage() == null ? 0 : msg.getMessage().length;
 		buf.writeInt(length);
 		buf.writeInt(msg.getSequence());
+		buf.writeInt(msg.getMapId());
 		if (length > 0) {
 			buf.writeBytes(msg.getMessage());
 		}

@@ -80,10 +80,10 @@ public class Connect<M> extends ConnectHandler<Connect, M> {
 				.handler(channelInitializer);
 
 		try {
-			bootstrap.connect(socketAddress).addListener((ChannelFutureListener) f0 -> {
-				InetSocketAddress saddr = (InetSocketAddress) socketAddress;
-				if (f0.isSuccess()) {
-					f0.channel().closeFuture().addListener((ChannelFutureListener) f1 -> {
+			bootstrap.connect(socketAddress).addListener((ChannelFutureListener) channelFuture -> {
+				InetSocketAddress sad = (InetSocketAddress) socketAddress;
+				if (channelFuture.isSuccess()) {
+					channelFuture.channel().closeFuture().addListener((ChannelFutureListener) f1 -> {
 						if (retryInterval >= 0) {
 							f1.channel().eventLoop().schedule(() -> {
 								connect(f1.channel().eventLoop(), socketAddress, retryInterval, channelInitializer);
@@ -91,15 +91,15 @@ public class Connect<M> extends ConnectHandler<Connect, M> {
 						}
 
 					});
-					LOGGER.info("connect {}:{} is success!!!", saddr.getAddress().getHostAddress(), saddr.getPort());
+					LOGGER.info("connect {}:{} is success!!!", sad.getAddress().getHostAddress(), sad.getPort());
 				} else {
 					if (retryInterval >= 0) {
-						f0.channel().eventLoop().schedule(() -> {
-							connect(f0.channel().eventLoop(), socketAddress, retryInterval, channelInitializer);
-						}, (long) retryInterval, TimeUnit.SECONDS);
+						channelFuture.channel().eventLoop().schedule(() -> {
+							connect(channelFuture.channel().eventLoop(), socketAddress, retryInterval, channelInitializer);
+						}, retryInterval, TimeUnit.SECONDS);
 					}
 
-					LOGGER.error("failed for connect {}:{}!!!", saddr.getAddress().getHostAddress(), saddr.getPort());
+					LOGGER.error("failed for connect {}:{}!!!", sad.getAddress().getHostAddress(), sad.getPort());
 				}
 
 			}).sync();

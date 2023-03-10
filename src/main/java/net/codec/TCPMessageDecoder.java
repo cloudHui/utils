@@ -1,11 +1,11 @@
 package net.codec;
 
+import java.nio.ByteOrder;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import net.message.TCPMessage;
-
-import java.nio.ByteOrder;
 
 public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 	public TCPMessageDecoder() {
@@ -21,6 +21,7 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 			int id = rec.readInt();
 			int length = rec.readInt();
 			int sequence = rec.readInt();
+			int mapId = rec.readInt();
 			byte[] data = null;
 			if (length > 0) {
 				data = new byte[length];
@@ -28,7 +29,7 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 			}
 
 			rec.release();
-			return TCPMessage.newInstance(version, id, sequence, data);
+			return TCPMessage.newInstance(version, id, sequence, data, mapId);
 		} else {
 			return null;
 		}
