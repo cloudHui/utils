@@ -49,6 +49,7 @@ public class TCPConnect extends ConnectHandler<TCPConnect, TCPMessage> {
 
 	public TCPConnect connect() {
 		Connect.connect(this.eventLoopGroup, this.socketAddress, this.retryInterval, new ChannelInitializer<SocketChannel>() {
+			@Override
 			protected void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline p = ch.pipeline();
 				p.addLast(new IdleStateHandler(0, 60, 0));

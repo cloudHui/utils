@@ -12,6 +12,7 @@ public class WSTCPMessageDecoder extends MessageToMessageDecoder<WebSocketFrame>
 	public WSTCPMessageDecoder() {
 	}
 
+	@Override
 	protected void decode(ChannelHandlerContext ctx, WebSocketFrame msg, List<Object> out) {
 		ByteBuf rec = msg.content();
 		int version = rec.readInt();

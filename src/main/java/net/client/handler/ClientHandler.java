@@ -104,6 +104,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 		this.safe = safe;
 	}
 
+	@Override
 	public void channelActive(ChannelHandlerContext ctx) {
 		if (null != this.registerEvent) {
 			try {
@@ -118,6 +119,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 		clientManager.addClient(this);
 	}
 
+	@Override
 	public void channelInactive(ChannelHandlerContext ctx) {
 		clientManager.removeClient(this);
 		if (null != this.closeEvent) {
@@ -142,6 +144,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 
 	}
 
+	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
 		Channel channel = ctx.channel();
 		if (channel.isActive()) {
@@ -150,6 +153,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 
 	}
 
+	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object event) {
 		if (IdleStateEvent.class.isAssignableFrom(event.getClass())) {
 			IdleStateEvent idle = (IdleStateEvent) event;
@@ -160,6 +164,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 
 	}
 
+	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object object) throws Exception {
 		if (object instanceof WebSocketFrame) {
 			WebSocketFrame frame = (WebSocketFrame) object;
@@ -189,6 +194,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 
 	}
 
+	@Override
 	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments) {
 		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
 	}
@@ -198,10 +204,12 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId));
 	}
 
+	@Override
 	public void sendMessage(int msgId, ByteString msg, Map<Long, String> attachments) {
 		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
 	}
 
+	@Override
 	public void sendMessage(int sequence, Integer msgId, Message message, Map<Long, String> attachments) {
 		if (0 == sequence) {
 			this.sendMessage(msgId, message, attachments);
@@ -211,6 +219,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 
 	}
 
+	@Override
 	public void sendMessage(M msg) {
 		this.channel.writeAndFlush(msg);
 	}

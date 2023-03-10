@@ -25,6 +25,7 @@ public class TCPServiceHandler extends ChannelInitializer<SocketChannel> {
 		this.clientFactory = clientFactory;
 	}
 
+	@Override
 	protected void initChannel(SocketChannel socketChannel) throws Exception {
 		ChannelPipeline p = socketChannel.pipeline();
 		p.addLast("encoder", new TCPMessageEncoder());

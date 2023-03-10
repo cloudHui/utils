@@ -15,6 +15,7 @@ public class SerialTimeNode<T> extends TimeNode<T> implements Task {
 		this.groupId = groupId;
 	}
 
+	@Override
 	public int groupId() {
 		return this.groupId;
 	}

@@ -13,6 +13,7 @@ public class WebSocketWrapEncoder extends MessageToMessageEncoder<SysProto.SysMe
 	public WebSocketWrapEncoder() {
 	}
 
+	@Override
 	protected void encode(ChannelHandlerContext channelHandlerContext, SysProto.SysMessage sysMessage, List<Object> list) throws Exception {
 		ByteBuf buf = Unpooled.wrappedBuffer(sysMessage.toByteArray());
 		list.add(new BinaryWebSocketFrame(buf));

@@ -35,7 +35,7 @@ public class SysMessageService extends Service {
 
 	public SysMessageService start(List<SocketAddress> socketAddresses) {
 		super.start(new SysMessageServiceHandler(this.idleTime, (channel) -> {
-			ArrayList channels = new ArrayList(1);
+			List channels = new ArrayList(1);
 
 			try {
 				channels.add(this.clazz.newInstance());

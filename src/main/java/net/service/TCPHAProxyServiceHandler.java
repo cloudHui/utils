@@ -23,6 +23,7 @@ public class TCPHAProxyServiceHandler extends ChannelInitializer<SocketChannel> 
 		this.clientFactory = clientFactory;
 	}
 
+	@Override
 	protected void initChannel(SocketChannel socketChannel) {
 		ChannelPipeline p = socketChannel.pipeline();
 		p.addLast("haproxy", new HAProxyDecoder());

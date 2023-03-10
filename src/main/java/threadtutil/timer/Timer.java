@@ -58,6 +58,7 @@ public class Timer implements Runnable {
         ++this.loops;
     }
 
+    @Override
     public void run() {
         for(int loop = this.loops; loop == this.loops; this.timeSignal.waitSignal(this.waitTime)) {
             this.waitTime = 180000L;

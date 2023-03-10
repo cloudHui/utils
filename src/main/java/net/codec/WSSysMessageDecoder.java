@@ -12,6 +12,7 @@ public class WSSysMessageDecoder extends MessageToMessageDecoder<WebSocketFrame>
 	public WSSysMessageDecoder() {
 	}
 
+	@Override
 	protected void decode(ChannelHandlerContext ctx, WebSocketFrame msg, List<Object> out) throws Exception {
 		ByteBuf buf = msg.content();
 		byte[] bytes = new byte[buf.readableBytes()];

@@ -28,6 +28,7 @@ public class SysMessageServiceHandler extends ChannelInitializer<SocketChannel> 
 		this.idleTime = idleTime;
 	}
 
+	@Override
 	protected void initChannel(SocketChannel c) {
 		ChannelPipeline p = c.pipeline();
 		p.addLast(new ProtobufVarint32FrameDecoder());

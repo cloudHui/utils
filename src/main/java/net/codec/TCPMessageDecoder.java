@@ -12,6 +12,7 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 		super(ByteOrder.LITTLE_ENDIAN, 2097152, 8, 4, 4, 0, true);
 	}
 
+	@Override
 	protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
 		ByteBuf buf = (ByteBuf) super.decode(ctx, in);
 		if (null != buf) {

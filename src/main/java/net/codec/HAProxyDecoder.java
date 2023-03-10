@@ -14,6 +14,7 @@ public class HAProxyDecoder extends ByteToMessageDecoder {
 	public HAProxyDecoder() {
 	}
 
+	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> list) throws Exception {
 		ByteBuf rec = byteBuf.order(ByteOrder.LITTLE_ENDIAN);
 		byte[] recData = new byte[256];

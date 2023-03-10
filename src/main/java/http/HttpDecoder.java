@@ -154,10 +154,12 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 		}
 	}
 
+	@Override
 	public String remoteIp() {
 		return ip;
 	}
 
+	@Override
 	public <T> void sendMessage(int msgId, T msg) {
 		try {
 			sendMsg(maker.wrap(msgId, msg));
@@ -166,6 +168,7 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 		}
 	}
 
+	@Override
 	public <T> void sendMessage(T msg) {
 		try {
 			sendMsg(maker.wrap(msg));
@@ -174,6 +177,7 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 		}
 	}
 
+	@Override
 	public void sendMessage(String msg) {
 		try {
 			sendMsg(maker.wrap(msg));

@@ -57,6 +57,7 @@ public class Connect<M> extends ConnectHandler<Connect, M> {
 
 	public Connect connect() {
 		connect(this.eventLoopGroup, this.socketAddress, this.retryInterval, new ChannelInitializer<SocketChannel>() {
+			@Override
 			protected void initChannel(SocketChannel ch) {
 				ChannelPipeline p = ch.pipeline();
 				p.addLast(new IdleStateHandler(0, 60, 0));

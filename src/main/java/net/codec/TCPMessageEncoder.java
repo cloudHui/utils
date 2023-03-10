@@ -11,6 +11,7 @@ public class TCPMessageEncoder extends MessageToByteEncoder<TCPMessage> {
 	public TCPMessageEncoder() {
 	}
 
+	@Override
 	protected void encode(ChannelHandlerContext ctx, TCPMessage msg, ByteBuf out) throws Exception {
 		ByteBuf buf = out.order(ByteOrder.LITTLE_ENDIAN);
 		buf.writeInt(msg.getVersion());

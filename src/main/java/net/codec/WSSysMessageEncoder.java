@@ -13,6 +13,7 @@ public class WSSysMessageEncoder extends MessageToMessageEncoder<SysProto.SysMes
 	public WSSysMessageEncoder() {
 	}
 
+	@Override
 	protected void encode(ChannelHandlerContext ctx, SysProto.SysMessage msg, List<Object> out) {
 		ByteBuf buf = Unpooled.wrappedBuffer(msg.toByteArray());
 		out.add(new BinaryWebSocketFrame(buf));

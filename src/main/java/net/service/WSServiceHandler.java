@@ -20,6 +20,7 @@ public class WSServiceHandler extends ChannelInitializer<SocketChannel> {
 		this.clientFactory = clientFactory;
 	}
 
+	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
 		ChannelPipeline p = ch.pipeline();
 		p.addLast(new HttpRequestDecoder());

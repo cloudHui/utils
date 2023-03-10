@@ -15,6 +15,7 @@ public class TransferHandler extends ChannelInboundHandlerAdapter {
 		this.transfer = transfer;
 	}
 
+	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object o) {
 		if (o instanceof SysProto.SysMessage) {
 			try {
