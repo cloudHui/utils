@@ -121,6 +121,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) {
+		LOGGER.error("[{}] close", ctx.channel());
 		clientManager.removeClient(this);
 		if (null != this.closeEvent) {
 			try {
