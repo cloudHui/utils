@@ -1,7 +1,6 @@
 package net.message;
 
 public class TCPMessage {
-	public static final int HEAD_LENGTH = 32;
 	private int version;
 	private int messageId;
 	private int sequence;

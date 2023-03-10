@@ -1,5 +1,9 @@
 package net.connect;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.util.concurrent.TimeUnit;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -22,10 +26,6 @@ import net.proto.SysProto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.util.concurrent.TimeUnit;
-
 @Sharable
 public class Connect<M> extends ConnectHandler<Connect, M> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Connect.class);
@@ -35,9 +35,14 @@ public class Connect<M> extends ConnectHandler<Connect, M> {
 
 	public Connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, Transfer transfer,
 	               Parser parser, Handlers handlers, RegisterEvent registerEvent) {
+		//默认重试三次
 		this(eventLoopGroup, socketAddress, 3, transfer, parser, handlers, registerEvent);
 	}
 
+	/**
+	 * @param retryInterval 重连次数 默认三次
+	 * @param registerEvent 链接成功后触发的事件
+	 */
 	public Connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, int retryInterval,
 	               Transfer transfer, Parser parser, Handlers handlers, RegisterEvent registerEvent) {
 		super(transfer, parser, handlers);
@@ -83,6 +88,7 @@ public class Connect<M> extends ConnectHandler<Connect, M> {
 			bootstrap.connect(socketAddress).addListener((ChannelFutureListener) channelFuture -> {
 				InetSocketAddress sad = (InetSocketAddress) socketAddress;
 				if (channelFuture.isSuccess()) {
+					//链接成功被关闭了也会重试
 					channelFuture.channel().closeFuture().addListener((ChannelFutureListener) f1 -> {
 						if (retryInterval >= 0) {
 							f1.channel().eventLoop().schedule(() -> {
@@ -93,6 +99,7 @@ public class Connect<M> extends ConnectHandler<Connect, M> {
 					});
 					LOGGER.info("connect {}:{} is success!!!", sad.getAddress().getHostAddress(), sad.getPort());
 				} else {
+					//链接失败也会重试
 					if (retryInterval >= 0) {
 						channelFuture.channel().eventLoop().schedule(() -> {
 							connect(channelFuture.channel().eventLoop(), socketAddress, retryInterval, channelInitializer);

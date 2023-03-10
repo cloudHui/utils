@@ -152,22 +152,22 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 				}
 
 				//有双序号保证消息发送成功
-//				if (msg.hasSequence() && 0 != (msg.getMsgId() & -2147483648)) {
-//					completer = this.completerGroup.popCompleter(msg.getSequence());
-//					if (null != completer) {
-//						completer.msg = innerMsg;
-//						ctx.channel().eventLoop().execute(completer);
-//					}
-//				} else {
-				handler = this.handlers.getHandler(msg.getMsgId());
-				if (null != handler) {
-					handler.handler(this, msg.hasSequence() ? msg.getSequence() : null, innerMsg);
+				if (msg.hasSequence()) {
+					completer = this.completerGroup.popCompleter(msg.getSequence());
+					if (null != completer) {
+						completer.msg = innerMsg;
+						ctx.channel().eventLoop().execute(completer);
+					}
 				} else {
-					LOGGER.error("[{}] ERROR! can not find handler for message({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()));
+					handler = this.handlers.getHandler(msg.getMsgId());
+					if (null != handler) {
+						handler.handler(this, msg.hasSequence() ? msg.getSequence() : null, innerMsg);
+					} else {
+						LOGGER.error("[{}] ERROR! can not find handler for SysMessage({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()));
+					}
 				}
-//				}
 			} catch (Exception var7) {
-				LOGGER.error("[{}] ERROR! failed for process message({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()), var7);
+				LOGGER.error("[{}] ERROR! failed for process SysMessage({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()), var7);
 			}
 		} else if (o instanceof TCPMessage) {
 			TCPMessage msg = (TCPMessage) o;
@@ -183,23 +183,23 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 					innerMsg = this.parser.parser(msg.getMessageId(), this.MSG_DEFAULT);
 				}
 
-				//有双序号保证消息发送成功
-//				if (msg.getSequence() > 0 && 0 != (msg.getMessageId() & -2147483648)) {
-//					completer = this.completerGroup.popCompleter((long) msg.getSequence());
-//					if (null != completer) {
-//						completer.msg = innerMsg;
-//						ctx.channel().eventLoop().execute(completer);
-//					}
-//				} else {
-				handler = this.handlers.getHandler(msg.getMessageId());
-				if (null != handler) {
-					handler.handler(this, (long) msg.getSequence(), innerMsg);
+				//有双序号保证消息发送成功  否则一直打印错误日志 然后链接重试是在connect里面
+				if (msg.getSequence() > 0) {
+					completer = this.completerGroup.popCompleter(msg.getSequence());
+					if (null != completer) {
+						completer.msg = innerMsg;
+						ctx.channel().eventLoop().execute(completer);
+					}
 				} else {
-					LOGGER.error("[{}] ERROR! can not find handler for message({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()));
+					handler = this.handlers.getHandler(msg.getMessageId());
+					if (null != handler) {
+						handler.handler(this, (long) msg.getSequence(), innerMsg);
+					} else {
+						LOGGER.error("[{}] ERROR! can not find handler for TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()));
+					}
 				}
-//				}
 			} catch (Exception var6) {
-				LOGGER.error("[{}] ERROR! failed for process message({})", new Object[]{ctx.channel(), String.format("0x%08x", msg.getMessageId()), var6});
+				LOGGER.error("[{}] ERROR! failed for process TCPMessage({})", new Object[]{ctx.channel(), String.format("0x%08x", msg.getMessageId()), var6});
 			}
 		} else {
 			ctx.fireChannelRead(o);

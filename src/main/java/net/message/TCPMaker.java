@@ -1,9 +1,9 @@
 package net.message;
 
+import java.util.Map;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
-
-import java.util.Map;
 
 public class TCPMaker implements Maker<TCPMessage> {
 	public static final TCPMaker INSTANCE = new TCPMaker();
@@ -22,8 +22,8 @@ public class TCPMaker implements Maker<TCPMessage> {
 	}
 
 	@Override
-	public TCPMessage wrap(int msgId, Message msg, Map<Long, String> attachments,int mapId) {
-		return TCPMessage.newInstance(0, msgId, 0, msg.toByteArray(),mapId);
+	public TCPMessage wrap(int msgId, Message msg, Map<Long, String> attachments, int mapId) {
+		return TCPMessage.newInstance(0, msgId, 0, msg.toByteArray(), mapId);
 	}
 
 	@Override
