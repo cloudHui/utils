@@ -197,9 +197,9 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 						handler.handler(this, (long) msg.getSequence(), innerMsg);
 						now = System.currentTimeMillis() - now;
 						if (now > 1000L) {
-							logger.error("handler:{} cost too long :{}", handler.getClass().getSimpleName(), now);
+							logger.error("connect handler:{} cost too long :{}", handler.getClass().getSimpleName(), now);
 						} else {
-							logger.warn("handler:{} cost:{}", handler.getClass().getSimpleName(), now);
+							logger.warn("connect handler:{} cost:{}", handler.getClass().getSimpleName(), now);
 						}
 					} else {
 						logger.error("[{}] ERROR! can not find handler for TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()));

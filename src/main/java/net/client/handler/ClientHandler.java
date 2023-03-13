@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import static net.proto.SysProto.SysMessage;
 
 public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHandlerAdapter implements Sender<T, M> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ClientHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(ClientHandler.class);
 	private static final ClientManager clientManager;
 	private final long id;
 	private Channel channel;
@@ -58,7 +58,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 			Object obj = clientHandler.channel.attr(HAProxyDecoder.HAPROXY).get();
 			if (obj instanceof String) {
 				String data = (String) obj;
-				LOGGER.info("{} {}", clientHandler.channel, data);
+				logger.info("{} {}", clientHandler.channel, data);
 				if (!data.isEmpty()) {
 					String[] splData = data.split(" ");
 					if (splData.length == 6) {
@@ -110,7 +110,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 			try {
 				this.registerEvent.register(this);
 			} catch (Exception var3) {
-				LOGGER.error("[{}] failed for register event", ctx.channel());
+				logger.error("[{}] failed for register event", ctx.channel());
 			}
 		}
 
@@ -121,13 +121,13 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) {
-		LOGGER.error("[{}] close", ctx.channel());
+		logger.error("[{}] close", ctx.channel());
 		clientManager.removeClient(this);
 		if (null != this.closeEvent) {
 			try {
 				this.closeEvent.onClose(this);
 			} catch (Exception var3) {
-				LOGGER.error("[{}] failed for close event", ctx.channel());
+				logger.error("[{}] failed for close event", ctx.channel());
 			}
 		}
 
@@ -139,7 +139,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 			try {
 				this.channel.close();
 			} catch (Exception var2) {
-				LOGGER.error("[{}] force close channel", this.channel);
+				logger.error("[{}] force close channel", this.channel);
 			}
 		}
 
@@ -180,7 +180,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 					return;
 				}
 
-				LOGGER.error("[{}] ERROR! sysmessage is null", ctx.channel());
+				logger.error("[{}] ERROR! sysmessage is null", ctx.channel());
 			} finally {
 				ReferenceCountUtil.release(frame);
 			}
@@ -228,7 +228,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 	private void processSysMessage(SysMessage sysMsg) {
 		try {
 			if (!this.safe.isValid(this, sysMsg)) {
-				LOGGER.error("[{}] ERROR! {} is not safe message id", this.channel, String.format("0x%08x", sysMsg.getMsgId()));
+				logger.error("[{}] ERROR! {} is not safe message id", this.channel, String.format("0x%08x", sysMsg.getMsgId()));
 				this.channel.close();
 				return;
 			}
@@ -243,11 +243,11 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 			} else {
 				msg = this.parser.parser(sysMsg.getMsgId(), DEFAULT_DATA);
 			}
-			LOGGER.debug("msg = [{}]", msg);
+			logger.debug("msg = [{}]", msg);
 
 			Handler handler = this.handlers.getHandler(sysMsg.getMsgId());
 			if (null == handler) {
-				LOGGER.error("[{}] ERROR! can not find handler for message({})", this.channel, String.format("0x%08x", sysMsg.getMsgId()));
+				logger.error("[{}] ERROR! can not find handler for message({})", this.channel, String.format("0x%08x", sysMsg.getMsgId()));
 				return;
 			}
 
@@ -257,7 +257,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 
 			this.channel.close();
 		} catch (Exception var4) {
-			LOGGER.error("[{}] ERROR! failed for process message({})", this.channel, String.format("0x%08x", sysMsg.getMsgId()), var4);
+			logger.error("[{}] ERROR! failed for process message({})", this.channel, String.format("0x%08x", sysMsg.getMsgId()), var4);
 		}
 
 	}
@@ -265,7 +265,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 	private void processTCPMessage(TCPMessage tcpMessage) {
 		try {
 			if (!this.safe.isValid(this, tcpMessage)) {
-				LOGGER.error("[{}] ERROR! {} is not safe message id", this.channel, String.format("0x%08x", tcpMessage.getMessageId()));
+				logger.error("[{}] ERROR! {} is not safe message id", this.channel, String.format("0x%08x", tcpMessage.getMessageId()));
 				this.channel.close();
 				return;
 			}
@@ -281,19 +281,28 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 				msg = this.parser.parser(tcpMessage.getMessageId(), DEFAULT_DATA);
 			}
 
+
 			Handler handler = this.handlers.getHandler(tcpMessage.getMessageId());
 			if (null == handler) {
-				LOGGER.error("[{}] ERROR! can not find handler for message({})", this.channel, String.format("0x%08x", tcpMessage.getMessageId()));
+				logger.error("[{}] ERROR! can not find handler for message({})", this.channel, String.format("0x%08x", tcpMessage.getMessageId()));
 				return;
 			}
 
-			if (handler.handler(this, (long) tcpMessage.getSequence(), msg)) {
+			long now = System.currentTimeMillis();
+			boolean close = handler.handler(this, (long) tcpMessage.getSequence(), msg);
+			now = System.currentTimeMillis() - now;
+			if (now > 1000L) {
+				logger.error("client handler:{} cost too long :{}", handler.getClass().getSimpleName(), now);
+			} else {
+				logger.warn("client handler:{} cost:{}", handler.getClass().getSimpleName(), now);
+			}
+			if (close) {
 				return;
 			}
 
 			this.channel.close();
 		} catch (Exception var4) {
-			LOGGER.error("[{}] ERROR! failed for process message({})", this.channel, String.format("0x%08x", tcpMessage.getMessageId()), var4);
+			logger.error("[{}] ERROR! failed for process message({})", this.channel, String.format("0x%08x", tcpMessage.getMessageId()), var4);
 		}
 
 	}
