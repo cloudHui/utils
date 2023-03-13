@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundHandlerAdapter implements Sender<T, M> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(ConnectHandler.class);
 	private static final ConnectManager connectManager;
 	private final long id;
 	private Transfer transfer;
@@ -100,7 +100,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 			try {
 				this.registerEvent.register(this);
 			} catch (Exception var3) {
-				LOGGER.error("[{}] ERROR! failed for register", ctx.channel());
+				logger.error("[{}] ERROR! failed for register", ctx.channel());
 			}
 		}
 
@@ -124,7 +124,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 					try {
 						this.idleRunner.accept(this);
 					} catch (Exception var2) {
-						LOGGER.error("failed for run idleRunner", var2);
+						logger.error("failed for run idleRunner", var2);
 					}
 
 				});
@@ -163,11 +163,11 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 					if (null != handler) {
 						handler.handler(this, msg.hasSequence() ? msg.getSequence() : null, innerMsg);
 					} else {
-						LOGGER.error("[{}] ERROR! can not find handler for SysMessage({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()));
+						logger.error("[{}] ERROR! can not find handler for SysMessage({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()));
 					}
 				}
 			} catch (Exception var7) {
-				LOGGER.error("[{}] ERROR! failed for process SysMessage({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()), var7);
+				logger.error("[{}] ERROR! failed for process SysMessage({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()), var7);
 			}
 		} else if (o instanceof TCPMessage) {
 			TCPMessage msg = (TCPMessage) o;
@@ -193,13 +193,20 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 				} else {
 					handler = this.handlers.getHandler(msg.getMessageId());
 					if (null != handler) {
+						long now = System.currentTimeMillis();
 						handler.handler(this, (long) msg.getSequence(), innerMsg);
+						now = System.currentTimeMillis() - now;
+						if (now > 1000L) {
+							logger.error("handler:{} cost too long :{}", handler.getClass().getSimpleName(), now);
+						} else {
+							logger.warn("handler:{} cost:{}", handler.getClass().getSimpleName(), now);
+						}
 					} else {
-						LOGGER.error("[{}] ERROR! can not find handler for TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()));
+						logger.error("[{}] ERROR! can not find handler for TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()));
 					}
 				}
 			} catch (Exception var6) {
-				LOGGER.error("[{}] ERROR! failed for process TCPMessage({})", new Object[]{ctx.channel(), String.format("0x%08x", msg.getMessageId()), var6});
+				logger.error("[{}] ERROR! failed for process TCPMessage({})", new Object[]{ctx.channel(), String.format("0x%08x", msg.getMessageId()), var6});
 			}
 		} else {
 			ctx.fireChannelRead(o);
@@ -271,7 +278,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 						var18 = false;
 						break;
 					} catch (Exception var25) {
-						ConnectHandler.LOGGER.error("", var25);
+						ConnectHandler.logger.error("", var25);
 						var18 = false;
 					} finally {
 						if (var18) {
@@ -281,7 +288,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 									try {
 										runners.wait(waitTime);
 									} catch (Exception var19) {
-										ConnectHandler.LOGGER.error("", var19);
+										ConnectHandler.logger.error("", var19);
 									}
 								}
 							}
@@ -295,7 +302,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 							try {
 								runners.wait(waitTime);
 							} catch (Exception var23) {
-								ConnectHandler.LOGGER.error("", var23);
+								ConnectHandler.logger.error("", var23);
 							}
 						}
 					}
@@ -307,7 +314,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 						try {
 							runners.wait(waitTime);
 						} catch (Exception var21) {
-							ConnectHandler.LOGGER.error("", var21);
+							ConnectHandler.logger.error("", var21);
 						}
 					}
 				}
@@ -420,7 +427,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 					this.complete(this.msg);
 				}
 			} catch (Exception var2) {
-				ConnectHandler.LOGGER.error("", var2);
+				ConnectHandler.logger.error("", var2);
 			}
 
 		}
