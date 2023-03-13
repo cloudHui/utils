@@ -292,9 +292,9 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 			boolean close = handler.handler(this, (long) tcpMessage.getSequence(), msg);
 			now = System.currentTimeMillis() - now;
 			if (now > 1000L) {
-				logger.error("client handler:{} cost too long :{}", handler.getClass().getSimpleName(), now);
+				logger.error("client handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
 			} else {
-				logger.warn("client handler:{} cost:{}", handler.getClass().getSimpleName(), now);
+				logger.warn("client handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
 			}
 			if (close) {
 				return;
