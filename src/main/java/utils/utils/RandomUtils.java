@@ -5,11 +5,15 @@ import java.util.Random;
 public class RandomUtils {
     private final static Random random = new Random(System.currentTimeMillis());
 
-    public static int Random(int min, int max) {
-        return Random(min, max, random);
+    public static int randomRangeObtain(int min, int max) {
+        return random(min, max, random);
     }
 
-    public static int Random(int min, int max, Random r) {
+    public static int randomRange(int bound) {
+        return random.nextInt(bound);
+    }
+
+    public static int random(int min, int max, Random r) {
         return (int) (r.nextDouble() * (max - min + 1)) + min;
     }
 
