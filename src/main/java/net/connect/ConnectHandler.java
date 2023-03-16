@@ -161,7 +161,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 				} else {
 					handler = this.handlers.getHandler(msg.getMsgId());
 					if (null != handler) {
-						handler.handler(this, msg.hasSequence() ? msg.getSequence() : null, innerMsg);
+						handler.handler(this, msg.hasSequence() ? msg.getSequence() : null, innerMsg, 0);
 					} else {
 						logger.error("[{}] ERROR! can not find handler for SysMessage({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()));
 					}
@@ -194,7 +194,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 					handler = this.handlers.getHandler(msg.getMessageId());
 					if (null != handler) {
 						long now = System.currentTimeMillis();
-						handler.handler(this, (long) msg.getSequence(), innerMsg);
+						handler.handler(this, (long) msg.getSequence(), innerMsg, msg.getMapId());
 						now = System.currentTimeMillis() - now;
 						if (now > 1000L) {
 							logger.error("connect handler:{} cost too long :{}ms", handler.getClass().getSimpleName(), now);
