@@ -263,7 +263,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 		private static final AtomicInteger sequence = new AtomicInteger(0);
 		private static final Set<Runnable> runners = new ConcurrentSkipListSet();
 		private static final Thread checker = new Thread(() -> {
-			long waitTime = 0L;
+			long waitTime;
 
 			while (true) {
 				while (true) {
@@ -272,9 +272,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 
 					try {
 						var18 = true;
-						runners.forEach((c) -> {
-							c.run();
-						});
+						runners.forEach(Runnable::run);
 						var18 = false;
 						break;
 					} catch (Exception var25) {
@@ -356,10 +354,8 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 			while (!this.completerMap.isEmpty()) {
 				Throwable ex = new RuntimeException("Unknown exception occurred！");
 				Set<Long> keys = this.completerMap.keySet();
-				Iterator var4 = keys.iterator();
 
-				while (var4.hasNext()) {
-					Long id = (Long) var4.next();
+				for (Long id : keys) {
 					completer = this.completerMap.remove(id);
 					if (null != completer) {
 						completer.ex = ex;
@@ -374,7 +370,7 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 		@Override
 		public void run() {
 			try {
-				Set<Long> seq = new HashSet();
+				Set<Long> seq = new HashSet<>();
 				long nowTime = System.currentTimeMillis();
 				this.completerMap.forEach((k, o) -> {
 					if (o.isTimeout(nowTime)) {
@@ -384,10 +380,8 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 				});
 				if (!seq.isEmpty()) {
 					Completer completer;
-					Iterator var5 = seq.iterator();
 
-					while (var5.hasNext()) {
-						Long id = (Long) var5.next();
+					for (Long id : seq) {
 						completer = this.completerMap.remove(id);
 						if (null != completer) {
 							completer.ex = TIMEOUT;

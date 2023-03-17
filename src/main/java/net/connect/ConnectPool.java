@@ -79,7 +79,7 @@ public class ConnectPool<M> implements Sender<ConnectPool, M> {
 			channel = this.pool.acquire().get();
 			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
 		} catch (Exception var9) {
-			LOGGER.error("id:{} msg:{}", new Object[]{msgId, msg.toString(), var9});
+			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var9);
 		} finally {
 			if (null != channel) {
 				this.pool.release(channel);
@@ -97,7 +97,7 @@ public class ConnectPool<M> implements Sender<ConnectPool, M> {
 			channel = this.pool.acquire().get();
 			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId));
 		} catch (Exception var9) {
-			LOGGER.error("id:{} msg:{}", new Object[]{msgId, msg.toString(), var9});
+			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var9);
 		} finally {
 			if (null != channel) {
 				this.pool.release(channel);
@@ -114,7 +114,7 @@ public class ConnectPool<M> implements Sender<ConnectPool, M> {
 			channel = this.pool.acquire().get();
 			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
 		} catch (Exception var9) {
-			LOGGER.error("id:{} msg:{}", new Object[]{msgId, msg.toString(), var9});
+			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var9);
 		} finally {
 			if (null != channel) {
 				this.pool.release(channel);
@@ -132,7 +132,7 @@ public class ConnectPool<M> implements Sender<ConnectPool, M> {
 			channel = this.pool.acquire().get();
 			channel.writeAndFlush(this.maker.wrap(sequence, msgId, msg, attachments));
 		} catch (Exception var10) {
-			LOGGER.error("id:{} msg:{}", new Object[]{msgId, msg.toString(), var10});
+			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var10);
 		} finally {
 			if (null != channel) {
 				this.pool.release(channel);
@@ -175,13 +175,9 @@ public class ConnectPool<M> implements Sender<ConnectPool, M> {
 		@Override
 		public void channelCreated(Channel channel) throws Exception {
 			ChannelPipeline p = channel.pipeline();
-			Iterator var3 = ConnectPool.this.clientFactory.create(channel).iterator();
-
-			while (var3.hasNext()) {
-				ChannelHandlerAdapter c = (ChannelHandlerAdapter) var3.next();
-				p.addLast(new ChannelHandler[]{c});
+			for (ChannelHandlerAdapter c : ConnectPool.this.clientFactory.create(channel)) {
+				p.addLast(c);
 			}
-
 		}
 	}
 }

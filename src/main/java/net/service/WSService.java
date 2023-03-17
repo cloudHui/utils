@@ -4,7 +4,7 @@ import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.timeout.IdleStateHandler;
-import net.client.handler.ClientHandler;
+import net.client.handler.WsClientHandler;
 import net.codec.WSTCPMessageDecoder;
 import net.codec.WSTCPMessageEncoder;
 import org.slf4j.Logger;
@@ -14,32 +14,32 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TCPWSService extends Service {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TCPWSService.class);
+public class WSService extends Service {
+	private static final Logger LOGGER = LoggerFactory.getLogger(WSService.class);
 	private final String webSocketPath;
 	private final int idleTime;
-	private final Class<? extends ClientHandler> clazz;
+	private final Class<? extends WsClientHandler> clazz;
 
-	public TCPWSService(String webSocketPath, Class<? extends ClientHandler> clazz) {
+	public WSService(String webSocketPath, Class<? extends WsClientHandler> clazz) {
 		this(webSocketPath, 0, clazz);
 	}
 
-	public TCPWSService(String webSocketPath, int idleTime, Class<? extends ClientHandler> clazz) {
+	public WSService(String webSocketPath, int idleTime, Class<? extends WsClientHandler> clazz) {
 		this(new NioEventLoopGroup(), webSocketPath, idleTime, clazz);
 	}
 
-	public TCPWSService(EventLoopGroup eventLoopGroup, String webSocketPath, int idleTime, Class<? extends ClientHandler> clazz) {
+	public WSService(EventLoopGroup eventLoopGroup, String webSocketPath, int idleTime, Class<? extends WsClientHandler> clazz) {
 		this(eventLoopGroup, eventLoopGroup, webSocketPath, idleTime, clazz);
 	}
 
-	public TCPWSService(EventLoopGroup bossGroup, EventLoopGroup workerGroup, String webSocketPath, int idleTime, Class<? extends ClientHandler> clazz) {
+	public WSService(EventLoopGroup bossGroup, EventLoopGroup workerGroup, String webSocketPath, int idleTime, Class<? extends WsClientHandler> clazz) {
 		super(bossGroup, workerGroup);
 		this.webSocketPath = webSocketPath;
 		this.idleTime = idleTime;
 		this.clazz = clazz;
 	}
 
-	public TCPWSService start(List<SocketAddress> socketAddresses) {
+	public WSService start(List<SocketAddress> socketAddresses) {
 		super.start(new WSServiceHandler(this.webSocketPath, (channel) -> {
 			List<ChannelHandlerAdapter> channels = new ArrayList<>(4);
 

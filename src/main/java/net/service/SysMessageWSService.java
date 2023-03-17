@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SysMessageWSService extends Service {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TCPWSService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(WSService.class);
 	private final String webSocketPath;
 	private final int idleTime;
 	private final Class<? extends ClientHandler> clazz;

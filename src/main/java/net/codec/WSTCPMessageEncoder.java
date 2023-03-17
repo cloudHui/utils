@@ -16,7 +16,7 @@ public class WSTCPMessageEncoder extends MessageToMessageEncoder<TCPMessage> {
 	@Override
 	protected void encode(ChannelHandlerContext ctx, TCPMessage msg, List<Object> out) {
 		int length = msg.getMessage() == null ? 0 : msg.getMessage().length;
-		ByteBuf buf = Unpooled.buffer(length + 32);
+		ByteBuf buf = Unpooled.buffer(length + 40);
 		buf.writeInt(msg.getVersion());
 		buf.writeInt(msg.getMessageId());
 		buf.writeInt(length);

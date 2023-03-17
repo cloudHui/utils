@@ -11,6 +11,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
@@ -33,8 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import static net.proto.SysProto.SysMessage;
 
-public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHandlerAdapter implements Sender<T, M> {
-	private static final Logger logger = LoggerFactory.getLogger(ClientHandler.class);
+public class WsClientHandler<T extends WsClientHandler, M> extends SimpleChannelInboundHandler implements Sender<T, M> {
+	private static final Logger logger = LoggerFactory.getLogger(WsClientHandler.class);
 	private static final ClientManager clientManager;
 	private final long id;
 	private Channel channel;
@@ -47,11 +48,11 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 	private RegisterEvent registerEvent;
 	private CloseEvent closeEvent;
 
-	public static ClientHandler getClient(long id) {
+	public static WsClientHandler getClient(long id) {
 		return clientManager.getClient(id);
 	}
 
-	public static InetSocketAddress getRemoteIP(ClientHandler clientHandler) {
+	public static InetSocketAddress getRemoteIP(WsClientHandler clientHandler) {
 		if (null == clientHandler.channel) {
 			return null;
 		} else {
@@ -71,15 +72,15 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 		}
 	}
 
-	public ClientHandler(Parser parser, Handlers handlers) {
+	public WsClientHandler(Parser parser, Handlers handlers) {
 		this(parser, handlers, Transfer::DEFAULT, Makers.getMaker());
 	}
 
-	public ClientHandler(Parser parser, Handlers handlers, Transfer transfer) {
+	public WsClientHandler(Parser parser, Handlers handlers, Transfer transfer) {
 		this(parser, handlers, transfer, Makers.getMaker());
 	}
 
-	public ClientHandler(Parser parser, Handlers handlers, Transfer transfer, Maker maker) {
+	public WsClientHandler(Parser parser, Handlers handlers, Transfer transfer, Maker maker) {
 		this.safe = Safe::DEFAULT;
 		this.id = clientManager.getId();
 		this.parser = parser;
@@ -166,33 +167,10 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 	}
 
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object object) throws Exception {
-		if (object instanceof WebSocketFrame) {
-			WebSocketFrame frame = (WebSocketFrame) object;
-			ByteBuf buf = frame.content();
-
-			try {
-				byte[] bytes = new byte[buf.readableBytes()];
-				buf.readBytes(bytes);
-				SysMessage msg = SysMessage.parseFrom(bytes);
-				if (null != msg) {
-					this.processSysMessage(msg);
-					return;
-				}
-
-				logger.error("[{}] ERROR! sysmessage is null", ctx.channel());
-			} finally {
-				ReferenceCountUtil.release(frame);
-			}
-
-		} else if (object instanceof SysMessage) {
-			this.processSysMessage((SysMessage) object);
-		} else if (object instanceof TCPMessage) {
-			this.processTCPMessage((TCPMessage) object);
-		} else {
-			ctx.fireChannelRead(object);
+	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+		if (msg instanceof WebSocketFrame) {
+			logger.error(msg.toString());
 		}
-
 	}
 
 	@Override
@@ -223,43 +201,6 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 	@Override
 	public void sendMessage(M msg) {
 		this.channel.writeAndFlush(msg);
-	}
-
-	private void processSysMessage(SysMessage sysMsg) {
-		try {
-			if (!this.safe.isValid(this, sysMsg)) {
-				logger.error("[{}] ERROR! {} is not safe message id", this.channel, String.format("0x%08x", sysMsg.getMsgId()));
-				this.channel.close();
-				return;
-			}
-
-			if (this.transfer.isTransfer(this, sysMsg)) {
-				return;
-			}
-
-			Message msg;
-			if (sysMsg.hasInnerMsg()) {
-				msg = this.parser.parser(sysMsg.getMsgId(), sysMsg.getInnerMsg().toByteArray());
-			} else {
-				msg = this.parser.parser(sysMsg.getMsgId(), DEFAULT_DATA);
-			}
-			logger.debug("msg = [{}]", msg);
-
-			Handler handler = this.handlers.getHandler(sysMsg.getMsgId());
-			if (null == handler) {
-				logger.error("[{}] ERROR! can not find handler for message({})", this.channel, String.format("0x%08x", sysMsg.getMsgId()));
-				return;
-			}
-
-			if (handler.handler(this, sysMsg.hasSequence() ? sysMsg.getSequence() : null, msg, 0)) {
-				return;
-			}
-
-			this.channel.close();
-		} catch (Exception var4) {
-			logger.error("[{}] ERROR! failed for process message({})", this.channel, String.format("0x%08x", sysMsg.getMsgId()), var4);
-		}
-
 	}
 
 	private void processTCPMessage(TCPMessage tcpMessage) {
@@ -315,7 +256,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 	private static class ClientManager {
 		private static final ClientManager INSTANCE = new ClientManager();
 		private final AtomicLong ID = new AtomicLong(0L);
-		private final Map<Long, ClientHandler> clientMap = new ConcurrentHashMap<>(4096);
+		private final Map<Long, WsClientHandler> clientMap = new ConcurrentHashMap<>(4096);
 
 		private ClientManager() {
 		}
@@ -324,11 +265,11 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 			return this.ID.incrementAndGet();
 		}
 
-		private void addClient(ClientHandler client) {
+		private void addClient(WsClientHandler client) {
 			this.clientMap.put(client.getId(), client);
 		}
 
-		private void removeClient(ClientHandler client) {
+		private void removeClient(WsClientHandler client) {
 			this.removeClient(client.getId());
 		}
 
@@ -337,7 +278,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 
 		}
 
-		private ClientHandler getClient(long id) {
+		private WsClientHandler getClient(long id) {
 			return this.clientMap.get(id);
 		}
 	}
