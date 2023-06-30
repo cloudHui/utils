@@ -10,8 +10,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 import net.client.event.RegisterEvent;
-import net.codec.TCPMessageDecoder;
-import net.codec.TCPMessageEncoder;
 import net.codec.WSTCPMessageDecoder;
 import net.codec.WSTCPMessageEncoder;
 import net.handler.Handlers;
@@ -49,7 +47,7 @@ public class WSTCPConnect extends ConnectHandler<WSTCPConnect, TCPMessage> {
 		return ((InetSocketAddress) this.socketAddress).getPort();
 	}
 
-	public WSTCPConnect connect() {
+	public WSTCPConnect connect(int disconnectRetry) {
 		Connect.connect(this.eventLoopGroup, this.socketAddress, this.retryInterval, new ChannelInitializer<SocketChannel>() {
 			@Override
 			protected void initChannel(SocketChannel ch) throws Exception {
@@ -59,7 +57,7 @@ public class WSTCPConnect extends ConnectHandler<WSTCPConnect, TCPMessage> {
 				p.addLast(new WSTCPMessageEncoder());
 				p.addLast(WSTCPConnect.this);
 			}
-		});
+		}, disconnectRetry);
 		return this;
 	}
 }

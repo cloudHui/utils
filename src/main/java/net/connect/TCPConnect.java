@@ -1,5 +1,8 @@
 package net.connect;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -16,9 +19,6 @@ import net.message.TCPMessage;
 import net.message.Transfer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 
 @Sharable
 public class TCPConnect extends ConnectHandler<TCPConnect, TCPMessage> {
@@ -47,7 +47,7 @@ public class TCPConnect extends ConnectHandler<TCPConnect, TCPMessage> {
 		return ((InetSocketAddress) this.socketAddress).getPort();
 	}
 
-	public TCPConnect connect() {
+	public TCPConnect connect(int disconnectRetry) {
 		Connect.connect(this.eventLoopGroup, this.socketAddress, this.retryInterval, new ChannelInitializer<SocketChannel>() {
 			@Override
 			protected void initChannel(SocketChannel ch) throws Exception {
@@ -57,7 +57,7 @@ public class TCPConnect extends ConnectHandler<TCPConnect, TCPMessage> {
 				p.addLast(new TCPMessageDecoder());
 				p.addLast(TCPConnect.this);
 			}
-		});
+		}, disconnectRetry);
 		return this;
 	}
 }

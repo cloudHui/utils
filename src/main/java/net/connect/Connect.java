@@ -29,26 +29,28 @@ import org.slf4j.LoggerFactory;
 @Sharable
 public class Connect<M> extends ConnectHandler<Connect, M> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Connect.class);
-	private final EventLoopGroup eventLoopGroup;
-	private final SocketAddress socketAddress;
-	private final int retryInterval;
+	private EventLoopGroup eventLoopGroup;
+	private SocketAddress socketAddress;
+	private int registerRetry;//注册重试
+
+	private int disconnectRetry;//断链重试
 
 	public Connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, Transfer transfer,
-	               Parser parser, Handlers handlers, RegisterEvent registerEvent) {
-		//默认重试三次
-		this(eventLoopGroup, socketAddress, 3, transfer, parser, handlers, registerEvent);
+	               Parser parser, Handlers handlers, RegisterEvent registerEvent, int registerRetry, int disconnectRetry) {
+		this(eventLoopGroup, socketAddress, registerRetry, transfer, parser, handlers, registerEvent, disconnectRetry);
 	}
 
 	/**
-	 * @param retryInterval 重连次数 默认三次
+	 * @param registerRetry 默认重试
 	 * @param registerEvent 链接成功后触发的事件
 	 */
-	public Connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, int retryInterval,
-	               Transfer transfer, Parser parser, Handlers handlers, RegisterEvent registerEvent) {
+	public Connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, int registerRetry,
+	               Transfer transfer, Parser parser, Handlers handlers, RegisterEvent registerEvent, int disconnectRetry) {
 		super(transfer, parser, handlers);
 		this.eventLoopGroup = eventLoopGroup;
 		this.socketAddress = socketAddress;
-		this.retryInterval = retryInterval;
+		this.registerRetry = registerRetry;
+		this.disconnectRetry = 0;
 		this.setRegisterEvent(registerEvent);
 	}
 
@@ -61,7 +63,7 @@ public class Connect<M> extends ConnectHandler<Connect, M> {
 	}
 
 	public Connect connect() {
-		connect(this.eventLoopGroup, this.socketAddress, this.retryInterval, new ChannelInitializer<SocketChannel>() {
+		connect(this.eventLoopGroup, this.socketAddress, this.registerRetry, new ChannelInitializer<SocketChannel>() {
 			@Override
 			protected void initChannel(SocketChannel ch) {
 				ChannelPipeline p = ch.pipeline();
@@ -72,12 +74,12 @@ public class Connect<M> extends ConnectHandler<Connect, M> {
 				p.addLast(new ProtobufDecoder(SysProto.SysMessage.getDefaultInstance()));
 				p.addLast(Connect.this);
 			}
-		});
+		}, this.disconnectRetry);
 		return this;
 	}
 
 	public static void connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, int retryInterval,
-	                           ChannelInitializer channelInitializer) {
+	                           ChannelInitializer channelInitializer, int disconnectRetry) {
 		Bootstrap bootstrap = ((new Bootstrap()).group(eventLoopGroup))
 				.channel(NioSocketChannel.class)
 				.option(ChannelOption.SO_KEEPALIVE, true)
@@ -89,21 +91,23 @@ public class Connect<M> extends ConnectHandler<Connect, M> {
 				InetSocketAddress sad = (InetSocketAddress) socketAddress;
 				if (channelFuture.isSuccess()) {
 					//链接成功被关闭了也会重试
+					final int disRetry = disconnectRetry - 1;
 					channelFuture.channel().closeFuture().addListener((ChannelFutureListener) f1 -> {
-						if (retryInterval >= 0) {
+						if (disRetry > 0) {
 							f1.channel().eventLoop().schedule(() -> {
-								connect(f1.channel().eventLoop(), socketAddress, retryInterval, channelInitializer);
-							}, retryInterval, TimeUnit.SECONDS);
+								connect(f1.channel().eventLoop(), socketAddress, retryInterval, channelInitializer, disRetry);
+							}, 3, TimeUnit.SECONDS);
 						}
 
 					});
 					LOGGER.info("connect {}:{} is success!!!", sad.getAddress().getHostAddress(), sad.getPort());
 				} else {
 					//链接失败也会重试
-					if (retryInterval >= 0) {
+					final int regRetry = retryInterval - 1;
+					if (regRetry > 0) {
 						channelFuture.channel().eventLoop().schedule(() -> {
-							connect(channelFuture.channel().eventLoop(), socketAddress, retryInterval, channelInitializer);
-						}, retryInterval, TimeUnit.SECONDS);
+							connect(channelFuture.channel().eventLoop(), socketAddress, regRetry, channelInitializer, disconnectRetry);
+						}, 3, TimeUnit.SECONDS);
 					}
 
 					LOGGER.error("failed for connect {}:{}!!!", sad.getAddress().getHostAddress(), sad.getPort());
