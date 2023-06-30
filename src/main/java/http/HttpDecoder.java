@@ -193,7 +193,7 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-
+		LOGGER.error("[{}] close", ctx.channel());
 	}
 
 	@Override
