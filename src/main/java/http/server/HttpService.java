@@ -1,5 +1,7 @@
 package http.server;
 
+import java.net.SocketAddress;
+
 import http.HttpDecoder;
 import http.handler.HttpResponseMaker;
 import io.netty.bootstrap.ServerBootstrap;
@@ -18,8 +20,6 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.SocketAddress;
 
 public class HttpService {
 	private final static Logger LOGGER = LoggerFactory.getLogger(HttpService.class);
@@ -45,7 +45,7 @@ public class HttpService {
 				.option(ChannelOption.SO_BACKLOG, 1024)
 				.childOption(ChannelOption.TCP_NODELAY, true)
 				.childOption(ChannelOption.SO_KEEPALIVE, true)
-				.handler(new LoggingHandler(LogLevel.DEBUG))
+				.handler(new LoggingHandler(LogLevel.INFO))
 				.childHandler(new ChannelInitializer<SocketChannel>() {
 					@Override
 					protected void initChannel(SocketChannel ch) throws Exception {
