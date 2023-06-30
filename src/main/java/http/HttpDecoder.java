@@ -55,78 +55,127 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 			}
 			lastMsgStamp = now;
 			if (o instanceof FullHttpRequest) {
-				FullHttpRequest request = (FullHttpRequest) o;
-				try {
-					String path = request.getUri();
-					if (null != path && path.startsWith("/")) {
-						path = path.substring(1);
-					}
-
-					String[] data = path.split("\\?");
-					if (data.length > 0) {
-						if (HttpMethod.POST.equals(request.getMethod())) {
-							Handler handler = getHandler(data[0]);
-							if (null != handler) {
-								HttpMethod method = request.getMethod();
-								if (!handler.handler(this, data[0], method.name(), handler.parser(getBody(request)))) {
-									//if (!handler.handler(this, data[0], method.name(), handler.parser(data.length > 1? data[1]: getBody(request)))) {
-									LOGGER.info("[{}] process message return false", ctx.channel());
-									ctx.close();
-								}
-							} else {
-								LOGGER.info("[{}] can not find handler(POST) for path({})", ctx.channel(), path);
-							}
-						} else if (HttpMethod.GET.equals(request.getMethod())) {
-							Handler handler = getHandler(data[0]);
-							if (null != handler) {
-								HttpMethod method = request.getMethod();
-								if (!handler.handler(this, data[0], method.name(), handler.parser(data.length > 1 ? data[1] : null))) {
-									LOGGER.info("[{}] process message return false", ctx.channel());
-									ctx.close();
-								}
-							} else {
-								LOGGER.info("[{}] can not find handler(GET) for path({} {})", ctx.channel(), data[0], path);
-							}
-						} else {
-							ctx.close();
-							LOGGER.info("[{}] unsupported method({} path:{})", ctx.channel(), request.getMethod().name(), path);
-						}
-					} else {
-						ctx.close();
-						LOGGER.info("[{}] unsupported({} path:{})", ctx.channel(), request.getMethod().name(), path);
-					}
-				} catch (Throwable e) {
-					LOGGER.error("", e);
-					ctx.close();
-				}
+				dealFullHttpMsg(ctx, o);
 			} else if (o instanceof WebSocketFrame) {
-				WebSocketFrame frame = (WebSocketFrame) o;
-				try {
-					ByteBuf buf = frame.content();
-					if (buf.readableBytes() > 0) {
-						byte[] bytes = new byte[buf.readableBytes()];
-						buf.readBytes(bytes);
-						Handler handler = getHandler(WEB_SOCKET);
-						if (null != handler) {
-							if (!handler.handler(this, null, WEB_SOCKET, handler.parser(new String(bytes, CharsetUtil.UTF_8)))) {
-								LOGGER.info("[{}] process message return false", ctx.channel());
-								ctx.close();
-							}
-						} else {
-							LOGGER.info("[{}] can not find handler for web socket", ctx.channel());
-						}
-					}
-				} catch (Throwable e) {
-					LOGGER.error("", e);
-					ctx.close();
-				} finally {
-					ReferenceCountUtil.release(frame);
-				}
+				dealWebsocketMsg(ctx, o);
 			} else {
 				ctx.fireChannelRead(o);
 			}
 		} catch (Throwable t) {
 			LOGGER.error("[{}] ERROR! failed for process message", ctx.channel(), t);
+		}
+	}
+
+	/**
+	 * 处理http消息
+	 */
+	private void dealFullHttpMsg(ChannelHandlerContext ctx, Object o) {
+		FullHttpRequest request = (FullHttpRequest) o;
+		try {
+			String path = request.getUri();
+			if (null != path && path.startsWith("/")) {
+				path = path.substring(1);
+			}
+
+			String[] data = path.split("\\?");
+			if (data.length > 0) {
+				if (HttpMethod.POST.equals(request.getMethod())) {
+					httpPost(data, request, ctx, path);
+				} else if (HttpMethod.GET.equals(request.getMethod())) {
+					httpGet(data, request, ctx, path);
+				} else {
+					ctx.close();
+					LOGGER.info("[{}] unsupported method({} path:{})", ctx.channel(), request.getMethod().name(), path);
+				}
+			} else {
+				ctx.close();
+				LOGGER.info("[{}] unsupported({} path:{})", ctx.channel(), request.getMethod().name(), path);
+			}
+		} catch (Throwable e) {
+			LOGGER.error("", e);
+			ctx.close();
+		}
+	}
+
+	/**
+	 * http get
+	 */
+	private void httpGet(String[] data, FullHttpRequest request, ChannelHandlerContext ctx, String path) {
+		Handler handler = getHandler(data[0]);
+		if (null != handler) {
+
+			long now = System.currentTimeMillis();
+			HttpMethod method = request.getMethod();
+			boolean keepChannel = handler.handler(this, data[0], method.name(), handler.parser(data.length > 1 ? data[1] : null));
+
+			now = System.currentTimeMillis() - now;
+			if (now > 1000L) {
+				LOGGER.error("httpGet handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
+			} else {
+				LOGGER.warn("httpGet handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
+			}
+
+			if (!keepChannel) {
+				LOGGER.info("[{}] process message return false", ctx.channel());
+				ctx.close();
+			}
+		} else {
+			LOGGER.info("[{}] can not find handler(GET) for path({} {})", ctx.channel(), data[0], path);
+		}
+	}
+
+	/**
+	 * http post
+	 */
+	private void httpPost(String[] data, FullHttpRequest request, ChannelHandlerContext ctx, String path) {
+		Handler handler = getHandler(data[0]);
+		if (null != handler) {
+
+			long now = System.currentTimeMillis();
+			HttpMethod method = request.getMethod();
+			boolean keepChannel = handler.handler(this, data[0], method.name(), handler.parser(getBody(request)));
+
+			now = System.currentTimeMillis() - now;
+			if (now > 1000L) {
+				LOGGER.error("httpPost handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
+			} else {
+				LOGGER.warn("httpPost handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
+			}
+
+			if (!keepChannel) {
+				LOGGER.info("[{}] process message return false", ctx.channel());
+				ctx.close();
+			}
+		} else {
+			LOGGER.info("[{}] can not find handler(POST) for path({})", ctx.channel(), path);
+		}
+	}
+
+	/**
+	 * 处理 websocket消息
+	 */
+	private void dealWebsocketMsg(ChannelHandlerContext ctx, Object o) {
+		WebSocketFrame frame = (WebSocketFrame) o;
+		try {
+			ByteBuf buf = frame.content();
+			if (buf.readableBytes() > 0) {
+				byte[] bytes = new byte[buf.readableBytes()];
+				buf.readBytes(bytes);
+				Handler handler = getHandler(WEB_SOCKET);
+				if (null != handler) {
+					if (!handler.handler(this, null, WEB_SOCKET, handler.parser(new String(bytes, CharsetUtil.UTF_8)))) {
+						LOGGER.info("[{}] process message return false", ctx.channel());
+						ctx.close();
+					}
+				} else {
+					LOGGER.info("[{}] can not find handler for web socket", ctx.channel());
+				}
+			}
+		} catch (Throwable e) {
+			LOGGER.error("", e);
+			ctx.close();
+		} finally {
+			ReferenceCountUtil.release(frame);
 		}
 	}
 

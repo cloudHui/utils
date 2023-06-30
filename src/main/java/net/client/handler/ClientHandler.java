@@ -243,15 +243,22 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 			} else {
 				msg = this.parser.parser(sysMsg.getMsgId(), DEFAULT_DATA);
 			}
-			logger.debug("msg = [{}]", msg);
+
 
 			Handler handler = this.handlers.getHandler(sysMsg.getMsgId());
 			if (null == handler) {
 				logger.error("[{}] ERROR! can not find handler for message({})", this.channel, String.format("0x%08x", sysMsg.getMsgId()));
 				return;
 			}
-
-			if (handler.handler(this, sysMsg.hasSequence() ? sysMsg.getSequence() : null, msg, 0)) {
+			long now = System.currentTimeMillis();
+			boolean noCloseChanel = handler.handler(this, sysMsg.hasSequence() ? sysMsg.getSequence() : null, msg, 0);
+			now = System.currentTimeMillis() - now;
+			if (now > 1000L) {
+				logger.error("client handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
+			} else {
+				logger.warn("client handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
+			}
+			if (noCloseChanel) {
 				return;
 			}
 
@@ -289,14 +296,14 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 			}
 
 			long now = System.currentTimeMillis();
-			boolean close = handler.handler(this, (long) tcpMessage.getSequence(), msg, tcpMessage.getMapId());
+			boolean noCloseChannel = handler.handler(this, (long) tcpMessage.getSequence(), msg, tcpMessage.getMapId());
 			now = System.currentTimeMillis() - now;
 			if (now > 1000L) {
 				logger.error("client handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
 			} else {
 				logger.warn("client handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
 			}
-			if (close) {
+			if (noCloseChannel) {
 				return;
 			}
 
