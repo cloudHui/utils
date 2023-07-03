@@ -1,5 +1,8 @@
 package net.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -8,9 +11,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 import net.client.ClientFactory;
 import net.codec.TCPMessageDecoder;
 import net.codec.TCPMessageEncoder;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.handler.IdleHandler;
 
 public class TCPServiceHandler extends ChannelInitializer<SocketChannel> {
 	private ClientFactory clientFactory;
@@ -51,6 +52,7 @@ public class TCPServiceHandler extends ChannelInitializer<SocketChannel> {
 			channels.add(new TCPMessageDecoder());
 			if (idleTime > 0) {
 				channels.add(new IdleStateHandler(idleTime, idleTime, idleTime));
+				channels.add(new IdleHandler());
 			}
 
 			channels.addAll(clientFactory.create(channel));

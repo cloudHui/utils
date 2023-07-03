@@ -1,5 +1,9 @@
 package net.service;
 
+import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -7,12 +11,9 @@ import io.netty.handler.timeout.IdleStateHandler;
 import net.client.handler.WsClientHandler;
 import net.codec.WSTCPMessageDecoder;
 import net.codec.WSTCPMessageEncoder;
+import net.handler.IdleHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.List;
 
 public class WSService extends Service {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WSService.class);
@@ -48,6 +49,7 @@ public class WSService extends Service {
 				channels.add(new WSTCPMessageEncoder());
 				if (this.idleTime > 0) {
 					channels.add(new IdleStateHandler(this.idleTime, this.idleTime, this.idleTime));
+					channels.add(new IdleHandler());
 				}
 
 				channels.add(this.clazz.newInstance());

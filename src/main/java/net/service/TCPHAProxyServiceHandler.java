@@ -9,6 +9,7 @@ import net.client.ClientFactory;
 import net.codec.HAProxyDecoder;
 import net.codec.TCPMessageDecoder;
 import net.codec.TCPMessageEncoder;
+import net.handler.IdleHandler;
 
 public class TCPHAProxyServiceHandler extends ChannelInitializer<SocketChannel> {
 	private ClientFactory clientFactory;
@@ -31,6 +32,7 @@ public class TCPHAProxyServiceHandler extends ChannelInitializer<SocketChannel> 
 		p.addLast("decoder", new TCPMessageDecoder());
 		if (this.idleTime > 0) {
 			p.addLast(new IdleStateHandler(this.idleTime, this.idleTime, this.idleTime));
+			p.addLast(new IdleHandler());
 		}
 
 		for (ChannelHandlerAdapter c : this.clientFactory.create(socketChannel)) {
