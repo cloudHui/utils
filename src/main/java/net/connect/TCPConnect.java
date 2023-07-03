@@ -13,7 +13,6 @@ import net.client.event.RegisterEvent;
 import net.codec.TCPMessageDecoder;
 import net.codec.TCPMessageEncoder;
 import net.handler.Handlers;
-import net.handler.IdleHandler;
 import net.message.Parser;
 import net.message.TCPMaker;
 import net.message.TCPMessage;
@@ -53,8 +52,7 @@ public class TCPConnect extends ConnectHandler<TCPConnect, TCPMessage> {
 			@Override
 			protected void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline p = ch.pipeline();
-				p.addLast(new IdleStateHandler(90, 90, 90));
-				p.addLast(new IdleHandler());
+				p.addLast(new IdleStateHandler(0, 60, 0));
 				p.addLast(new TCPMessageEncoder());
 				p.addLast(new TCPMessageDecoder());
 				p.addLast(TCPConnect.this);

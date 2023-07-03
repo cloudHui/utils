@@ -126,11 +126,9 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 					} catch (Exception var2) {
 						logger.error("failed for run idleRunner", var2);
 					}
-
 				});
 			}
 		}
-
 	}
 
 	@Override
