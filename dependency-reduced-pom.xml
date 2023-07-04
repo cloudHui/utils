@@ -21,7 +21,7 @@
             <exclude>*.properties</exclude>
             <exclude>logback.xml</exclude>
           </excludes>
-          <outputDirectory>${session.executionRootDirectory}/build/utilUse</outputDirectory>
+          <outputDirectory>${session.executionRootDirectory}/build/utils</outputDirectory>
         </configuration>
       </plugin>
       <plugin>

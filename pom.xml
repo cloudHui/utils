@@ -97,7 +97,7 @@
                         <exclude>logback.xml</exclude>
                     </excludes>
                     <outputDirectory>
-                        ${session.executionRootDirectory}/build/utilUse
+                        ${session.executionRootDirectory}/build/utils
                     </outputDirectory>
                 </configuration>
             </plugin>
