@@ -10,11 +10,11 @@ import java.util.List;
 public class ExecCommand {
 
 	/**
-	 * 获取外网ip
+	 * 执行命令
 	 *
-	 * @return 外网ip地址
+	 * @return 命令结果
 	 */
-	public static String exec(String command) {
+	public static String exeCommand(String command) {
 		String cmd;
 		List<String> results = new ArrayList<>();
 		String osName = System.getProperty("os.name");
@@ -43,7 +43,25 @@ public class ExecCommand {
 		return "";
 	}
 
+	/**
+	 * 执行脚本
+	 */
+	public static void exeBatSh(String batName) {
+		String cmd;
+		String osName = System.getProperty("os.name");
+		if (osName.contains("Windows")) {
+			cmd = "cmd.exe /c " + batName;
+		} else {
+			cmd = "sh " + batName;
+		}
+		try {
+			Runtime.getRuntime().exec(cmd).waitFor();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void main(String[] args) {
-		System.out.println(exec("svn info"));
+		System.out.println(exeCommand("svn info"));
 	}
 }

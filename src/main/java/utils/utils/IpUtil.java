@@ -14,7 +14,7 @@ public class IpUtil {
 	 * @return 外网ip地址
 	 */
 	public static String getOutIp() {
-		return ExecCommand.exec("curl icanhazip.com");
+		return ExecCommand.exeCommand("curl icanhazip.com");
 	}
 
 
