@@ -4,17 +4,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExecCommand {
 
 	/**
 	 * 执行命令
 	 *
-	 * @param command        命令
-	 * @param needResultChar 需要的结果字符串
+	 * @param command 命令
 	 * @return 命令结果
 	 */
-	public static String exeCommand(String command, String needResultChar) {
+	public static List<String> exeCommand(String command) {
 		String cmd;
 		String osName = System.getProperty("os.name");
 		if (osName.contains("Windows")) {
@@ -23,22 +24,44 @@ public class ExecCommand {
 			cmd = command;
 		}
 		InputStream in;
-		String result = "";
+		String result;
+		List<String> results = new ArrayList<>();
 		try {
 			Process pro = Runtime.getRuntime().exec(cmd);
 			in = pro.getInputStream();
 			BufferedReader read = new BufferedReader(new InputStreamReader(in));
 			if ((result = read.readLine()) != null) {
 				do {
-					if (needResultChar != null && needResultChar.length() > 0 && result.contains(needResultChar)) {
-						return result;
-					}
+					results.add(result);
 				} while (read.readLine() != null);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return results;
+	}
+
+	/**
+	 * 执行命令干活去指定结果
+	 */
+	public static String exeCommand(String command, String targetResult) {
+		List<String> exeCommand = exeCommand(command);
+		return getExeCommandResult(exeCommand, targetResult);
+	}
+
+	/**
+	 * 获取需要的命令结果
+	 */
+	public static String getExeCommandResult(List<String> results, String targetResult) {
+		if (results == null || results.isEmpty()) {
+			return "";
+		}
+		for (String temp : results) {
+			if (temp.contains(targetResult)) {
+				return temp.substring(temp.indexOf(targetResult)).trim();
+			}
+		}
+		return "";
 	}
 
 	/**
@@ -60,6 +83,6 @@ public class ExecCommand {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(exeCommand("svn info", ""));
+		System.out.println(exeCommand("svn info"));
 	}
 }

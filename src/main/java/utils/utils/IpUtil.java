@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.List;
 
 public class IpUtil {
 
@@ -14,7 +15,11 @@ public class IpUtil {
 	 * @return 外网ip地址
 	 */
 	public static String getOutIp() {
-		return ExecCommand.exeCommand("curl icanhazip.com", "");
+		List<String> results = ExecCommand.exeCommand("curl icanhazip.com");
+		if (results.isEmpty()) {
+			return "";
+		}
+		return results.get(0);
 	}
 
 
