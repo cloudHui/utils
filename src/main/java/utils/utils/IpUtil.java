@@ -1,16 +1,10 @@
 package utils.utils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 
 public class IpUtil {
 
@@ -20,30 +14,7 @@ public class IpUtil {
 	 * @return 外网ip地址
 	 */
 	public static String getOutIp() {
-		String cmd = "curl icanhazip.com";
-		List<String> results = new ArrayList<>();
-		String osName = System.getProperty("os.name");
-		String command;
-		if (osName.contains("Windows")) {
-			command = "cmd.exe /c " + cmd;
-		} else {
-			command = cmd;
-		}
-		InputStream in;
-		String result;
-		try {
-			Process pro = Runtime.getRuntime().exec(command);
-			in = pro.getInputStream();
-			BufferedReader read = new BufferedReader(new InputStreamReader(in));
-			if ((result = read.readLine()) != null) {
-				do {
-					results.add(result);
-				} while (read.readLine() != null);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return results.get(0);
+		return ExecCommand.exec("curl icanhazip.com");
 	}
 
 
@@ -98,9 +69,9 @@ public class IpUtil {
 		return null;
 	}
 
-	public static void main(String[] args) {
-		System.out.println(getLocalIP());
-		System.out.println(getOutIp());
-		System.out.println(getHostName());
-	}
+//	public static void main(String[] args) {
+//		System.out.println(getLocalIP());
+//		System.out.println(getOutIp());
+//		System.out.println(getHostName());
+//	}
 }
