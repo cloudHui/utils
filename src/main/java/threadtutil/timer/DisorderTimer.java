@@ -82,7 +82,7 @@ public class DisorderTimer implements Runnable {
                                 future.whenComplete((n, t) -> {
                                     if (n instanceof TimeNode) {
                                         TimeNode node = (TimeNode)n;
-                                        if (!node.finished()) {
+                                        if (node.unFinished()) {
                                             node.refreshTriggerTime();
                                             this.runners.run(() -> {
                                                 this.addNode(node);

@@ -23,7 +23,7 @@ public class TimeNode<T> implements Runnable {
 		this.param = param;
 		this.interval = interval;
 		this.count = count;
-		this.triggerTime = System.currentTimeMillis() + (long)delay;
+		this.triggerTime = System.currentTimeMillis() + (long) delay * 1000L;
 	}
 
 	public int getId() {
@@ -39,11 +39,11 @@ public class TimeNode<T> implements Runnable {
 	}
 
 	public void refreshTriggerTime() {
-		this.triggerTime += (long)this.interval;
+		this.triggerTime += (long) this.interval;
 	}
 
-	public boolean finished() {
-		return 0 == this.count;
+	public boolean unFinished() {
+		return 0 != this.count;
 	}
 
 	@Override
