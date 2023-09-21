@@ -9,21 +9,21 @@ public class TimeNode<T> implements Runnable {
 	private final int id;
 	private Runner runner;
 	private T param;
-	private int interval;
+	private long interval;
 	private int count;
 	private long triggerTime;
 
-	public TimeNode(int id, Runner runner, T param, int delay, int interval) {
+	public TimeNode(int id, Runner runner, T param, long delay, long interval) {
 		this(id, runner, param, interval, delay, -1);
 	}
 
-	public TimeNode(int id, Runner runner, T param, int delay, int interval, int count) {
+	public TimeNode(int id, Runner runner, T param, long delay, long interval, int count) {
 		this.id = id;
 		this.runner = runner;
 		this.param = param;
 		this.interval = interval;
 		this.count = count;
-		this.triggerTime = System.currentTimeMillis() + (long) delay * 1000L;
+		this.triggerTime = System.currentTimeMillis() + delay;
 	}
 
 	public int getId() {
@@ -39,7 +39,7 @@ public class TimeNode<T> implements Runnable {
 	}
 
 	public void refreshTriggerTime() {
-		this.triggerTime += (long) this.interval;
+		this.triggerTime += this.interval;
 	}
 
 	public boolean unFinished() {

@@ -35,11 +35,11 @@ public class Timer implements Runnable {
 		return this;
 	}
 
-	public <T> void register(int delay, int interval, int count, Runner<T> runner, T param) {
+	public <T> void register(long delay, long interval, int count, Runner<T> runner, T param) {
 		this.addNode(new TimeNode(this.ID_GENERATOR.incrementAndGet(), runner, param, delay, interval, count));
 	}
 
-	public <T> void registerSerial(int groupId, int delay, int interval, int count, Runner<T> runner, T param) {
+	public <T> void registerSerial(int groupId, long delay, long interval, int count, Runner<T> runner, T param) {
 		this.addNode(new SerialTimeNode(groupId, this.ID_GENERATOR.incrementAndGet(), runner, param, delay, interval, count));
 	}
 
