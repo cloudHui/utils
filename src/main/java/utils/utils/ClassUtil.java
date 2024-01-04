@@ -9,25 +9,14 @@ import java.util.Objects;
 
 public class ClassUtil {
 
-	/**
-	 * 根据传入的根包名，扫描该包下所有类
-	 *
-	 * @param thiz            this
-	 * @param rootPackageName 包名
-	 */
-	public static List<String> scanClasses(Object thiz, String rootPackageName) {
-		return scanClasses(thiz.getClass(), rootPackageName);
-	}
-
 
 	/**
 	 * 根据传入的根包名，扫描该包下所有类
 	 *
-	 * @param thisClass       所在类
 	 * @param rootPackageName 包名
 	 */
-	public static List<String> scanClasses(Class<?> thisClass, String rootPackageName) {
-		return scanClasses(Objects.requireNonNull(thisClass.getClassLoader()), rootPackageName);
+	public static List<String> scanClasses( String rootPackageName) {
+		return scanClasses(Objects.requireNonNull(ClassUtil.class.getClassLoader()), rootPackageName);
 	}
 
 
