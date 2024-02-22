@@ -2,6 +2,9 @@ package utils.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
@@ -10,18 +13,15 @@ import com.dingtalk.api.response.OapiRobotSendResponse;
 
 public class WarningUtil {
 
-	private DingTalkClient client;
+	private final DingTalkClient client;
 
 	public WarningUtil() {
-		String url ="https://oapi.dingtalk.com/robot/send?access_token=cb2da625856eea700198d67a3ccdfbb1e4b9f4ef3cecaf3ada338b9aa348aa00";
+		String url = "https://oapi.dingtalk.com/robot/send?access_token=cb2da625856eea700198d67a3ccdfbb1e4b9f4ef3cecaf3ada338b9aa348aa00";
 		client = new DefaultDingTalkClient(url);
 	}
 
 
 	public void sendDingTalkMessage(String message) {
-		if (client == null) {
-			return;
-		}
 		new Thread(() -> asyncSendMessage(message)).start();
 	}
 
@@ -46,8 +46,24 @@ public class WarningUtil {
 		}
 	}
 
-	public static void main(String[] args){
+	public static void main(String[] args) {
+		int warning = 10;//10分钟没数据报警
 		WarningUtil util = new WarningUtil();
-		util.sendDingTalkMessage("报警: ");
+		ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+		executorService.schedule(() -> {
+			long now = System.currentTimeMillis();
+			System.out.println("check new file start  now: " + now);
+			boolean needNotice = FileChecker.hasNewFiles("url");
+			if (needNotice) {
+				long diff = now - FileChecker.lastModifiedTime;
+				int minute = (int) (diff / (1000 * 60));
+				if (minute > warning) {
+					util.sendDingTalkMessage("报警: 长时间没有文件写入");
+				}
+			}
+			long end = System.currentTimeMillis();
+			System.out.println("check new file end now: " + end);
+		}, 30, TimeUnit.MINUTES);
+
 	}
 }
