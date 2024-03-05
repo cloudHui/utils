@@ -26,7 +26,7 @@ public class ConfigurationManager {
 	private Map<String, ConnectConfiguration> connectConfigurationMap;
 	private Map<String, String> propertiesMap;
 
-	public static ConfigurationManager INSTANCE() {
+	public static ConfigurationManager getInstance() {
 		if (null == INSTANCE) {
 			synchronized (FILE_NAME) {
 				if (null == INSTANCE) {
@@ -43,6 +43,7 @@ public class ConfigurationManager {
 	}
 
 	private ConfigurationManager() {
+		load();
 	}
 
 	public String getProperty(String name) {

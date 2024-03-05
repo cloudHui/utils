@@ -1,16 +1,15 @@
 package threadtutil.thread;
 
+import java.util.Date;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import threadtutil.thread.model.TaskList;
 import threadtutil.utils.TimeUtils;
 
-import java.util.Date;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
-public class ExecutorPool<T extends Task, R extends Runnable> {
+public class ExecutorPool {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutorPool.class);
 	private final ThreadPool threadPool;
 	private final TaskList[] taskLists;
@@ -34,11 +33,11 @@ public class ExecutorPool<T extends Task, R extends Runnable> {
 		return this.threadPool.size();
 	}
 
-	public Future<?> execute(R r) {
-		return this.threadPool.execute(r);
+	public void execute(Runnable r) {
+		this.threadPool.execute(r);
 	}
 
-	public CompletableFuture<T> serialExecute(T t) {
+	public CompletableFuture<Task> serialExecute(Task t) {
 		TaskNode taskNode = new TaskNode(t);
 		int index = Math.abs(taskNode.groupId() % this.size());
 		this.taskLists[index].add(taskNode);
@@ -113,7 +112,7 @@ public class ExecutorPool<T extends Task, R extends Runnable> {
 		return taskNode.completableFuture;
 	}
 
-	public CompletableFuture run(R r) {
+	public CompletableFuture run(Runnable r) {
 		CompletableFuture future = new CompletableFuture();
 		this.threadPool.execute(() -> {
 			try {
@@ -133,11 +132,11 @@ public class ExecutorPool<T extends Task, R extends Runnable> {
 
 	private static class TaskNode implements Task {
 		public final Task t;
-		public final CompletableFuture completableFuture;
+		public final CompletableFuture<Task> completableFuture;
 
 		public TaskNode(Task t) {
 			this.t = t;
-			this.completableFuture = new CompletableFuture();
+			this.completableFuture = new CompletableFuture<>();
 		}
 
 		@Override

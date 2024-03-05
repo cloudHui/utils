@@ -7,7 +7,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ExecCommand {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExecCommand.class);
 
 	/**
 	 * 执行命令
@@ -16,6 +20,7 @@ public class ExecCommand {
 	 * @return 命令结果
 	 */
 	public static List<String> exeCommand(String command) {
+		long startTime = System.currentTimeMillis();
 		String cmd;
 		String osName = System.getProperty("os.name");
 		if (osName.contains("Windows")) {
@@ -38,6 +43,7 @@ public class ExecCommand {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		LOGGER.info("exeCommand:{} cost:{}ms", command, System.currentTimeMillis() - startTime);
 		return results;
 	}
 
@@ -82,7 +88,11 @@ public class ExecCommand {
 		}
 	}
 
-	public static void main(String[] args) {
-		System.out.println(exeCommand("svn info"));
+	/**
+	 * 是否是windows系统
+	 */
+	public static boolean isWindows() {
+		String osName = System.getProperty("os.name");
+		return osName.contains("Windows");
 	}
 }
