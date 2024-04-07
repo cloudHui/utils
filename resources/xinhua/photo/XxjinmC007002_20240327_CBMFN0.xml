@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CNML xmlns="http://www.cnml.org.cn/2005/CNMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cnml.org.cn/2005/CNMLSchema http://www.cnml.org.cn/2005/CNMLSchema/CNML_v1.020070208.xsd" schemaVersion="" template="" templateVersion="">
+	<Envelop>
+		<SystemId topicRef="cb" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-SystemId-39:39">
+			<Name>全媒体采编发系统</Name>
+		</SystemId>
+		<TransmissionID>101002024032770000173</TransmissionID>
+		<TransferTime>2024-03-27T10:31:27+08:00</TransferTime>
+		<SentFrom xsi:type="OrganizationType">
+			<NameTopic topicRef="Xinhua" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Organization-1:1">
+				<Name>新华社</Name>
+			</NameTopic>
+		</SentFrom>
+		<SentTo>
+			<GroupRecipient scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tGroupAddr-2:2" topicRef="ywj01">
+				<Name>国际专稿1组</Name>
+				<ProductId xsi:type="TopicUseMetaType" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-160:160" topicRef="xhzoe" />
+				<DailySequence>10000</DailySequence>
+			</GroupRecipient>
+			<GroupRecipient scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tGroupAddr-2:2" topicRef="ywj02">
+				<Name>国际专稿2组</Name>
+				<ProductId xsi:type="TopicUseMetaType" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-160:160" topicRef="xhzoe" />
+				<DailySequence>10000</DailySequence>
+			</GroupRecipient>
+			<GroupRecipient topicRef="xhzoe" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115">
+				<ProductId scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115" topicRef="xhzoe" />
+				<Name>国际专稿</Name>
+				<DailySequence>100000</DailySequence>
+			</GroupRecipient>
+			<GroupRecipient topicRef="xhtmc" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115">
+				<ProductId scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115" topicRef="xhtmc" />
+				<Name>对外中文互联网专线</Name>
+				<DailySequence>100000</DailySequence>
+			</GroupRecipient>
+			<GroupRecipient topicRef="ifwzx" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115">
+				<ProductId scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115" topicRef="ifwzx" />
+				<Name>新媒体专线</Name>
+				<DailySequence>100000</DailySequence>
+			</GroupRecipient>
+			<GroupRecipient topicRef="xappc" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115">
+				<ProductId scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115" topicRef="xappc" />
+				<Name>新华社客户端</Name>
+				<DailySequence>100000</DailySequence>
+			</GroupRecipient>
+			<GroupRecipient topicRef="xjrzx" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115">
+				<ProductId scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115" topicRef="xjrzx" />
+				<Name>县级融媒体专线</Name>
+				<DailySequence>100000</DailySequence>
+			</GroupRecipient>
+		</SentTo>
+		<Priority scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Priority-1:1" topicRef="5.0" />
+		<Services>
+			<Service scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Service-4:4" topicRef="finished">
+				<Name>成品稿</Name>
+			</Service>
+		</Services>
+		<Products>
+			<Product productID="xhzoe">
+				<GroupAddressList>ywj01~ywj02</GroupAddressList>
+				<ProductName scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-144.xml" topicRef="xhzoe">
+					<Name>国际专稿</Name>
+				</ProductName>
+				<Columns>
+					<Column topicRef="006">
+						<Name>融媒特稿</Name>
+					</Column>
+				</Columns>
+				<SendSequence>1</SendSequence>
+			</Product>
+			<Product productID="xhtmc">
+				<ProductName scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-144.xml" topicRef="xhtmc">
+					<Name>对外中文互联网专线</Name>
+				</ProductName>
+				<Columns>
+					<Column topicRef="006">
+						<Name>社会</Name>
+					</Column>
+				</Columns>
+				<SendSequence>1</SendSequence>
+			</Product>
+			<Product productID="ifwzx">
+				<ProductName scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-144.xml" topicRef="ifwzx">
+					<Name>新媒体专线</Name>
+				</ProductName>
+				<Columns>
+					<Column topicRef="718">
+						<Name>新华国际</Name>
+					</Column>
+				</Columns>
+				<SendSequence>1</SendSequence>
+			</Product>
+			<Product productID="xappc">
+				<ProductName scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-144.xml" topicRef="xappc">
+					<Name>新华社客户端</Name>
+				</ProductName>
+				<Columns>
+					<Column topicRef="045">
+						<Name>新华国际</Name>
+					</Column>
+				</Columns>
+				<SendSequence>1</SendSequence>
+			</Product>
+			<Product productID="xjrzx">
+				<ProductName scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-144.xml" topicRef="xjrzx">
+					<Name>县级融媒体专线</Name>
+				</ProductName>
+				<Columns>
+					<Column topicRef="005">
+						<Name>国际风云</Name>
+					</Column>
+				</Columns>
+				<SendSequence>1</SendSequence>
+			</Product>
+		</Products>
+	</Envelop>
+	<Items>
+
+		<Item xsi:type="NewsItemType">
+			<MetaInfo>
+				<AdministrationMetaGroup>
+					<Id>
+						<PublicId>urn:CNML:xinhua.org:20240327:XxjinmC007002_20240327_CBMFN0:1</PublicId>
+						<ProviderId>xinhua.org</ProviderId>
+						<DateId>20240327</DateId>
+						<ItemId>XxjinmC007002_20240327_CBMFN0</ItemId>
+						<VersionId>1</VersionId>
+					</Id>
+					<Status>Usable</Status>
+					<Provider xsi:type="OrganizationType">
+						<Name>新华社</Name>
+					</Provider>
+					<FirstCreateTime>2024-03-27T08:50:22+08:00</FirstCreateTime>
+					<CurrentRevisionTime>2024-03-27T10:31:27+08:00</CurrentRevisionTime>
+					<Urgency scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Urgency-1:1" topicRef="5.0" />
+					<Importance scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Urgency-1:1" topicRef="15" />
+				</AdministrationMetaGroup>
+				<DescriptionMetaGroup>
+					<Titles>
+						<HeadLine>
+							<![CDATA[集装箱船撞击致桥塌　美国马里兰州进入紧急状态]]>
+						</HeadLine>
+					</Titles>
+					<Language scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Language-7:7" topicRef="zh-CN" />
+					<Creators>
+						<Creator xsi:type="PersonType" kind="Author">
+							<Name>
+								<FullName xml:lang="zh-CN">包雪琳</FullName>
+								<FullName xml:lang="en">Bao Xuelin</FullName>
+							</Name>
+							<Affiliation>
+								<Organization>
+									<NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-107:107" topicRef="Xxjinw" />
+								</Organization>
+							</Affiliation>
+						</Creator>
+					</Creators>
+					<DateTimes>
+						<DateTime kind="HappenTime"></DateTime>
+						<DateTime kind="InditeTime"></DateTime>
+						<DateTime kind="RatifyTime">2024-03-27T10:31:27+08:00</DateTime>
+					</DateTimes>
+					<SubjectCodes>
+						<SubjectCode kind="XH_Internalinternational">
+							<MainCode scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-XH_InternalInternational-6:6" topicRef="02">
+								<Name>国际新闻</Name>
+							</MainCode>
+						</SubjectCode>
+						<SubjectCode kind="XH_NewsCategory">
+							<MainCode scheme="topiclist.cnml-XH_NewsCategory-10.xml" topicRef="03">
+								<Name>社会</Name>
+							</MainCode>
+						</SubjectCode>
+					</SubjectCodes>
+					<Contributors>
+						<Contributor kind="Establisher">
+							<Name>
+								<FullName>李宏</FullName>
+							</Name>
+							<Affiliation>
+								<Organization>
+									<NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-8:8" topicRef="Xxjinw">
+										<Name>国际部-专特稿中心</Name>
+									</NameTopic>
+								</Organization>
+							</Affiliation>
+						</Contributor>
+						<Contributor kind="Edit">
+							<Name>
+								<FullName>李宏</FullName>
+							</Name>
+							<Affiliation>
+								<Organization>
+									<NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-8:8" topicRef="Xxjinw">
+										<Name>国际部-专特稿中心</Name>
+									</NameTopic>
+								</Organization>
+							</Affiliation>
+						</Contributor>
+						<Contributor kind="Edit">
+							<Name>
+								<FullName>陈立希</FullName>
+							</Name>
+							<Affiliation>
+								<Organization>
+									<NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-8:8" topicRef="Xxjinw">
+										<Name>国际部-专特稿中心</Name>
+									</NameTopic>
+								</Organization>
+							</Affiliation>
+						</Contributor>
+						<Contributor kind="Edit">
+							<Name>
+								<FullName>闫珺岩</FullName>
+							</Name>
+							<Affiliation>
+								<Organization>
+									<NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-8:8" topicRef="Xxjinm">
+										<Name>国际部-多媒体采编中心</Name>
+									</NameTopic>
+								</Organization>
+							</Affiliation>
+						</Contributor>
+						<Contributor kind="Signer">
+							<Name>
+								<FullName>沈浩洋</FullName>
+							</Name>
+							<Affiliation>
+								<Organization>
+									<NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-8:8" topicRef="Xxjinm">
+										<Name>国际部-多媒体采编中心</Name>
+									</NameTopic>
+								</Organization>
+							</Affiliation>
+						</Contributor>
+					</Contributors>
+					<Keywords>
+						<Keyword>
+							<![CDATA[美国,巴尔的摩,紧急状态,大桥坍塌]]>
+						</Keyword>
+					</Keywords>
+					<SourceInfo>
+						<ItemSource scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-107:107" topicRef="Xxjind">
+							<Name>国际部</Name>
+						</ItemSource>
+					</SourceInfo>
+				</DescriptionMetaGroup>
+			</MetaInfo>
+			<Contents>
+				<ContentItem xsi:type="MultimediaCIType" id="c01">
+					<MetaInfo>
+						<CharacteristicMetaGroup xsi:type="MultimediaCIMetaGroupType">
+							<Format scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Format-1:1" topicRef="XHTML" />
+							<MediaType scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-MediaType-1:1" topicRef="Multimedia" />
+							<WordCount>929</WordCount>
+							<IsCDATA>1</IsCDATA>
+						</CharacteristicMetaGroup>
+					</MetaInfo>
+					<DataContent>
+						<![CDATA[<p>　　新华社北京3月27日电 美国马里兰州巴尔的摩市一座大桥26日凌晨遭一艘集装箱船撞击后坍塌，约20人落水。当地应急部门通报，救援人员已救起两人，其中一人重伤。马里兰州州长韦斯·穆尔宣布该州进入紧急状态。</p><p>　　巴尔的摩警方于美国东部时间26日凌晨1时35分接到报警，一艘船撞击“弗朗西斯·斯科特·基”桥的一个桥墩，导致该桥多处垮塌，包括一辆大货车在内的数辆汽车坠入帕塔普斯科河中，约20人落水。</p><div class="image"><img controls="controls" src="XxjinmC007002_20240327_CBMFN0A001.JPG"  data-info="{&quot;src&quot;:&quot;/file/getFile?resourceId=109012024032700000663&quot;,&quot;itemId&quot;:&quot;102012024032770000339&quot;}"></img><p><span style="color:#337fe5;font-family:宋体;font-size:16pt;">　　这是3月26日在美国马里兰州巴尔的摩拍摄的坍塌的大桥。新华社记者胡友松摄</span></p></div><p>　　巴尔的摩市应急部门主管詹姆斯·华莱士说，救援人员从河中救起两人，其中一人重伤。</p><p>　　马里兰州交通部长保罗·威德费尔德在记者会上说，桥梁坍塌时有工人正进行维修作业，暂不清楚维修作业涉及多少辆车。</p><p>　　船只追踪网站的信息显示，撞击大桥的货船悬挂新加坡国旗，由Synergy海事集团运营。Synergy海事集团在声明中说，已与所有22名船员取得联系，这些船员中无人受伤。</p><p>　　法新社援引一名目击者的话报道，他半夜被巨大声响惊醒，起初以为是地震，从卧室窗户看到大桥坍塌。</p><p>　　华莱士在记者会上通报，应急部门利用声呐、无人机和红外技术搜救落水人员，“声呐已探测到有多辆车沉入河中”。</p><p>　　巴尔的摩警察局长理查德·沃利在记者会上说，没有证据表明货船故意撞上桥墩，“没有迹象表明这起事故关联恐怖主义”。美国联邦调查局已参与调查事故原因。</p><div class="image"><img controls="controls" src="XxjinmC007002_20240327_CBMFN0A002.JPG"  data-info="{&quot;src&quot;:&quot;/file/getFile?resourceId=109012024032700000674&quot;,&quot;itemId&quot;:&quot;102012024032770000347&quot;}"></img><p><span style="color:#337fe5;font-family:宋体;font-size:16pt;">　　这是3月26日在美国马里兰州巴尔的摩拍摄的坍塌的大桥。新华社记者胡友松摄</span></p></div><p>　　美国广播公司援引美国网络安全与基础设施安全局的一份报告报道，撞击发生前，这艘船的船员向交通部门报告，该船已失控，可能撞上大桥。</p><p>　　美国交通部长皮特·布蒂吉格在社交媒体发文说，他同巴尔的摩市市长、马里兰州州长保持联系，联邦政府将予以帮助。了解事故进展的白宫官员告诉美国有线电视新闻网记者，白宫正“密切关注”这一事件。</p><p>　　坍塌的大桥位于巴尔的摩西南部，1977年开通，桥长约2.6千米，设有4条车道，日均车流量为3.1万辆。</p><p>　　帕塔普斯科河连通巴尔的摩港，这座港口是美国东部海运线路的一处重要枢纽。马里兰州交通部长威德费尔德说，巴尔的摩港已暂停船只进出。国际货运信息平台海上交通网站的数据显示，至少有10艘驶往巴尔的摩港的商船在附近水域下锚停船。（包雪琳）</p>]]>
+					</DataContent>
+				</ContentItem>
+				<ContentItem xsi:type="ImageCIType" id="c02" href="XxjinmC007002_20240327_CBMFN0A001.JPG">
+					<MetaInfo>
+						<CharacteristicMetaGroup xsi:type="ImageCIMetaGroupType">
+							<Format topicRef="JPG" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Format-1:1" />
+							<MediaType topicRef="Photo" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-MediaType-1:1" />
+							<SizeInBytes>196528</SizeInBytes>
+							<PixelWidth>2000</PixelWidth>
+							<PixelHeight>1403</PixelHeight>
+							<Resolution>72 dots</Resolution>
+							<FilmNumber></FilmNumber>
+						</CharacteristicMetaGroup>
+						<DescriptionMetaGroup>
+							<Creators>
+								<Creator kind="Author">
+									<Name xml:lang="zh-CN">李宏</Name>
+								</Creator>
+							</Creators>
+							<Locations>
+								<Location kind="HappenPlace">
+									<Name xml:lang="zh-CN"></Name>
+								</Location>
+								<Location kind="SendArea">
+									<Name></Name>
+								</Location>
+								<Location kind="SendArea">
+									<Name></Name>
+								</Location>
+							</Locations>
+						</DescriptionMetaGroup>
+					</MetaInfo>
+					<DataContent>
+						<![CDATA[]]>
+					</DataContent>
+				</ContentItem>
+				<ContentItem xsi:type="ImageCIType" id="c03" href="XxjinmC007002_20240327_CBMFN0A002.JPG">
+					<MetaInfo>
+						<CharacteristicMetaGroup xsi:type="ImageCIMetaGroupType">
+							<Format topicRef="JPG" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Format-1:1" />
+							<MediaType topicRef="Photo" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-MediaType-1:1" />
+							<SizeInBytes>173508</SizeInBytes>
+							<PixelWidth>2000</PixelWidth>
+							<PixelHeight>1333</PixelHeight>
+							<Resolution>72 dots</Resolution>
+							<FilmNumber></FilmNumber>
+						</CharacteristicMetaGroup>
+						<DescriptionMetaGroup>
+							<Creators>
+								<Creator kind="Author">
+									<Name xml:lang="zh-CN">李宏</Name>
+								</Creator>
+							</Creators>
+							<Locations>
+								<Location kind="HappenPlace">
+									<Name xml:lang="zh-CN"></Name>
+								</Location>
+								<Location kind="SendArea">
+									<Name></Name>
+								</Location>
+								<Location kind="SendArea">
+									<Name></Name>
+								</Location>
+							</Locations>
+						</DescriptionMetaGroup>
+					</MetaInfo>
+					<DataContent>
+						<![CDATA[]]>
+					</DataContent>
+				</ContentItem>
+			</Contents>
+			<Relations>
+				<Relation name="hasEmbedding">
+					<Source>
+					<Role xpath="ContentItem[1]" />
+					</Source>
+					<Target>
+						<RoleSet>
+							<Role xpath="ContentItem[2]" />
+							<Role xpath="ContentItem[3]" />
+						</RoleSet>
+					</Target>
+				</Relation>
+			</Relations>
+		</Item>
+	</Items>
+	<Relations>
+
+		<Relation name="referenceOf">
+			<Source>
+			<Role xpath="Item[1]" />
+			</Source>
+			<Target>
+				<RoleSet>
+					<Role href="CnyztpC007006_20240327_PEPFN0.xml" />
+					<Role href="CnyztpC007004_20240327_PEPFN0.xml" />
+					<Role href="XxjidoC007063_20240326_CBTFN0.xml" />
+				</RoleSet>
+			</Target>
+		</Relation>
+	</Relations>
+</CNML>

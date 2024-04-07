@@ -22,13 +22,6 @@ public class ServerMonitor {
 	/**
 	 * 检测服务器负载
 	 */
-	public static void checkCpuLoad() {
-		checkCpuLoad(0, "", null, null);
-	}
-
-	/**
-	 * 检测服务器负载
-	 */
 	public static void checkCpuLoad(String phone) {
 		checkCpuLoad(0, phone, null, null);
 	}

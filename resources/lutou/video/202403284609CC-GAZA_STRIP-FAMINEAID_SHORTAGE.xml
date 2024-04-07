@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  -->
+<!--  -->
+<!-- 41 NewsML2\Feed_V2.txt -->
+<newsMessage xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rtr="http://www.reuters.com/ns/2003/08/content" xmlns:x="http://www.w3.org/1999/xhtml">
+    <header>
+        <sent>2024-03-28T06:27:11Z</sent>
+        <sender>reuters.com</sender>
+        <transmitId>tag:reuters.com,2024:newsml_RWK33LPPL:2</transmitId>
+        <priority>4</priority>
+        <channel>VID</channel>
+        <destination>RCCTV</destination>
+        <destination>RMON</destination>
+    </header>
+    <itemSet>
+        <!-- ========================================================= -->
+        <!-- PRIMARY ITEM : NEP -->
+        <packageItem standard="NewsML-G2" standardversion="2.1" conformance="power" guid="tag:reuters.com,2024:newsml_RWK33LPPL" version="2" xml:lang="en">
+            <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml"/>
+            <rightsInfo>
+                <copyrightHolder literal="CCTV"/>
+                <copyrightNotice>(c) Copyright CCTV 2024. The content in this story, including video and script is provided by China Central Television (CCTV) and is copyright CCTV. Thomson Reuters does not guarantee the accuracy of, or endorse the views or opinions given in, this package.</copyrightNotice>
+                <usageTerms xml:lang="en">No access Chinese mainland/Not for sale. For Reuters customers only.</usageTerms>
+                <usageTerms role="usageRole:content" xml:lang="en">Broadcast</usageTerms>
+            </rightsInfo>
+            <!-- ========================================================= -->
+            <!-- itemMeta -->
+            <itemMeta>
+                <itemClass qcode="icls:composite"/>
+                <provider literal="reuters.com"/>
+                <versionCreated>2024-03-28T06:28:00Z</versionCreated>
+                <firstCreated>2024-03-28T06:27:11Z</firstCreated>
+                <pubStatus qcode="stat:usable"/>
+                <role qcode="itemRole:N" />
+                <fileName>202403284609CC-GAZA_STRIP-FAMINEAID_SHORTAGE.xml</fileName>
+                <generator versioninfo="4.12.0">RVN Script Server</generator>
+                <profile versioninfo="00.00.01">NEP-External_ANP</profile>
+                <service qcode="svc:RTR_VID"/>
+                <signal qcode="sic:ATOMIC" />
+                <signal qcode="edStat:U" />
+                <signal qcode="prodId:VID" />
+                <link rel="irel:prevVersion" residref="tag:reuters.com,2024:newsml_RWK33LPPL" version="1" contenttype="application/vnd.iptc.g2.packageitem+xml" rtr:id="RWK33LPPL" rtr:type="idType:USN" />
+                <rtr:versionedId guid="tag:reuters.com,2024:newsml_RWK33LPPL:2"/>
+            </itemMeta>
+            <!-- ========================================================= -->
+            <!-- contentMeta -->
+            <contentMeta>
+                <!--=== Administrative === -->
+                <urgency>4</urgency>
+                <located literal="Others" xml:lang="en">
+                    <name xml:lang="en">Others</name>
+                </located>
+                <infoSource role="cRole:origProv" literal="CCTV"/>
+                <infoSource role="cRole:source" literal="CCTV"/>
+                <creator literal="CCTV"/>
+                <contributor role="cRole:lastEd" literal="Vespa"/>
+                <exclAudience qcode="audMedia:RCV7"/>
+                <altId type="idType:USN" rtr:isOriginal="1">RWK33LPPL</altId>
+                <altId type="idType:editNumber">4609</altId>
+                <altId type="idType:itemId">tag:reuters.com,2024:newsml_RWK33LPPL:2</altId>
+                <!-- === Descriptive === -->
+                <language tag="en"/>
+                <subject qcode="WNSFR:CCTV"/>
+                <subject qcode="tvsc:No-Data-Available"/>
+                <subject qcode="rvnServiceCode:CC">
+                    <name>CCTV News</name>
+                </subject>
+                <subject qcode="ISLC:No-Data-Available"/>
+                <genre literal="Current or spot news">
+                    <name>Current or spot news</name>
+                </genre>  
+                <by xml:lang="en">CCTV, MAR 28</by>
+                <slugline xml:lang="en">Gaza Strip-Famine/Aid Shortage</slugline>
+                <headline xml:lang="en">Famine imminent in north Gaza: World Food Program</headline>
+                <dateline>March 13/16/25/26, 2024</dateline>
+                <description role="descRole:videoCaption" xml:lang="en">Famine imminent in north Gaza: World Food Program</description>
+            </contentMeta>
+            <!-- ========================================================= -->
+            <!-- CONTENT -->
+            <!-- root  -->
+            <groupSet root="root">
+                <group role="grpRole:NEP" id="root">
+                    <!-- Main -->
+                    <groupRef idref="main"/>
+                </group>  
+                <!-- === MAIN === -->
+                <group role="grpRole:Main" id="main">
+                            <!-- === ITEM REFERENCE === -->
+                    <itemRef residref="tag:reuters.com,2024:newsml_OVK33LPPK" contenttype="application/vnd.iptc.g2.newsitem+xml">
+                        <provider literal="reuters.com" />
+                        <pubStatus qcode="stat:usable" />
+                        <role qcode="itemRole:N" />
+                    </itemRef>
+                                                    <!-- === ITEM REFERENCE === -->
+                    <itemRef residref="tag:reuters.com,2024:newsml_LWD001FNLELBD" contenttype="application/vnd.iptc.g2.newsitem+xml">
+                        <provider literal="reuters.com" />
+                        <pubStatus qcode="stat:usable" />
+                        <role qcode="itemRole:N" />
+                    </itemRef>
+                </group>
+            </groupSet>
+        </packageItem>
+        <!-- ========================================================= -->
+        <!-- PRIMARY ITEM : SNI-Text -->
+        <newsItem guid="tag:reuters.com,2024:newsml_OVK33LPPK" version="2" standard="NewsML-G2" standardversion="2.1" conformance="power" xml:lang="en">
+            <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+            <rightsInfo>
+                <copyrightHolder literal="CCTV"/>
+                <copyrightNotice>(c) Copyright CCTV 2024. The content in this story, including video and script is provided by China Central Television (CCTV) and is copyright CCTV. Thomson Reuters does not guarantee the accuracy of, or endorse the views or opinions given in, this package.</copyrightNotice>
+            </rightsInfo>
+            <itemMeta>
+                  <itemClass qcode="icls:text" />
+                   <provider literal="reuters.com"/>
+                   <versionCreated>2024-03-28T06:27:11Z</versionCreated>
+                    <firstCreated>2024-03-28T06:27:11Z</firstCreated>
+                    <pubStatus qcode="stat:usable"/>
+                    <role qcode="itemRole:N" />
+                   <fileName>202403284609CC-GAZA_STRIP-FAMINEAID_SHORTAGE.xml</fileName>
+                   <profile versioninfo="00.00.01">SNI-Text</profile>
+                <signal qcode="sic:3P" />
+                <signal qcode="edStat:U" />
+                <link rel="irel:prevVersion" residref="tag:reuters.com,2024:newsml_OVK33LPPK" version="1" contenttype="application/vnd.iptc.g2.newsitem+xml" rtr:id="OVK33LPPK" rtr:type="idType:USN" />
+                   <rtr:versionedId guid="tag:reuters.com,2024:newsml_OVK33LPPK:2"/>
+               </itemMeta>
+            <contentMeta>
+                <urgency>4</urgency>
+                <located literal="Others" xml:lang="en">
+                    <name xml:lang="en">Others</name>
+                </located>
+                <infoSource role="cRole:origProv" literal="CCTV"/>
+                <infoSource role="cRole:source" literal="CCTV"/>
+                <creator literal="CCTV"/>
+                <altId type="idType:USN" rtr:isOriginal="1">OVK33LPPK</altId>
+                <altId type="idType:itemId">tag:reuters.com,2024:newsml_OVK33LPPK:2</altId>
+                <language tag="en" />
+                <by xml:lang="en">CCTV, MAR 28</by>
+                <slugline xml:lang="en">Gaza Strip-Famine/Aid Shortage</slugline>
+                <headline xml:lang="en">Famine imminent in north Gaza: World Food Program</headline>
+                <dateline>March 13/16/25/26, 2024</dateline>
+                <description role="descRole:intro" xml:lang="en">Famine imminent in north Gaza: World Food Program</description>
+            </contentMeta>
+            <contentSet>
+                <inlineXML contenttype="application/xhtml+xml" xml:lang="en">
+                    <html xmlns="http://www.w3.org/1999/xhtml"><head><title/>
+	               		</head><body><p> </p><p>2024-03-28 13:18:02.0</p><p>STORY:Gaza Strip-Famine/Aid Shortage</p><p>RESTRICTIONS:No access Chinese mainland/Not for sale</p><p>SOURCE:UNifeed</p><p>DATELINE:March 13/16/25/26, 2024</p><p>LENGTH:2'44</p><p>More downloads available at http://cctvplus.com</p><p>SHOTLIST:<p>********************</p><p>This video news is provided by CCTV+ and is available for licensing. Thank you for using CCTV+ content. Please contact Ms. Haley HE at heliyun@cctvplus.com or call +86 10 83949886 for any further enquiries.</p><p>********************</p></p><p>Deir al Balah, Gaza Strip - March 25, 2024 (Unifeed - No access Chinese mainland/Not for sale) </p><p>1. Various of tents for displaced people </p><p>2. Various of ambulance; International Medical Corps Field Hospital, tents</p><p>3. Various of medical worker, patients</p><p>Gaza City, Gaza Strip - March 26, 2024 (Unifeed - No access Chinese mainland/Not for sale) </p><p>4. Destruction  </p><p>5. SOUNDBITE (English) Matthew Hollingworth, Country Director in Palestine, World Food Programme (WFP) (partially overlaid with shot 6): </p><p>"There is nowhere else in the world where so many people face imminent famine. Here in Gaza City we're at the epicenter of the crisis here in the Gaza Strip. People themselves are desperately seeking every day the aid that they need to survive, and we are simply not getting enough into Gaza City and the north of the Strip."</p><p>++SHOT OVERLAYING SOUNDBITE++</p><p>Deir al Balah, Gaza Strip - March 25, 2024 (Unifeed - No access Chinese mainland/Not for sale) </p><p>6. Various of patient being tested </p><p>++SHOT OVERLAYING SOUNDBITE++</p><p>Gaza City, Gaza Strip - March 26, 2024 (Unifeed - No access Chinese mainland/Not for sale) </p><p>7. Destruction </p><p>8. SOUNDBITE (English) Matthew Hollingworth, Country Director in Palestine, World Food Programme (WFP): </p><p>"We desperately need the conditions to get access every day to be flooding this area with food assistance if we're going to prevent famine, prevent further death, prevent wasting amongst children, prevent really the desperate situation that is already in place."</p><p>Deir al Balah, Gaza Strip - March 16, 2024 (Unifeed - No access Chinese mainland/Not for sale) </p><p>9. Various of people walking amongst destruction </p><p>Deir al Balah, Gaza Strip - March 13, 2024 (Unifeed - No access Chinese mainland/Not for sale) </p><p>10. Various of WFP hot meals being prepared, distributed and eaten </p><p>More downloads available at http://cctvplus.com</p><p>STORYLINE:</p><p>Famine is imminent in northern Gaza, said the World Food Program (WFP) on Tuesday. </p><p>Malnutrition among children is proceeding at a record pace, and one of three children below the age of two is now acutely malnourished or "wasted." </p><p>Some 70 percent of the population in north Gaza is facing catastrophic hunger. Parents are not eating for days at time so that their children can. </p><p>"There is nowhere else in the world where so many people face imminent famine. Here in Gaza City we're at the epicenter of the crisis here in the Gaza Strip. People themselves are desperately seeking every day the aid that they need to survive, and we are simply not getting enough into Gaza City and the north of the Strip," said Matthew Hollingworth, Country Director in Palestine of the WFP. </p><p>WFP is providing desperately needed food to 1.45 million people in Gaza each month. It distributes ready-to-eat food parcels, hot meals, wheat flour and specialized products to stave off malnutrition. </p><p>WFP has only managed to send 11 convoys with food to the north since the start of the year. The 11 convoys which managed to reach the north in March brought food for 74,000 people. </p><p>Yet daily deliveries are needed to halt famine. </p><p>Most food is distributed in Rafah and Deir al Balah, and very little assistance reaches people elsewhere. To support existing systems and the local economy, WFP is also helping bakeries get back on their feet by providing them with wheat flour and other necessary resources to operate. </p><p>"We desperately need the conditions to get access every day to be flooding this area with food assistance if we're going to prevent famine, prevent further death, prevent wasting amongst children, prevent really the desperate situation that is already in place," said Hollingworth. </p><p>Together with partners, WFP has enough food supplies ready to feed all 2.2 million people across Gaza. It said that needs Israel to allow more routes into Gaza, including from the north, and use of Ashdod port. </p><p>WFP also said that it needs humanitarian staff and supplies to move freely, and the people of Gaza to access assistance safely. </p><p>It warned that as famine closes in, an Israeli land offensive in southern Gaza would make their task even harder. </p><p>********************</p><p>This video news is provided by CCTV+ and is available for licensing. Thank you for using CCTV+ content. Please contact Ms. Haley HE at heliyun@cctvplus.com or call +86 10 83949886 for any further enquiries.</p><p>********************</p><p>More downloads available at http://www.cctvplus.com</p><p>For any questions please call +86-10-83949889, or email service@cctvplus.com. If you want to learn more, please go to the CCTV website at http://www.cctvplus.com.</p><p>© Copyright CCTV. The content in this story, including video and script is provided by China Central Television (CCTV) and is copyright CCTV. Thomson Reuters does not guarantee the accuracy of, or endorse the views or opinions given in, this package. THIS STATEMENT SUPERSEDES ALL OTHER STATEMENTS RELATING TO COPYRIGHT ATTACHED TO THIS CONTENT.</p></body>
+	           		</html>
+                </inlineXML>
+            </contentSet>
+        </newsItem>
+        <!-- ========================================================= -->
+        <!-- PRIMARY ITEM : SNI -Video -->
+        <newsItem guid="tag:reuters.com,2024:newsml_LWD001FNLELBD" version="1" standard="NewsML-G2" standardversion="2.1" conformance="power" xml:lang="en">
+            <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+            <rightsInfo>
+                <copyrightHolder literal="CCTV"/>
+                <copyrightNotice>(c) Copyright CCTV 2024. The content in this story, including video and script is provided by China Central Television (CCTV) and is copyright CCTV. Thomson Reuters does not guarantee the accuracy of, or endorse the views or opinions given in, this package.</copyrightNotice>
+            </rightsInfo>
+            <itemMeta>
+                  <itemClass qcode="icls:video" />
+                   <provider literal="reuters.com"/>
+                   <versionCreated>2024-03-28T06:28:00Z</versionCreated>
+                    <firstCreated>2024-03-28T06:27:11Z</firstCreated>
+                    <pubStatus qcode="stat:usable"/>
+                    <role qcode="itemRole:N" />
+                   <profile versioninfo="00.00.01">SNI-Video</profile>
+                <signal qcode="sic:3P" />
+                   <rtr:versionedId guid="tag:reuters.com,2024:newsml_LWD001FNLELBD:1"/>
+               </itemMeta>
+            <contentMeta>
+                <urgency>4</urgency>
+                <infoSource role="cRole:origProv" literal="CCTV"/>
+                <infoSource role="cRole:source" literal="UNifeed"/>
+                <creator literal="CCTV"/>
+                <!-- === Descriptive === -->
+                <altId type="idType:SID" rtr:isOriginal="1">LWD001FNLELBD</altId>
+                <altId type="idType:itemId">tag:reuters.com,2024:newsml_LWD001FNLELBD:1</altId>
+                <language tag="en" />
+                <by xml:lang="en">UNifeed, MAR 28</by>
+                <description role="descRole:audio" xml:lang="en">English/Nats</description>
+            </contentMeta>
+                <partMeta>
+                    <timeDelim start="00:00:00.000" end="00:00:00.000" timeunit="timeunit:normalPlayTime"/>
+                    <rtr:role qcode="partRole:slate"/>
+                </partMeta>
+                <partMeta>
+                    <timeDelim start="00:00:00.000" end="00:02:44.000" timeunit="timeunit:normalPlayTime"/>
+                    <rtr:role qcode="partRole:content"/>
+                </partMeta>
+                <partMeta>
+                    <timeDelim start="00:00:10.000" end="00:00:11.000" timeunit="timeunit:normalPlayTime"/>
+                    <rtr:role qcode="partRole:keyframe"/>
+                </partMeta>
+            <!-- ========================================================= -->
+            <!-- CONTENT -->
+            <contentSet>
+            <remoteContent residref="tag:reuters.com,2024:binary_LWD001FNLELBD-STREAM:4500:MPG" format="fmt:mp4" contenttype="video/mp4" duration="165" audiocodec="acdc:c028" audiobitrate="256000" audiovbr="false" audiosamplesize="16" audiosamplerate="48000" videocodec="vcdc:c190" videoavgbitrate="13500000" videovbr="true" videoscan="interlaced" videoaspectratio="16:9" videosampling="4:2:0" rendition="rend:stream:6756:mpg" rtr:definition="videoDef:HD" version="1">
+                    <rtr:altId type="idType:fileBIN" isPresent="1" contentType="video/mp4">202403284609CC-GAZA_STRIP-FAMINEAID_SHORTAGE.mp4</rtr:altId>
+            </remoteContent>
+            </contentSet>
+        </newsItem>
+    </itemSet>
+</newsMessage>

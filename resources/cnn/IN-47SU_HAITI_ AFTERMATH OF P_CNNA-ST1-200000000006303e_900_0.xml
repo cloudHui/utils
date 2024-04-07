@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mos>
+  <mosID>AffiliateServer</mosID>
+  <ncsID>PushServer</ncsID>
+  <messageID>0</messageID>
+  <mosReqObjAction operation="NEW">
+    <mosObj>
+      <objID>CNNA-ST1-200000000006303e</objID>
+      <objSlug>HAITI: AFTERMATH OF PRISONER ESCAPE IN PORT-AU-PRINCE</objSlug>
+      <objGroup>FusionPush</objGroup>
+      <objType>VIDEO</objType>
+      <objTB>30</objTB>
+      <objRev>0</objRev>
+      <objDur>0</objDur>
+      <status>NEW</status>
+      <objAir>READY</objAir>
+      <objPaths>
+        <objProxyFile techDescription="JPEG 16:9">IN-47SU_HAITI_ AFTERMATH OF P_CNNA-ST1-200000000006303e_801_0.jpg</objProxyFile>
+        <objFile techDescription="H264 MP4 1080i PAL">BHDP_IN-47SU_HAITI_ AFTERMATH OF P_CNNA-ST1-200000000006303e_175_0.mp4</objFile>
+        <objProxyFile techDescription="H264 16:9">WH16x9N_IN-47SU_HAITI_ AFTERMATH OF P_CNNA-ST1-200000000006303e_213_0.mp4</objProxyFile>
+      </objPaths>
+      <createdBy>MetadataXmlCreator</createdBy>
+      <created>2024-03-04T04:30:30,810Z</created>
+      <changedBy>MetadataXmlCreator</changedBy>
+      <changed>2024-03-04T04:30:30,810Z</changed>
+      <description>&lt;p&gt;&lt;b&gt;--SUPERS&lt;/b&gt;--&lt;/p&gt;
+&lt;p&gt;CADDHO&lt;/p&gt;
+&lt;p&gt;Sunday&lt;/p&gt;
+&lt;p&gt;Port-au-Prince, Haiti&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;March 3, 2024&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;--CNN &lt;/b&gt;&lt;b&gt;REPORTING&lt;/b&gt;--&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;More than 3,000 inmates estimated to have escaped from Haiti prison amid overnight violence in Port-au-Prince &lt;/b&gt;&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;Around 3,500 prisoners are believed to have escaped Haiti's National Penitentiary during an outbreak of violence this weekend, according to UN estimates, though conditions have not allowed for a full count, a UN source said Sunday.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;There had been 3,687 prisoners at prison, according to the source. The UN mission in Haiti tracks incarcerated populations and humanitarian conditions in prisons in the country.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;According to Haitian lawyer Arnel Remy, the head of the Collective of Lawyers for the Defense of Human Rights in Haiti, (CADDHO), a total of 3,597 prisoners escaped from Haiti’s National Penitentiary. CNN cannot independently verify CADDHO's figures.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;Remy said his team was at the prison on Sunday and told CNN that the 99 remaining inmates are being relocated to other facilities and that the penitentiary is now empty and surrounded by police vehicles.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;Colombia's Foreign Ministry said in a statement on Sunday that 17 Colombian inmates who were held in Haiti’s National Penitentiary have been transferred to other facilities at the request of the Colombian government.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;This comes as the Haitian Ministry of Communication said in a statement Sunday that police confronted "heavily armed criminals seeking at any cost to free people from custody" and were "not able to stop the criminals from freeing a large number of prisoners." The statement added that the violence left several inmates and prison staff injured.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;CNN has reached out to Haiti's Justice Ministry and National Police for comment.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;-----END-----CNN.SCRIPT-----&lt;/b&gt;&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;--KEYWORD TAGS--&lt;/b&gt;&lt;/p&gt;
+&lt;p&gt;HAITI PRISONER ESCAPE VIOLENCE FIGHTING&lt;/p&gt;
+</description>
+      <mosExternalMetadata>
+        <mosScope>STORY</mosScope>
+        <mosSchema>http://www.bitcentral.com/mos/supported_schemas/BCMOSXML1.00</mosSchema>
+        <mosPayload>
+          <storyNum>IN-47SU</storyNum>
+          <format>VO/STILL</format>
+          <sourceAffiliate>CADDHO</sourceAffiliate>
+          <embargoDMA>NONE</embargoDMA>
+          <originalFormatCategory>HD</originalFormatCategory>
+          <contributingStation>CNNA-ST1-0000000000000001</contributingStation>
+          <expiration>2024-03-07T04:30:14,164Z</expiration>
+          <playoutDuration>:46</playoutDuration>
+          <categories>
+            <category id="CNNC-CE1-1000000000002087">Web Ready</category>
+            <category id="CNNC-CE1-1000000000002128">Justice / Legal</category>
+            <category id="CNNC-CE1-1000000000098257">Latin America</category>
+            <category id="CNNC-CE1-1000000000002096">International</category>
+          </categories>
+        </mosPayload>
+      </mosExternalMetadata>
+    </mosObj>
+  </mosReqObjAction>
+</mos>

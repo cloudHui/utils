@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+SUMMARY:
+- Structure: NML2 SNI Text
+- Based On: NML2 v2.10
+
+AUTHOR: thomsonreuters.com
+--><!-- ========================================================= -->
+<newsMessage xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:rtr="http://www.reuters.com/ns/2003/08/content" xmlns:x="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <header>
+    <sent>2024-02-29T02:47:46.000Z</sent>
+    <sender>reuters.com</sender>
+    <transmitId>tag:reuters.com,2024:newsml_MTZXEK2TLFSFRP:3</transmitId>
+    <priority>4</priority>
+    <!-- destination is repeatable -->
+    <destination>OPTANA</destination>
+    <channel>TXT</channel>
+  </header>
+  <itemSet>
+    <newsItem conformance="power" guid="tag:reuters.com,2024:newsml_MTZXEK2TLFSFRP" standard="NewsML-G2" standardversion="2.28" version="3" xml:lang="en-US">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_22.xml"/>
+      <rightsInfo>
+        <copyrightHolder literal="Opta Sports Data"/>
+        <copyrightNotice xml:lang="en-GB">(c) Copyright Opta Sports Data 2024. All Rights Reserved</copyrightNotice>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="icls:text" rtr:msgType="R"/>
+        <provider literal="reuters.com"/>
+        <versionCreated>2024-02-29T02:47:46.000Z</versionCreated>
+        <firstCreated>2024-02-29T02:47:46.000Z</firstCreated>
+        <!-- <embargoed></embargoed> -->
+        <pubStatus qcode="stat:usable"/>
+        <role qcode="itemRole:N"/>
+        <fileName>2024-02-29T024746Z_3_MTZXEK2TLFSFRP_RTRFIPT_0_ICEHOCKEY-NHL-STANDINGS-UPDATE-3.XML</fileName>
+        <generator versioninfo="00.02.00">FIPus3</generator>
+        <profile versioninfo="00.00.01">SNI-Text</profile>
+        <service qcode="svc:RTR_TNS"/>
+        <title dir="ltr">UPDATE 3-NHL Standings</title>
+        <edNote dir="ltr"/>
+        <signal qcode="prodId:TXT"/>
+        <signal qcode="var:binMod"/>
+        <signal qcode="edStat:U"/>
+        <signal qcode="pmt:text"/>
+        <signal qcode="sic:TABLE"/>
+        <itemMetaExtProperty rel="mediaCptRel:hasChannelList" value="aWA755 jiu355 dVC612 STK567 hou588 fnl031 axi637" valuedatatype="xs:NMTOKENS"/>
+        <rtr:versionedId guid="tag:reuters.com,2024:newsml_MTZXEK2TLFSFRP:3"/>
+      </itemMeta>
+      <contentMeta>
+        <urgency>4</urgency>
+        <infoSource literal="Opta Sports Data" qcode="NS:OPTA" role="cRole:origProv"/>
+        <infoSource literal="Opta Sports Data" qcode="NS:OPTA" role="cRole:source"/>
+        <infoSource literal="Reuters" role="cRole:enhancer"/>
+        <infoSource literal="Reuters" role="cRole:redistributor"/>
+        <creator literal="Opta Sports Data" qcode="NS:OPTA" role="cRole:source"/>
+        <altId rtr:isOriginal="1" type="idType:USN">MTZXEK2TLFSFRP</altId>
+        <altId type="idType:OTR">MTZXEK2TLFSFRP</altId>
+        <language tag="en-US"/>
+        <!-- genre qcode="N2:RSLT" / -->
+        <subject qcode="MCC:SPO"/>
+        <subject qcode="MCCL:SPO"/>
+        <subject qcode="N2:HKN">
+          <name>NHL Ice Hockey</name>
+        </subject>
+        <subject qcode="N2:ICEH">
+          <name>Ice Hockey</name>
+        </subject>
+        <subject qcode="N2:NHL">
+          <name>NHL Ice Hockey</name>
+        </subject>
+        <subject qcode="N2:SPO">
+          <name>Sport</name>
+        </subject>
+        <subject qcode="N2:USA"/>
+        <subject qcode="a1312cat:s"/>
+        <subject qcode="subj:15000000"/>
+        <subject qcode="subj:15031000"/>
+        <subject qcode="subj:15031001"/>
+        <slugline separator="-">ICEHOCKEY-NHL/STANDINGS (UPDATE 3)</slugline>
+        <headline dir="ltr">UPDATE 3-NHL Standings</headline>
+        <creditline>Opta Sports Data via Reuters Connect</creditline>
+        <description role="descRole:caption">ICEHOCKEY-NHL/STANDINGS (UPDATE 3):UPDATE 3-NHL Standings</description>
+        <dateline>2024-02-29 02:47:46 GMT+00:00</dateline>
+      </contentMeta>
+      <contentSet>
+        <inlineXML contenttype="application/xhtml+html" wordcount="4809">
+          <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+            <head>
+              <title/>
+            </head>
+            <body>
+              <p>Feb 29 (Stats Perform) - Standings from the NHL games on Wednesday
+
+ Atlantic Division
+                            W   L  OTL   GF   GA  PTS
+ 1. Florida Panthers       39  16    4  194  142   82
+ 2. Boston Bruins          34  12   14  202  165   82
+ 3. Toronto Maple Leafs    33  17    8  216  185   74
+ 4. Detroit Red Wings      33  20    6  213  186   72
+ 5. Tampa Bay Lightning    32  24    5  208  207   69
+ 6. Buffalo Sabres         27  28    4  171  178   58
+ 7. Montreal Canadiens     23  28    8  167  211   54
+ 8. Ottawa Senators        25  29    3  190  203   53
+ Metropolitan Division
+                            W   L  OTL   GF   GA  PTS
+ 1. New York Rangers       40  17    3  201  164   83
+ 2. Carolina Hurricanes    35  18    6  194  165   76
+ 3. Philadelphia Flyers    31  22    7  183  177   69
+ 4. New Jersey Devils      30  25    4  198  205   64
+ 5. Washington Capitals    27  22    9  153  186   63
+ 6. Pittsburgh Penguins    27  21    8  170  154   62
+ 7. New York Islanders     24  20   14  170  197   62
+ 8. Columbus Blue Jackets  19  29   10  171  214   48
+ Central Division
+                            W   L  OTL   GF   GA  PTS
+ 1. Winnipeg Jets          37  15    5  176  135   79
+ 2. Dallas Stars           35  17    9  218  187   79
+ 3. Colorado Avalanche     36  19    5  221  189   77
+ 4. Nashville Predators    33  25    2  188  188   68
+ 5. St. Louis Blues        30  26    2  169  182   62
+ 6. Minnesota Wild         28  25    6  188  196   62
+ 7. Arizona Coyotes        23  30    5  168  192   51
+ 8. Chicago Blackhawks     15  39    5  123  208   35
+ Pacific Division
+                            W   L  OTL   GF   GA  PTS
+ 1. Vancouver Canucks      38  16    7  221  170   83
+ 2. Vegas Golden Knights   33  19    7  192  167   73
+ 3. Edmonton Oilers        34  20    2  201  168   70
+ 4. Los Angeles Kings      29  19   10  178  160   68
+ 5. Calgary Flames         29  25    5  185  184   63
+ 6. Seattle Kraken         25  22   11  163  169   61
+ 7. Anaheim Ducks          20  35    3  151  207   43
+ 8. San Jose Sharks        15  37    5  120  222   35
+
+ Thursday, February 29 schedules (EST/GMT)
+ Vegas Golden Knights   at  Boston Bruins          (0000/0000)
+ Carolina Hurricanes    at  Columbus Blue Jackets  (0000/0000)
+ New York Islanders     at  Detroit Red Wings      (0000/0000)
+ Montreal Canadiens     at  Florida Panthers       (0000/0000)
+ Buffalo Sabres         at  Tampa Bay Lightning    (0000/0000)
+ Arizona Coyotes        at  Toronto Maple Leafs    (0000/0000)
+ Winnipeg Jets          at  Dallas Stars           (0100/0100)
+ Minnesota Wild         at  Nashville Predators    (0100/0100)
+ Colorado Avalanche     at  Chicago Blackhawks     (0200/0200)
+ Pittsburgh Penguins    at  Seattle Kraken         (0300/0300)
+ Los Angeles Kings      at  Vancouver Canucks      (0300/0300)
+ Anaheim Ducks          at  San Jose Sharks        (0330/0330)
+ Friday, March  1 schedules (EST/GMT)
+ Arizona Coyotes        at  Ottawa Senators        (0000/0000)
+ Philadelphia Flyers    at  Washington Capitals    (0000/0000)
+ New Jersey Devils      at  Anaheim Ducks          (0300/0300)
+ Saturday, March  2 schedules (EST/GMT)
+ Winnipeg Jets          at  Carolina Hurricanes    (1730/1730)
+ Florida Panthers       at  Detroit Red Wings      (2000/2000)
+ Edmonton Oilers        at  Seattle Kraken         (2100/2100)
+ Colorado Avalanche     at  Nashville Predators    (2300/2300)
+ Minnesota Wild         at  St. Louis Blues        (2300/2300)
+ Vegas Golden Knights   at  Buffalo Sabres         (0000/0000)
+ Ottawa Senators        at  Philadelphia Flyers    (0000/0000)
+ Montreal Canadiens     at  Tampa Bay Lightning    (0000/0000)
+ New York Rangers       at  Toronto Maple Leafs    (0000/0000)
+ Boston Bruins          at  New York Islanders     (0030/0030)
+ Columbus Blue Jackets  at  Chicago Blackhawks     (0100/0100)
+ San Jose Sharks        at  Dallas Stars           (0100/0100)
+ Pittsburgh Penguins    at  Calgary Flames         (0300/0300)
+ Sunday, March  3 schedules (EST/GMT)
+ Arizona Coyotes        at  Washington Capitals    (1800/1800)
+ New Jersey Devils      at  Los Angeles Kings      (2030/2030)
+ San Jose Sharks        at  Minnesota Wild         (0000/0000)
+ Winnipeg Jets          at  Buffalo Sabres         (0000/0000)
+ Vancouver Canucks      at  Anaheim Ducks          (0100/0100)
+ Pittsburgh Penguins    at  Edmonton Oilers        (0200/0200)
+ Monday, March  4 schedules (EST/GMT)
+ Vegas Golden Knights   at  Columbus Blue Jackets  (0000/0000)
+ Florida Panthers       at  New York Rangers       (0000/0000)
+ Boston Bruins          at  Toronto Maple Leafs    (0000/0000)
+ St. Louis Blues        at  Philadelphia Flyers    (0030/0030)
+ Chicago Blackhawks     at  Colorado Avalanche     (0200/0200)
+ Seattle Kraken         at  Calgary Flames         (0230/0230)
+</p>
+            </body>
+          </html>
+        </inlineXML>
+      </contentSet>
+    </newsItem>
+  </itemSet>
+</newsMessage>

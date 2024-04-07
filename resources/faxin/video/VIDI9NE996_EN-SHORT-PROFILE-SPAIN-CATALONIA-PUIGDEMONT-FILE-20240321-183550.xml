@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NewsML Version="1.2">
+  <!--AFP NewsML text-photo profile evolution2-->
+  <!--Processed by Xafp1-4ToNewsML1-2 rev20-->
+  <Catalog Href="http://www.afp.com/dtd/AFPCatalog.xml" />
+  <NewsEnvelope>
+    <TransmissionId>1234</TransmissionId>
+    <DateAndTime>20240321T184046+0000</DateAndTime>
+    <NewsService FormalName="AFP-VIDEO">
+    </NewsService>
+    <NewsProduct FormalName="PRBI30">
+    </NewsProduct>
+    <NewsProduct FormalName="AFP-FORUM">
+    </NewsProduct>
+    <NewsProduct FormalName="PRBINT">
+    </NewsProduct>
+    <NewsProduct FormalName="BASE-ILLIMITEE-AFPNEWS-EN">
+    </NewsProduct>
+    <NewsProduct FormalName="VID-AFP-B-EN">
+    </NewsProduct>
+    <Priority FormalName="4">
+    </Priority>
+  </NewsEnvelope>
+  <NewsItem xml:lang="en">
+    <Identification>
+      <NewsIdentifier>
+        <ProviderId>afp.com</ProviderId>
+        <DateId>20210923T224405Z</DateId>
+        <NewsItemId>VIDI9NE996_EN</NewsItemId>
+        <RevisionId PreviousRevision="4" Update="N">5</RevisionId>
+        <PublicIdentifier>urn:newsml:afp.com:20210923T224405Z:VIDI9NE996_EN:5</PublicIdentifier>
+      </NewsIdentifier>
+      <NameLabel>SHORT-PROFILE-SPAIN-CATALONIA-PUIGDEMONT-FILE</NameLabel>
+      <Label>
+        <LabelType FormalName="CodeName" />
+        <LabelText>VIDI9NE996_EN</LabelText>
+      </Label>
+    </Identification>
+    <NewsManagement>
+      <NewsItemType FormalName="News">
+      </NewsItemType>
+      <FirstCreated>20210923T224405+0000</FirstCreated>
+      <ThisRevisionCreated>20240321T184046+0000</ThisRevisionCreated>
+      <Status FormalName="Usable">
+      </Status>
+      <Urgency FormalName="4">
+      </Urgency>
+    </NewsManagement>
+    <NewsComponent>
+      <NewsLines>
+        <DateLine>Brussels (Belgium), 21 mars 2024 (AFP) -</DateLine>
+        <HeadLine>SHORT PROFILE: exiled Catalan separatist leader Carles Puigdemont</HeadLine>
+        <SlugLine>SHORT-PROFILE-SPAIN-CATALONIA-PUIGDEMONT-FILE</SlugLine>
+      </NewsLines>
+      <AdministrativeMetadata>
+        <FileName>VIDI9NE996_EN</FileName>
+        <Provider>
+          <Party FormalName="AFP">
+          </Party>
+        </Provider>
+        <Creator>
+          <Party FormalName="KILIAN FICHOU ">
+            <Property FormalName="Position" Value="STF" />
+          </Party>
+        </Creator>
+        <Source>
+          <Party FormalName="AFPTV">
+          </Party>
+        </Source>
+        <Contributor>
+          <Party FormalName="KATE GILLAM ">
+            <Property FormalName="Position" Value="STF" />
+          </Party>
+        </Contributor>
+      </AdministrativeMetadata>
+      <DescriptiveMetadata>
+        <Language FormalName="en">
+        </Language>
+        <SubjectCode>
+          <Subject FormalName="11000000">
+          </Subject>
+        </SubjectCode>
+        <Location HowPresent="Origin">
+          <Property FormalName="Country" AllowedValues="country" Value="BEL">
+          </Property>
+          <Property FormalName="City" Value="2091">
+          </Property>
+        </Location>
+        <Property FormalName="Event" Value="">
+        </Property>
+        <Property FormalName="Event" Value="">
+        </Property>
+        <Property FormalName="Keyword" Value="Carles Puigdemont">
+        </Property>
+        <Property FormalName="Keyword" Value="Oriol Junqueras">
+        </Property>
+        <Property FormalName="Keyword" Value="Raül Romeva">
+        </Property>
+        <Property FormalName="Keyword" Value="Carme Forcadell">
+        </Property>
+        <Property FormalName="Keyword" Value="Dolors Bassa">
+        </Property>
+        <Property FormalName="Keyword" Value="Toni Comín">
+        </Property>
+        <Property FormalName="Keyword" Value="Clara Ponsatí">
+        </Property>
+      </DescriptiveMetadata>
+      <NewsComponent>
+        <Role FormalName="caption">
+        </Role>
+        <ContentItem>
+          <MediaType FormalName="Text">
+          </MediaType>
+          <Format FormalName="NITF3.1" />
+          <DataContent>
+            <nitf>
+              <body>
+                <body.content>
+                  <p>Short profile of Catalan separatist leader Carles Puigdemont said Thursday he would run in Catalonia's snap May election in a move which could bring forward his return to Spain after years of self-imposed exile. "I have decided to run in the next elections for Catalonia's parliament," he told supporters in Elne, a small town in southern France near the border with Spain.  SHORT PROFILE OF</p>
+                </body.content>
+              </body>
+            </nitf>
+          </DataContent>
+        </ContentItem>
+      </NewsComponent>
+      <NewsComponent>
+        <Role FormalName="script">
+        </Role>
+        <ContentItem>
+          <MediaType FormalName="Text">
+          </MediaType>
+          <Format FormalName="NITF3.1" />
+          <DataContent>
+            <nitf>
+              <body>
+                <body.content>
+                  <p>SHOTLIST<br></br><br></br>WATERLOO, WALLOON BRABANT PROVINCE, BELGIUM<br></br>JULY 7, 2021<br></br>SOURCE: AFPTV<br></br><br></br>IMAGES (00:23)<br></br>1. 00:04-00:16 Zoom out recently released Catalan separatists exiting the Casa de la Republica Catalana in Waterloo with former Catalan president Carles Puigdemont<br></br>2. 00:16-00:20 Mid shot recently released Catalan separatists Carme Forcadell (left), Meritxell Serret (2nd left), Oriol Junqueras (3rd left), Dolors Bassa (3rd right) and Raul Romeva (2nd right), posing with Carles Puigdemont (center) and Catalan MEP Toni Comin (right)in front of the Casa de la Republica Catalana in Waterloo<br></br>3. 00:20-00:24 Close-up Oriol Junqueras (left) and former Catalan President Carles Puigdemont <br></br>4. 00:24-00:28 Mid shot recently released catalan separatists Oriol Junqueras (center), Meritxell Serret (left) and former Catalan President Carles Puigdemont <br></br><br></br>BRUSSELS, BELGIUM<br></br>JUNE 3, 2021<br></br>SOURCE: AFPTV<br></br><br></br>IMAGES (00:07)<br></br>5. 00:28-00:31 Mid shot Antoni Comín, Carles Puigdemont and Clara Ponsatí at the beginning of the press conference<br></br>6. 00:31-00:35 Wide shot Antoni Comín, Carles Puigdemont and Clara Ponsatí at the beginning of the press conference<br></br><br></br>BRUSSELS, BELGIUM<br></br>MARCH 9, 2021<br></br>SOURCE: AFPTV<br></br><br></br>IMAGES (00:36)<br></br>7. 00:35-00:46 Wide shot Carles Puigdemont, Clara Ponsati and Toni Comin singing at protest after press conference<br></br>8. 00:46-00:50 Close-up Carles Puigdemont singing at protest <br></br>9. 00:50-00:59 Pan left from press to protesters singing<br></br>10. 00:59-01:05 Mid shot Carles Puigdemont, Clara Ponsati and Toni Comin clapping and shouting "Libertad" (ed: Freedom)<br></br>11. 01:05-01:11 Tilt up Carles Puigdemont clapping and shouting "Libertad"<br></br><br></br><br></br>///<br></br>-----------------------------------------------------------<br></br>AFP TEXT STORY: <br></br><br></br> URGENT ¥¥¥ Exiled separatist Puigdemont says to run in Catalonia snap poll <br></br>Elne, France, March 21, 2024 (AFP) - <br></br>Catalan separatist leader Carles Puigdemont said Thursday he would run in Catalonia's snap May election in a move which could bring forward his return to Spain after years of self-imposed exile.<br></br>"I have decided to run in the next elections for Catalonia's parliament," he told supporters in Elne, a small town in southern France near the border with Spain. <br></br>burs-hmw/CHZ/imm</p>
+                </body.content>
+              </body>
+            </nitf>
+          </DataContent>
+        </ContentItem>
+      </NewsComponent>
+    </NewsComponent>
+  </NewsItem>
+</NewsML>

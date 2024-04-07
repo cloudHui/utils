@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<newsMessage
+    xmlns="http://iptc.org/std/nar/2006-10-01/">
+    <header>
+        <sent>2023-12-13T15:57:16.507Z</sent>
+        <sender>ap.org</sender>
+        <transmitId>ug6qMXBK1LI</transmitId>
+        <channel>AP Media API</channel>
+    </header>
+    <itemSet>
+        <newsItem guid="tag:ap.org,2011:2584968342fc4b698f9727388f2294d5" version="1" standard="NewsML-G2" standardversion="2.28" conformance="power">
+            <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_6.xml"/>
+            <catalogRef href="http://cv.ap.org/customer/cv/catalog4customers-1.xml"/>
+            <rightsInfo>
+                <copyrightHolder literal="AP"/>
+                <copyrightNotice>Copyright 2023 The Associated Press. All rights reserved.</copyrightNotice>
+                <usageTerms>This content is intended for editorial use only. For other uses, additional clearances may be required.</usageTerms>
+                <usageTerms>No additional restrictions beyond those terms outlined in your license agreement.</usageTerms>
+            </rightsInfo>
+            <itemMeta>
+                <itemClass qcode="ninat:video"/>
+                <provider qcode="approviderid:ap">
+                    <name>AP</name>
+                </provider>
+                <versionCreated>2023-12-13T14:30:45Z</versionCreated>
+                <firstCreated>2023-12-13T14:30:43Z</firstCreated>
+                <pubStatus qcode="stat:usable"/>
+                <role>
+                    <name>VOSOT</name>
+                </role>
+                <generator versioninfo="2.2" role="apgen:runtime">AP Media API</generator>
+                <service>
+                    <name>Latest News</name>
+                </service>
+                <service>
+                    <name>Top Stories</name>
+                </service>
+                <service>
+                    <name>Europe Africa</name>
+                </service>
+                <service>
+                    <name>VideoHub APTN News</name>
+                </service>
+                <title>UAE COP28 Agreement EU Colombia Reaction</title>
+                <signal qcode="apsig:singlesource"/>
+                <signal qcode="apsig:whitelisted"/>
+                <signal qcode="apsig:NewsroomReady"/>
+                <signal qcode="apsig:newscontent"/>
+                <link rel="irel:seeAlso" href="https://newsroom.ap.org/detail/SpainUKEUandColombiarepresentativesreacttoagreementreachedatCOP28/2584968342fc4b698f9727388f2294d5/video"/>
+            </itemMeta>
+            <contentMeta>
+                <urgency>4</urgency>
+                <contentCreated>2023-12-13T14:30:43Z</contentCreated>
+                <contentModified>2023-12-13T14:30:45Z</contentModified>
+                <located>
+                    <name>Dubai, United Arab Emirates</name>
+                </located>
+                <infoSource role="crole:source" type="apsourcetype:AP">
+                    <name>ASSOCIATED PRESS</name>
+                </infoSource>
+                <audience qcode="apaudience:661850e07d5b100481f4c076b8e3055c" type="apaudtype:audgeography">
+                    <name>Europe</name>
+                </audience>
+                <audience qcode="apaudience:661812607d5b100481f1c076b8e3055c" type="apaudtype:audgeography">
+                    <name>Africa</name>
+                </audience>
+                <altId type="ap:itemId">2584968342fc4b698f9727388f2294d5</altId>
+                <altId type="ap:recordSequenceNumber">0</altId>
+                <altId type="ap:videoid">4468398</altId>
+                <altId type="ap:etag">2584968342fc4b698f9727388f2294d5_0a12aza11c0</altId>
+                <altId type="ap:friendlyKey">2990011007</altId>
+                <altId type="ap:referenceId">4468398</altId>
+                <language tag="en" role="aprol:contentLang"/>
+                <language tag="en" role="aprol:audioDescription">
+                    <name>NATSOUND/Engish</name>
+                </language>
+                <subject type="cpnat:abstract" creator="apsubcreator:Machine" qcode="apsubject:86aad5207dac100488ecba7fa5283c3e" relevance="51">
+                    <name>Politics</name>
+                </subject>
+                <subject type="cpnat:geoArea" creator="apsubcreator:Machine" qcode="apgeography:661effd07d5b1004829ec076b8e3055c" relevance="73">
+                    <name>Colombia</name>
+                    <broader qcode="apgeography:661908787d5b10048204c076b8e3055c">
+                        <name>South America</name>
+                    </broader>
+                </subject>
+                <subject type="cpnat:geoArea" creator="apsubcreator:Machine" qcode="apgeography:661850e07d5b100481f4c076b8e3055c" relevance="96">
+                    <name>Europe</name>
+                </subject>
+                <subject type="cpnat:geoArea" creator="apsubcreator:Machine" qcode="apgeography:66219fb07d5b100482e2c076b8e3055c" relevance="73">
+                    <name>United Kingdom</name>
+                </subject>
+                <subject type="cpnat:person" creator="apsubcreator:Editorial">
+                    <name>Wopke Hoekstra</name>
+                </subject>
+                <subject type="cpnat:person" creator="apsubcreator:Editorial">
+                    <name>Susana Muhamad Gonzalez</name>
+                </subject>
+                <subject type="cpnat:person" creator="apsubcreator:Editorial">
+                    <name>Teresa Ribera</name>
+                </subject>
+                <subject type="cpnat:person" creator="apsubcreator:Editorial">
+                    <name>Graham Stuart</name>
+                </subject>
+                <subject type="cpnat:person" creator="apsubcreator:Machine" qcode="apperson:a26aff24734f442198eed57f56b3b067" relevance="35">
+                    <name>Graham Stuart</name>
+                </subject>
+                <subject type="cpnat:organisation" creator="apsubcreator:Machine" qcode="aporganization:775f91288d7410048cf98a3c53cbc603" relevance="44">
+                    <name>European Union</name>
+                </subject>
+                <slugline>UAE COP28 Agreement EU Colombia Reaction</slugline>
+                <slugline role="aprol:original">UAE COP28 AGREEMENT EU COLOMBIA REACTION 202312</slugline>
+                <headline>Spain, UK, EU and Colombia representatives react to agreement reached at COP28</headline>
+                <dateline>13 December 2023 - Dubai, United Arab Emirates</dateline>
+                <description xml:lang="en" role="drol:caption">Spain, UK, EU and Colombia representatives react to agreement reached at COP28</description>
+            </contentMeta>
+            <contentSet>
+                <remoteContent residref="d5217b6861f84766be6bca4abdf466e2" href="https://mapi.associatedpress.com/v1/items/2584968342fc4b698f9727388f2294d5.0/thumbnail/3fbc062377184c41bba6129e01b24cba_1920x1080.jpg?nfe=true&amp;app=MPK&amp;wm=false&amp;tag=iid~2584968342fc4b698f9727388f2294d5!rsn~0!cid~d5217b6861f84766be6bca4abdf466e2!orgId~111677!qt~ug6qMXBK1LI!orgNm~Nextologies!role~Thumbnail!mt~video!fmt~JPEG%20Baseline" rendition="rnd:thumbnail" size="232928348" contenttype="image/jpeg" format="frmt:JPEG_Baseline" width="1920" height="1080">
+                    <altId type="ap:originalFileName">4468398_UAE COP28 Agreement EU Colombia Reaction_0_1920x1080.jpg</altId>
+                </remoteContent>
+                <remoteContent residref="d1d0122bc78a474ab3f5e44a6fdd0028" href="https://api.ap.org/media/v/content/2584968342fc4b698f9727388f2294d5.0/download?role=preview&amp;qt=ug6qMXBK1LI&amp;cid=d1d0122bc78a474ab3f5e44a6fdd0028" rendition="rnd:preview" contenttype="video/mpeg" format="frmt:MPEG" width="576" height="324" duration="181600" durationunit="timeunit:milliseconds" videoframerate="15" videoaspectratio="16:9" videoavgbitrate="1500000" videocodec="codec:h.264" videoscaling="sov:unscaled">
+                    <altId type="ap:originalFileName">4468398_UAE COP28 Agreement EU Colombia Reaction_0_Preview.mp4</altId>
+                </remoteContent>
+                <remoteContent residref="5f0872dc3e8340ac8a884f58524141d6" href="https://api.ap.org/media/v/content/2584968342fc4b698f9727388f2294d5.0/download?role=main&amp;qt=ug6qMXBK1LI&amp;cid=5f0872dc3e8340ac8a884f58524141d6&amp;pt=NDU1OTB8OTA4NzF8MnwwfC0" rendition="rnd:highRes" size="232928348" contenttype="video/mp4" format="frmt:MPEG" width="1920" height="1080" duration="181600" durationunit="timeunit:milliseconds" videoframerate="29.97" videoaspectratio="16:9" videoavgbitrate="50000000" videocodec="codec:microsoft mpeg-4">
+                    <altId type="ap:originalFileName">4468398_UAE COP28 Agreement EU Colombia Reaction_0_1080i60ESSENCE.mp4</altId>
+                    <signal type="ap:priceTag" literal="Unlimited"/>
+                </remoteContent>
+                <remoteContent residref="b34f80fd45df478e830d14d6fe82e4f4" href="https://api.ap.org/media/v/content/2584968342fc4b698f9727388f2294d5.0/download?role=main&amp;qt=ug6qMXBK1LI&amp;cid=b34f80fd45df478e830d14d6fe82e4f4&amp;pt=NDU1OTB8OTA4NzF8MnwwfC0" rendition="rnd:highRes" size="232928348" contenttype="video/mp4" format="frmt:MPEG" width="1920" height="1080" duration="181600" durationunit="timeunit:milliseconds" videoframerate="25" videoaspectratio="16:9" videoavgbitrate="50000000" videocodec="codec:microsoft mpeg-4">
+                    <altId type="ap:originalFileName">4468398_UAE COP28 Agreement EU Colombia Reaction_0_1080i50ESSENCE.mp4</altId>
+                    <signal type="ap:priceTag" literal="Unlimited"/>
+                </remoteContent>
+                <remoteContent residref="e669c57bbe424cdc95e1dacca52f330c" href="https://api.ap.org/media/v/content/2584968342fc4b698f9727388f2294d5.0/download?role=main&amp;qt=ug6qMXBK1LI&amp;cid=e669c57bbe424cdc95e1dacca52f330c&amp;pt=NDU1OTB8OTA4NzF8MnwwfC0" rendition="rnd:highRes" size="232928348" contenttype="video/mpeg" format="frmt:MPEG" width="720" height="480" duration="181600000" durationunit="timeunit:milliseconds" videoframerate="29.97" videoaspectratio="16:9" videoavgbitrate="6144" videocodec="codec:mpeg">
+                    <altId type="ap:originalFileName">4468398_UAE COP28 Agreement EU Colombia Reaction_0_NTSCESSENCE.mpg</altId>
+                    <signal type="ap:priceTag" literal="Unlimited"/>
+                </remoteContent>
+                <remoteContent residref="c2aa5ca97862432982582863edff4695" href="https://api.ap.org/media/v/content/2584968342fc4b698f9727388f2294d5.0/download?role=main&amp;qt=ug6qMXBK1LI&amp;cid=c2aa5ca97862432982582863edff4695&amp;pt=NDU1OTB8OTA4NzF8MnwwfC0" rendition="rnd:highRes" size="232928348" contenttype="video/mpeg" format="frmt:MPEG" width="720" height="576" duration="181600000" durationunit="timeunit:milliseconds" videoframerate="25" videoaspectratio="16:9" videoavgbitrate="6144" videocodec="codec:mpeg">
+                    <altId type="ap:originalFileName">4468398_UAE COP28 Agreement EU Colombia Reaction_0_PALESSENCE.mpg</altId>
+                    <signal type="ap:priceTag" literal="Unlimited"/>
+                </remoteContent>
+                <remoteContent residref="3fbc062377184c41bba6129e01b24cba" href="https://api.ap.org/media/v/content/2584968342fc4b698f9727388f2294d5.0/download?qt=ug6qMXBK1LI&amp;type=text&amp;format=nitf&amp;text=caption&amp;et=0a12aza11c0" rendition="aprol:caption" contenttype="text/xml" format="frmt:nitf" wordcount="13">
+                    <altId type="ap:originalFileName">4468398_UAE COP28 Agreement EU Colombia Reaction_0_Caption.xml</altId>
+                </remoteContent>
+                <remoteContent residref="3fbc062377184c41bba6129e01b24cba" href="https://api.ap.org/media/v/content/2584968342fc4b698f9727388f2294d5.0/download?qt=ug6qMXBK1LI&amp;type=text&amp;format=nitf&amp;text=script&amp;et=0a12aza11c0" rendition="aprol:script" contenttype="text/xml" format="frmt:nitf" wordcount="841">
+                    <altId type="ap:originalFileName">4468398_UAE COP28 Agreement EU Colombia Reaction_0_Script.xml</altId>
+                </remoteContent>
+                <inlineXML contenttype="application/nitf+xml" format="frmt:NITF" rendition="aprol:Script" wordcount="6891" xml:lang="en">
+                    <nitf
+                        xmlns="http://iptc.org/std/NITF/2006-10-18/" version="-//IPTC//DTD NITF 3.4//EN" change.date="October 18, 2006" change.time="19:30">
+                        <head>
+                            <docdata>
+                                <doc-id regsrc="AP"/>
+                                <date.issue norm="20231213T143043Z"/>
+                                <ed-msg>Latest News</ed-msg>
+                                <ed-msg>Top Stories</ed-msg>
+                                <ed-msg>Europe Africa</ed-msg>
+                            </docdata>
+                        </head>
+                        <body>
+                            <body.head>
+                                <hedline>
+                                    <hl1 id="headline">Spain, UK, EU and Colombia representatives react to agreement reached at COP28</hl1>
+                                </hedline>
+                                <distributor>The Associated Press</distributor>
+                                <dateline>
+                                    <location>13 December 2023 - Dubai, United Arab Emirates</location>
+                                </dateline>
+                            </body.head>
+                            <body.content>
+                                <block>
+                                    <p>Editors / Producers please click to view this video on 
+                                        <a href="https://newsroom.ap.org/detail/SpainUKEUandColombiarepresentativesreacttoagreementreachedatCOP28/2584968342fc4b698f9727388f2294d5/video">AP Newsroom</a>
+                                    </p>
+                                    <p>
+                                        <a href="https://newsroom.ap.org/detail/SpainUKEUandColombiarepresentativesreacttoagreementreachedatCOP28/2584968342fc4b698f9727388f2294d5/video">https://newsroom.ap.org/detail/SpainUKEUandColombiarepresentativesreacttoagreementreachedatCOP28/2584968342fc4b698f9727388f2294d5/video</a>
+                                    </p>
+                                    <p>SHOTLIST:</p>
+                                    <p>RESTRICTION SUMMARY:</p>
+                                    <p/>
+                                    <p>ASSOCIATED PRESS </p>
+                                    <p>Dubai - 13 December 2023</p>
+                                    <p>1. Wide of people outside plenary</p>
+                                    <p>2. SOUNDBITE (English) Wopke Hoekstra, European Union Commissioner for Climate Action:</p>
+                                    <p>"For the first time in 30 years, we are now at a decision that marks the beginning of the end of fossil fuels, and that has tremendous influence. It means we keep 1.5 within reach."</p>
+                                    <p>3. Wide of people outside plenary</p>
+                                    <p>4. SOUNDBITE (English) Wopke Hoekstra, European Union Commissioner for Climate Action:</p>
+                                    <p>"This is a moment of true satisfaction. But at the same time, we have to continue, we have to act and we have to absolutely do so in unity, and that is our commitment as the European Union."</p>
+                                    <p>5. Wide of people outside plenary</p>
+                                    <p>6. SOUNDBITE (English) Wopke Hoekstra, European Union Commissioner for Climate Action:</p>
+                                    <p>"In any negotiation it is my experience that there’s always, that you can always articulate something that you would also would want to have or a slightly different language or an extra bit of words. But If you zoom out and you see what we came here for, which was high ambition on mitigation, high ambition on (unintelligible), bridging that also with financing and specifically marking the end of the beginning, the beginning of the end of fossil fuels. I think we did deliver and we did rise to the occasion."</p>
+                                    <p>7. Media</p>
+                                    <p>8. SOUNDBITE (English) Teresa Ribera, Spanish Deputy Prime Minister: </p>
+                                    <p>"There were many other things that we would have liked to see in this text, but we sincerely think that this is very relevant step forward, that for the first time after 30 years since Rio times, the focus spots the attention on fossil fuels, on a fossil fuel world that needs to step down from fossil fuels, and to provide energy security to all with other means."</p>
+                                    <p>9. Wide of people outside plenary</p>
+                                    <p>10. SOUNDBITE (English) Graham Stuart, UK Climate Minister: </p>
+                                    <p>(++referring to delegations from island nations++)</p>
+                                    <p>" I really feel it's important that their voices should be heard. The fact that the gavel came down when they weren't in the room was of course disappointing."</p>
+                                    <p>11. Wide of delegates outside plenary</p>
+                                    <p>12. SOUNDBITE (English) Susana Muhamad Gonzalez, Environment Minister of Colombia:</p>
+                                    <p>"The political strategy of the president was to be very fast in the decision, so we couldn't come up with a fast reaction. I'm sorry for that situation. And that the islands couldn’t have the space before the decision was made,  because it is a right in the plenary – a plenary is exactly not only for reading statements, but actually to mobilize the process. But on the other hand, I also say that I don't think there could have been another political result within this situation."</p>
+                                    <p>13. Wide of delegates outside plenary</p>
+                                    <p>STORYLINE:</p>
+                                    <p>Ministers involved in negotiating a cliamte deal on Wednesday praised the COP28 agreement to "transition away" from fossil fuels, while acknowledging that it was a challenging compromise.</p>
+                                    <p/>
+                                    <p>United Nations climate negotiators directed the world to transition away from planet-warming fossil fuels in a move the talks chief called historic, despite critics' worries about loopholes.</p>
+                                    <p/>
+                                    <p>Within minutes of opening Wednesday’s session, COP28 President Sultan al-Jaber gaveled approval of the central document — the global stocktake that says how off-track the world is on climate and how it will get back on track — without asking for comments. Delegates stood and hugged each other.</p>
+                                    <p/>
+                                    <p>The European Union's delegation, which stood with small island nations in fighting for stronger language to rid the world of fossil fuels, celebrated the agreement as historic.</p>
+                                    <p/>
+                                    <p>The new deal had been floated early Wednesday and was stronger than a draft proposed days earlier, but had loopholes that upset critics.</p>
+                                    <p/>
+                                    <p>Analysts and delegates wondered if there was going to be a floor fight over details, but al-Jaber acted quickly, not giving critics a chance to even clear their throats.</p>
+                                    <p/>
+                                    <p>Ministers said they felt bad that small island nations weren't in the room when al-Jaber said the deal was done.</p>
+                                    <p/>
+                                    <p>Al-Jaber who leads a state-run oil company made remarks that raised concerns that he plans to increase the production of crude oil and natural gas.</p>
+                                    <p/>
+                                    <p>AP video shot by David Keyton</p>
+                                    <p/>
+                                    <p>=======================================</p>
+                                    <p>Associated Press climate and environmental coverage receives support from several private foundations. The AP is solely responsible for all content.</p>
+                                    <p/>
+                                    <p>===========================================================</p>
+                                    <p/>
+                                    <p>Clients are reminded to adhere to all listed restrictions and to check the terms of their licence agreements. For further assistance, please contact the AP Archive on: Tel +44(0)2074827482 Email: info@aparchive.com.</p>
+                                </block>
+                            </body.content>
+                        </body>
+                    </nitf>
+                </inlineXML>
+                <inlineXML contenttype="application/nitf+xml" format="frmt:NITF" rendition="aprol:Caption" wordcount="1311" xml:lang="en">
+                    <nitf
+                        xmlns="http://iptc.org/std/NITF/2006-10-18/" version="-//IPTC//DTD NITF 3.4//EN" change.date="October 18, 2006" change.time="19:30">
+                        <head>
+                            <docdata>
+                                <doc-id regsrc="AP"/>
+                                <date.issue norm="20231213T143043Z"/>
+                                <ed-msg>Latest News</ed-msg>
+                                <ed-msg>Top Stories</ed-msg>
+                                <ed-msg>Europe Africa</ed-msg>
+                            </docdata>
+                        </head>
+                        <body>
+                            <body.head>
+                                <hedline>
+                                    <hl1 id="headline">Spain, UK, EU and Colombia representatives react to agreement reached at COP28</hl1>
+                                </hedline>
+                                <distributor>The Associated Press</distributor>
+                                <dateline>
+                                    <location>13 December 2023 - Dubai, United Arab Emirates</location>
+                                </dateline>
+                            </body.head>
+                            <body.content>
+                                <block>
+                                    <p>Editors / Producers please click to view this video on 
+                                        <a href="https://newsroom.ap.org/detail/SpainUKEUandColombiarepresentativesreacttoagreementreachedatCOP28/2584968342fc4b698f9727388f2294d5/video">AP Newsroom</a>
+                                    </p>
+                                    <p>
+                                        <a href="https://newsroom.ap.org/detail/SpainUKEUandColombiarepresentativesreacttoagreementreachedatCOP28/2584968342fc4b698f9727388f2294d5/video">https://newsroom.ap.org/detail/SpainUKEUandColombiarepresentativesreacttoagreementreachedatCOP28/2584968342fc4b698f9727388f2294d5/video</a>
+                                    </p>
+                                    <p>Spain, UK, EU and Colombia representatives react to agreement reached at COP28</p>
+                                </block>
+                            </body.content>
+                        </body>
+                    </nitf>
+                </inlineXML>
+            </contentSet>
+        </newsItem>
+    </itemSet>
+</newsMessage>

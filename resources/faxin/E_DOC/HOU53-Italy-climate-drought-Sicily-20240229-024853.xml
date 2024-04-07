@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NewsML Version="1.2">
+  <!--AFP NewsML text-photo profile evolution2-->
+  <!--Processed by Xafp1-4ToNewsML1-2 rev20-->
+  <Catalog Href="http://www.afp.com/dtd/AFPCatalog.xml" />
+  <NewsEnvelope>
+    <TransmissionId>0149</TransmissionId>
+    <DateAndTime>20240229T030206Z</DateAndTime>
+    <NewsService FormalName="DGTE">
+    </NewsService>
+    <NewsProduct FormalName="PAW">
+    </NewsProduct>
+    <NewsProduct FormalName="EAA">
+    </NewsProduct>
+    <NewsProduct FormalName="ASI">
+    </NewsProduct>
+    <NewsProduct FormalName="MAX">
+    </NewsProduct>
+    <NewsProduct FormalName="AFW">
+    </NewsProduct>
+    <NewsProduct FormalName="ANA">
+    </NewsProduct>
+    <NewsProduct FormalName="MEW">
+    </NewsProduct>
+    <NewsProduct FormalName="EUW">
+    </NewsProduct>
+    <NewsProduct FormalName="climate">
+    </NewsProduct>
+    <Priority FormalName="4">
+    </Priority>
+  </NewsEnvelope>
+  <NewsItem xml:lang="en">
+    <Identification>
+      <NewsIdentifier>
+        <ProviderId>afp.com</ProviderId>
+        <DateId>20240229T030206Z</DateId>
+        <NewsItemId>TX-PAR-HOU53</NewsItemId>
+        <RevisionId PreviousRevision="0" Update="N">1</RevisionId>
+        <PublicIdentifier>urn:newsml:afp.com:20240229T030206Z:TX-PAR-HOU53:1</PublicIdentifier>
+      </NewsIdentifier>
+      <NameLabel>Italy-climate-drought-Sicily</NameLabel>
+    </Identification>
+    <NewsManagement>
+      <NewsItemType FormalName="News">
+      </NewsItemType>
+      <FirstCreated>20240229T030206+0000</FirstCreated>
+      <ThisRevisionCreated>20240229T030206+0000</ThisRevisionCreated>
+      <Status FormalName="Usable">
+      </Status>
+      <Urgency FormalName="4">
+      </Urgency>
+      <AssociatedWith NewsItem="urn:newsml:afp.com:20240229T030206Z:doc-34kb8fw">
+      </AssociatedWith>
+      <AssociatedWith FormalName="Photo">
+      </AssociatedWith>
+    </NewsManagement>
+    <NewsComponent>
+      <NewsLines>
+        <DateLine xml:lang="en">Enna, Italy, Feb 29, 2024 (AFP) -</DateLine>
+        <HeadLine xml:lang="en">Dry lakes, wildfires: Consequences of drought on Sicily</HeadLine>
+        <SlugLine xml:lang="en">Italy-climate-drought-Sicily</SlugLine>
+        <NewsLine>
+          <NewsLineType FormalName="ProductLine" />
+          <NewsLineText xml:lang="en">=(Picture)=</NewsLineText>
+        </NewsLine>
+      </NewsLines>
+      <AdministrativeMetadata>
+        <Provider>
+          <Party FormalName="AFP">
+          </Party>
+        </Provider>
+        <Creator>
+          <Party FormalName="Ella IDE ">
+          </Party>
+        </Creator>
+      </AdministrativeMetadata>
+      <DescriptiveMetadata>
+        <Language FormalName="en">
+        </Language>
+        <Genre FormalName="reperes">
+        </Genre>
+        <SubjectCode>
+          <SubjectMatter FormalName="17002000">
+          </SubjectMatter>
+        </SubjectCode>
+        <SubjectCode>
+          <SubjectMatter FormalName="03001000">
+          </SubjectMatter>
+        </SubjectCode>
+        <SubjectCode>
+          <Subject FormalName="03000000">
+          </Subject>
+        </SubjectCode>
+        <SubjectCode>
+          <Subject FormalName="06000000">
+          </Subject>
+        </SubjectCode>
+        <SubjectCode>
+          <SubjectMatter FormalName="03015000">
+          </SubjectMatter>
+        </SubjectCode>
+        <SubjectCode>
+          <SubjectDetail FormalName="03015001">
+          </SubjectDetail>
+        </SubjectCode>
+        <OfInterestTo FormalName="ASI-TEG-1=PAW">
+        </OfInterestTo>
+        <OfInterestTo FormalName="EAA-TEG-1=EUW">
+        </OfInterestTo>
+        <OfInterestTo FormalName="ASI-TEG-1=ASI">
+        </OfInterestTo>
+        <OfInterestTo FormalName="MAX-TEG-1=MAX">
+        </OfInterestTo>
+        <OfInterestTo FormalName="EAA-TEG-1=AFW">
+        </OfInterestTo>
+        <OfInterestTo FormalName="ANA-TEG-1=ANA">
+        </OfInterestTo>
+        <OfInterestTo FormalName="EAA-TEG-1=MEW">
+        </OfInterestTo>
+        <OfInterestTo FormalName="EAA-TEG-1=EUW">
+        </OfInterestTo>
+        <DateLineDate>20240229T030206+0000</DateLineDate>
+        <Location HowPresent="Origin">
+          <Property FormalName="Country" Value="ITA">
+          </Property>
+          <Property FormalName="Area" Value="Sicily">
+          </Property>
+          <Property FormalName="City" Value="Enna">
+          </Property>
+        </Location>
+        <Property FormalName="Keyword" Value="Italy">
+        </Property>
+        <Property FormalName="Keyword" Value="climate">
+        </Property>
+        <Property FormalName="Keyword" Value="drought">
+        </Property>
+        <Property FormalName="Keyword" Value="Sicily">
+        </Property>
+        <Property FormalName="GeneratorSoftware" Value="libg2">
+        </Property>
+      </DescriptiveMetadata>
+      <NewsComponent xml:lang="en">
+        <Role FormalName="main">
+        </Role>
+        <ContentItem>
+          <MediaType FormalName="Text">
+          </MediaType>
+          <Format FormalName="NITF3.1" />
+          <Characteristics>
+            <SizeInBytes>3744</SizeInBytes>
+            <Property FormalName="Words" Value="624">
+            </Property>
+          </Characteristics>
+          <DataContent>
+            <nitf>
+              <body>
+                <body.content>
+                  <p>The Italian island of Sicily has declared a state of emergency over a drought which has withered crops, desiccated pastures and led to water restrictions.</p>
+                  <p>Experts say climate change driven by human activity is boosting the intensity and frequency of extreme weather events, such as heatwaves, droughts and wildfires.</p>
+                  <p>Here is what is at stake:</p>
+                  <p>
+                  </p>
+                  <hl2>- Wildfires -</hl2>
+                  <p>
+                  </p>
+                  <p>Wildfires burned through over 126,000 acres (51,000 hectares) of Sicily last year, according to ISPRA, Italy's environment agency, and there have already been several blazes this year.</p>
+                  <p>More often than not, fires on the island are started deliberately by arsonists including organised crime and building speculators, according to national environmental group Legambiente.</p>
+                  <p>But they rip through land parched by lack of rain.</p>
+                  <p>Firefighting planes often collect water from lakes to tackle fires inland, but water levels have dropped so far they are being forced to collect from the sea instead.</p>
+                  <p>"That means slowing response times and increasing already vertiginous costs enormously," said geologist Giuseppe Amato, head of water resources in Sicily for Legambiente.</p>
+                  <p>
+                  </p>
+                  <hl2>- Agriculture -</hl2>
+                  <p>
+                  </p>
+                  <p>From orange and almond orchards to olive groves and vineyards, Sicilian farmers are reporting failed or poor-quality crops following months of little rain and record temperatures last summer.</p>
+                  <p>The wheat belt near Mount Etna volcano lies cracked and bare. No wheat means no hay for livestock either.</p>
+                  <p>Near Nicoletti Lake in central Sicily, producers of prized Leonforte peaches -- individually wrapped while on the tree to protect them while they ripen -- face losing whole orchards.</p>
+                  <p>"It would be the mass loss of one of the most important things in Sicilian agriculture," Amato said.</p>
+                  <p>For many farmers, it is the second blow after last year's crops were hit by unseasonable rains.</p>
+                  <p>
+                  </p>
+                  <hl2>- Wildlife -</hl2>
+                  <p>
+                  </p>
+                  <p>Sicily is a key stop-over site for birds migrating between Africa and Europe.</p>
+                  <p>Pozzillo Lake has come to symbolise the drought: once a favoured spot for pelicans, it can hold 150 million cubic metres of water, but currently holds just 3.8 million.</p>
+                  <p>Nearby Pergusa Lake, part of a protected UNESCO geopark, "has almost disappeared", said Amato.</p>
+                  <p>"If this lake were to dry up completely, hundreds of species of birds would suffer enormously in terms of migration. It could even threaten endangered species," he said.</p>
+                  <p>Sicily has also destroyed 95 percent of its wetlands in the past 150 years through drainage for conversion to urban or farm land, despite the key role they play in preventing drought, Amato said.</p>
+                  <p>
+                  </p>
+                  <hl2>- Silt -</hl2>
+                  <p>
+                  </p>
+                  <p>Sicily has 25 dams used for irrigation and four for drinking water, though not all are currently operational, according to infrastructure ministry data.</p>
+                  <p>Those 29 together hold 23 percent less water than this time last year, regional figures show.</p>
+                  <p>Part of the problem is that the dams are old -- most were built before 1980 -- and silt build-up over time has dramatically reduced the volume of water they can hold even when rains are abundant.</p>
+                  <p>Italy has secured EU funds for a 47-million-euro ($51-million) project to complete the Pietrarossa dam, begun in the 1990s, which will be the biggest in Sicily once finished.</p>
+                  <p>
+                  </p>
+                  <hl2>- Waste water -</hl2>
+                  <p>
+                  </p>
+                  <p>An average of 42 percent of the water in the Italian network is lost via leaky pipes, according to Italy's national statistics agency, with Sicily the worst performer, losing 52.5 percent.</p>
+                  <p>The region's drought action plan includes the use of treated waste water for agriculture, but "there is very limited water purification in Sicily and it is often terrible quality", Amato said.</p>
+                  <p>According to environmental protection agency Arpa Sicilia, the region has 463 water treatment plants but only 388 are active -- and only 20 percent are currently licensed to operate.</p>
+                  <p>ide/ar/bp</p>
+                  <p>
+                  </p>
+                  <p>
+                  </p>
+                </body.content>
+              </body>
+            </nitf>
+          </DataContent>
+        </ContentItem>
+      </NewsComponent>
+    </NewsComponent>
+  </NewsItem>
+</NewsML>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  -->
+<!--  -->
+<!-- 41 NewsML2\Feed_V2.txt -->
+<newsMessage xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rtr="http://www.reuters.com/ns/2003/08/content" xmlns:x="http://www.w3.org/1999/xhtml">
+    <header>
+        <sent>2024-03-28T07:51:44Z</sent>
+        <sender>reuters.com</sender>
+        <transmitId>tag:reuters.com,2024:newsml_RW978821032024RP1:3</transmitId>
+        <priority>4</priority>
+        <channel>VID</channel>
+        <destination>RWLDO</destination>
+        <destination>RWO1O</destination>
+        <destination>CAI</destination>
+        <destination>RFLA</destination>
+        <destination>RMON</destination>
+        <destination>RWFE</destination>
+        <destination>RWLD</destination>
+        <destination>RWO1</destination>
+        <destination>RWO8</destination>
+        <destination>VCA</destination>
+        <destination>VISM</destination>
+        <destination>VISP</destination>
+    </header>
+    <itemSet>
+        <!-- ========================================================= -->
+        <!-- PRIMARY ITEM : NEP -->
+        <packageItem standard="NewsML-G2" standardversion="2.1" conformance="power" guid="tag:reuters.com,2024:newsml_RW978821032024RP1" version="3" xml:lang="en">
+            <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml"/>
+            <rightsInfo>
+                <copyrightHolder literal="RTRS"/>
+                <copyrightNotice>(c) 2024 Thomson Reuters, unless otherwise identified. Full statement available at https://www.thomsonreuters.com/en/policies/copyright.html</copyrightNotice>
+                <usageTerms xml:lang="en">Broadcast: Part no resale. Part must on-screen courtesy Filistin Icin 1000 Genc. Digital: Part no resale. Part must on-screen courtesy Filistin Icin 1000 Genc.. For Reuters customers only.</usageTerms>
+                <usageTerms role="usageRole:content" xml:lang="en">Broadcast</usageTerms>
+            </rightsInfo>
+            <!-- ========================================================= -->
+            <!-- itemMeta -->
+            <itemMeta>
+                <itemClass qcode="icls:composite"/>
+                <provider literal="reuters.com"/>
+                <versionCreated>2024-03-28T07:51:47Z</versionCreated>
+                <firstCreated>2024-03-28T07:44:20Z</firstCreated>
+                <pubStatus qcode="stat:usable"/>
+                <role qcode="itemRole:N" />
+                <fileName>202403289788WD-TURKEY-ELECTION_O_.xml</fileName>
+                <generator versioninfo="4.12.0">RVN Script Server</generator>
+                <profile versioninfo="00.00.01">NEP-External_ANP</profile>
+                <service qcode="svc:RTR_VID"/>
+                <signal qcode="sic:ATOMIC" />
+                <signal qcode="edStat:U" />
+                <signal qcode="prodId:VID" />
+                <signal qcode="sar:widescreen" >
+                    <name>Native widescreen 16:9</name>
+                </signal> 
+                <link rel="irel:prevVersion" residref="tag:reuters.com,2024:newsml_RW978821032024RP1" version="2" contenttype="application/vnd.iptc.g2.packageitem+xml" rtr:id="RW978821032024RP1" rtr:type="idType:USN" />
+                <rtr:versionedId guid="tag:reuters.com,2024:newsml_RW978821032024RP1:3"/>
+            </itemMeta>
+            <!-- ========================================================= -->
+            <!-- contentMeta -->
+            <contentMeta>
+                <!--=== Administrative === -->
+                <urgency>4</urgency>
+                <located literal="ISTANBUL, ANKARA AND SAKARYA, TURKEY" xml:lang="en">
+                    <name xml:lang="en">ISTANBUL, ANKARA AND SAKARYA, TURKEY</name>
+                </located>
+                <infoSource role="cRole:origProv" literal="Reuters"/>
+                <infoSource role="cRole:source" literal="Reuters"/>
+                <creator literal="Reuters"/>
+                <contributor role="cRole:lastEd" literal="Vespa"/>
+                <exclAudience qcode="audMedia:RCV7"/>
+                <altId type="idType:USN" rtr:isOriginal="1">RW978821032024RP1</altId>
+                <altId type="idType:editNumber">9788</altId>
+                <altId type="idType:itemId">tag:reuters.com,2024:newsml_RW978821032024RP1:3</altId>
+                <!-- === Descriptive === -->
+                <language tag="en"/>
+                <subject qcode="WNSFR:WORLD"/>
+                <subject qcode="tvsc:No-Data-Available"/>
+                <subject qcode="rvnServiceCode:WD">
+                    <name>World</name>
+                </subject>
+                <subject qcode="ISLC:No-Data-Available"/>
+                <genre literal="Current or spot news">
+                    <name>Current or spot news</name>
+                </genre>  
+                <by xml:lang="en">Reuters, MAR 28</by>
+                <slugline xml:lang="en">TURKEY-ELECTION/</slugline>
+                <headline xml:lang="en">Turkey&apos;s opposition aims to hit back at Erdogan in local elections</headline>
+                <dateline>VARIOUS</dateline>
+                <description role="descRole:videoCaption" xml:lang="en">Turkey&apos;s opposition aims to hit back at Erdogan in local elections</description>
+                <subject qcode="N2:POL" type="cptType:78">
+                    <name>Government/Politics</name>
+                </subject> 
+                <subject qcode="N2:VOTE" type="cptType:78">
+                    <name>Elections/Voting</name>
+                </subject> 
+                <keyword>TURKEY</keyword>
+                <keyword>ELECTION</keyword>
+                <keyword>TAYYIP ERDOGAN</keyword>
+                <keyword>MURAT KURUM</keyword>
+                <keyword>EKREM IMAMOGLU</keyword>
+                <keyword>ISTANBUL</keyword>
+                <keyword>ANKARA</keyword>
+                <keyword>MAYOR</keyword>
+            </contentMeta>
+            <!-- ========================================================= -->
+            <!-- CONTENT -->
+            <!-- root  -->
+            <groupSet root="root">
+                <group role="grpRole:NEP" id="root">
+                    <!-- Main -->
+                    <groupRef idref="main"/>
+                </group>  
+                <!-- === MAIN === -->
+                <group role="grpRole:Main" id="main">
+                            <!-- === ITEM REFERENCE === -->
+                    <itemRef residref="tag:reuters.com,2024:newsml_OVT978821032024RP1" contenttype="application/vnd.iptc.g2.newsitem+xml">
+                        <provider literal="reuters.com" />
+                        <pubStatus qcode="stat:usable" />
+                        <role qcode="itemRole:N" />
+                    </itemRef>
+                                                    <!-- === ITEM REFERENCE === -->
+                    <itemRef residref="tag:reuters.com,2024:newsml_LWD978821032024RP1" contenttype="application/vnd.iptc.g2.newsitem+xml">
+                        <provider literal="reuters.com" />
+                        <pubStatus qcode="stat:usable" />
+                        <role qcode="itemRole:N" />
+                    </itemRef>
+                </group>
+            </groupSet>
+        </packageItem>
+        <!-- ========================================================= -->
+        <!-- PRIMARY ITEM : SNI-Text -->
+        <newsItem guid="tag:reuters.com,2024:newsml_OVT978821032024RP1" version="3" standard="NewsML-G2" standardversion="2.1" conformance="power" xml:lang="en">
+            <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+            <rightsInfo>
+                <copyrightHolder literal="RTRS"/>
+                <copyrightNotice>(c) 2024 Thomson Reuters, unless otherwise identified. Full statement available at https://www.thomsonreuters.com/en/policies/copyright.html</copyrightNotice>
+            </rightsInfo>
+            <itemMeta>
+                  <itemClass qcode="icls:text" />
+                   <provider literal="reuters.com"/>
+                   <versionCreated>2024-03-28T07:51:44Z</versionCreated>
+                    <firstCreated>2024-03-28T07:44:20Z</firstCreated>
+                    <pubStatus qcode="stat:usable"/>
+                    <role qcode="itemRole:N" />
+                   <fileName>202403289788WD-TURKEY-ELECTION_O_.xml</fileName>
+                   <profile versioninfo="00.00.01">SNI-Text</profile>
+                <signal qcode="edStat:U" />
+                <link rel="irel:prevVersion" residref="tag:reuters.com,2024:newsml_OVT978821032024RP1" version="2" contenttype="application/vnd.iptc.g2.newsitem+xml" rtr:id="OVT978821032024RP1" rtr:type="idType:USN" />
+                   <rtr:versionedId guid="tag:reuters.com,2024:newsml_OVT978821032024RP1:3"/>
+               </itemMeta>
+            <contentMeta>
+                <urgency>4</urgency>
+                <located literal="ISTANBUL, ANKARA AND SAKARYA, TURKEY" xml:lang="en">
+                    <name xml:lang="en">ISTANBUL, ANKARA AND SAKARYA, TURKEY</name>
+                </located>
+                <infoSource role="cRole:origProv" literal="Reuters"/>
+                <infoSource role="cRole:source" literal="Reuters"/>
+                <creator literal="Reuters"/>
+                <altId type="idType:USN" rtr:isOriginal="1">OVT978821032024RP1</altId>
+                <altId type="idType:itemId">tag:reuters.com,2024:newsml_OVT978821032024RP1:3</altId>
+                <language tag="en" />
+                <by xml:lang="en">Reuters, MAR 28</by>
+                <slugline xml:lang="en">TURKEY-ELECTION/</slugline>
+                <headline xml:lang="en">Turkey&apos;s opposition aims to hit back at Erdogan in local elections</headline>
+                <dateline>VARIOUS</dateline>
+                <description role="descRole:intro" xml:lang="en">Turkey&apos;s opposition aims to hit back at Erdogan in local elections</description>
+            </contentMeta>
+            <contentSet>
+                <inlineXML contenttype="application/xhtml+xml" xml:lang="en">
+                    <html xmlns="http://www.w3.org/1999/xhtml"><head><title/>
+	               		</head><body><p>VIDEO SHOWS: STREETS OF ISTANBUL AND ANKARA WITH PARTY BANNERS AND POSTERS AHEAD OF MAYORAL ELECTIONS / VOTERS IN INTERVIEW / ANTI-ISRAEL PROTESTS AT TURKISH PRESIDENT TAYYIP ERDOGAN'S RALLIES / NEW WELFARE PARTY CAMPAIGNING AND HOLDING RALLY / ANALYSTS MURAT YETKIN AND BERK ESEN IN INTERVIEW / ELECTION BALLOTS</p><p>EDITORS PLEASE SEE FOLLOWING EDITS FOR MORE COVERAGE OF TURKEY'S LOCAL ELECTIONS: </p><p>EDIT 0018-TURKEY-ELECTION/ANKARA-CAMPAIGN FOR MAYORAL CAMPAIGNS IN ANKARA</p><p>EDIT 0016-TURKEY-ELECTIONS/ISTANBUL-CAMPAIGN FOR MAYORAL CAMPAIGNS IN ISTANBUL</p><p>EDIT 5190-TURKEY-ELECTION/ISTANBUL-CANDIDATES-PROFILE FOR ADDITIONAL FOOTAGE OF CANDIDATES</p><p>EDIT 5191-TURKEY-ELECTION/ANKARA-CANDIDATES-PROFILE FOR ADDITIONAL FOOTAGE OF CANDIDATES</p><p>EDIT 9234-TURKEY-ELECTION/KURDS FOR AN ANALYSIS ON KURDISH VOTERS</p><p>EDIT 8665-TURKEY-ELECTION/ERDOGAN PROFILE FOR A PROFILE ON ERDOGAN</p><p>SHOTLIST ONLY. COMPLETE SCRIPT TO FOLLOW.</p><p>SHOWS: ISTANBUL, TURKEY (MARCH 26, 2024) (REUTERS - Access All)</p><p>1. PEOPLE WALKING IN FRONT OF REPUBLICAN PEOPLE'S PARTY (CHP) STANDS IN ISTANBUL'S USKUDAR DISTRICT</p><p>2. VARIOUS OF CHP CAMPAIGNER DISTRIBUTING FLYERS</p><p>3. VARIOUS OF WOMAN WAVING FLAG IN FRONT OF AK PARTY (AKP) STAND</p><p>4. AKP CAMPAIGNERS SPEAKING TO PEOPLE, HANDING OUT BOOKLETS</p><p>5. VARIOUS OF AKP AND CHP TENTS IN USKUDAR</p><p>6. (SOUNDBITE) (Turkish) PENSIONER, MEHMET KULA, 52, SAYING:</p><p>"We want Murat Kurum to win." (REPORTER ASKING WHY) "Why? Because the man works. He provides services. When you look at our president, he's an older person who is hardworking. He has a lot of services. Does he have mistakes? Yes, there is no person without mistakes but the man works. No matter what they say and our vote is there for years."</p><p>7. BILLBOARDS WITH ELECTION POSTERS FOR CHP ISTANBUL MAYORAL CANDIDATE EKREM IMAMOGLU, SAYING IN TURKISH, "TO THE BALLOT BOXES" AND AKP ISTANBUL MAYORAL CANDIDATE MURAT KURUM, SAYING IN TURKISH, "ISTANBUL WILL WIN"</p><p>8. ELECTION BANNERS FOR IMAMOGLU AND KURUM IN ISTANBUL</p><p>9. (SOUNDBITE) (Turkish) PENSIONER, NEBIYE ERCAN, SAYING:</p><p>"I want Ekrem Imamoglu to win, of course. Some are happy (with him), some are not happy. But I am happy. He has a more enlightened perspective. He is more humane. His services are good. He is not bad. They say he is bad but he is not."</p><p>10. WOMAN LOOKING AT AK PARTY BOOKLET</p><p>11. (SOUNDBITE) (Turkish) HOUSEWIFE, HAMIDE KERKISCI, 60, SAYING:</p><p>"Murat Kurum is a crown jewel. Murat Kurum is a crown jewel. He is a man who visits areas hit by the earthquakes, not one who sits at restaurants, tables where there is alcohol. He is a man who visits areas hit by earthquakes, who is together with the people."</p><p>12. WOMEN AT NEW WELFARE PARTY STAND</p><p>13. (SOUNDBITE) (Turkish) PENSIONER, FARUK PAK, 65, SAYING:</p><p>"It is not only about taking Istanbul. If Istanbul is taken, and the AK Party's votes fall in Turkey, the ruling government will pull itself together in Turkey. It will act more carefully about this high cost of living and I think an early election before 2028 will come on the agenda of our country."</p><p>ANKARA, TURKEY (MARCH 25, 2024) (REUTERS - Access All)</p><p>14. ANALYST MURAT YETKIN IN INTERVIEW</p><p>15. (SOUNDBITE) (English) ANALYST, MURAT YETKIN, SAYING:</p><p>"In 2019, when Erdogan and AK Party lost Istanbul, it was a big blow and it was a scratch on Erdogan's reputation that up until then he was unbeatable, invincible. So, this is going to be a test for him now, whether he will succeed to get Istanbul back and if he does so, that means that he will be able to extend, endorse his power."</p><p>ANKARA, TURKEY (MARCH 18, 2024) (TURKISH PRESIDENCY - Access All)</p><p>16. TURKISH PRESIDENT TAYYIP ERDOGAN AND AK PARTY'S ANKARA MAYORAL CANDIDATE TURGUT ALTINOK AT OPENING CEREMONY OF A TOWER IN ANKARA</p><p>17. (SOUNDBITE) (Turkish) TURKISH PRESIDENT, TAYYIP ERDOGAN, SAYING (PARTIALLY LAID OVER WIDER SHOT):</p><p>"Some people came up who are holding us back not to win but just to make us lose. You know who they are, right? What are you doing holding us back? Okay, then who is going to win when we lose? Of course the single-party fascist CHP and the (pro-Kurdish) DEM (Party), which has become its official partner."</p><p>ISTANBUL, TURKEY (MARCH 24, 2024) (YENIDEN REFAH PARTISI - Access All)</p><p>18. NEW WELFARE PARTY CHAIR FATIH ERBAKAN AND ISTANBUL MAYORAL CANDIDATE MEHMET ALTINOZ AT RALLY IN ISTANBUL</p><p>19. PEOPLE WAVING FLAGS AT RALLY</p><p>20. (SOUNDBITE) (Turkish) NEW WELFARE PARTY LEADER, FATIH ERBAKAN, SAYING:</p><p>"We are not making you lose. Trade with Israel is making you lose. Your understanding of profiteering from municipalities is making you lose. Your economy based on debt, interest, price hikes and taxes, which you have been implementing for 22 years, is making you lose."</p><p>ISTANBUL, TURKEY (MARCH 21, 2024) (REUTERS - Access All)</p><p>21. ANALYST BERK ESEN IN INTERVIEW</p><p>22. (SOUNDBITE) (English) ANALYST, BERK ESEN, SAYING:</p><p>"The Gaza crisis certainly has an impact on the Islamist base of the ruling party and probably some very conservative, pious voters who otherwise supported President Erdogan in the recent presidential elections are having doubts and objections to the foreign policy enacted by this government."</p><p>ISTANBUL, TURKEY (MARCH 20, 2024) (REUTERS - Access All)</p><p>23. NEW WELFARE PARTY'S ISTANBUL MAYORAL CANDIDATE MEHMET ALTINOZ CAMPAIGNING IN BEYLIKDUZU DISTRICT OF ISTANBUL</p><p>24. PERSON SIGNING DOCUMENT TO BECOME MEMBER OF PARTY</p><p>25. MAN WATCHING</p><p>26. ALTINOZ GREETING WORKERS AT BUTCHER SHOP</p><p>27. (SOUNDBITE) (Turkish) NEW WELFARE PARTY'S ISTANBUL MAYORAL CANDIDATE, MEHMET ALTINOZ, SAYING:</p><p>"Right now, Turkey is unfortunately not being run well from an economic perspective. There are very serious zig-zags in foreign policy. Of course these are not welcomed by our people, for example Gaza. It is not possible for citizens to accept the government's Gaza policy. People are being killed there for the past six months, being massacred. There is a genocide. Despite this, the government of the Republic of Turkey, the administration of Turkey which is the leader of the Islamic world, is not doing anything about this."</p><p>28. ALTINOZ SPEAKING TO VOTER</p><p>ISTANBUL, TURKEY (MARCH 21, 2024) (REUTERS - Access All)</p><p>29. (SOUNDBITE) (English) ANALYST, BERK ESEN, SAYING:</p><p>"That party is actually a safe option for many pro-government voters who prefer to keep Erdogan in office but are unhappy about some of the policies that his government is pursuing. So if they want to really send a message that they are not happy with the direction of the country, then the local elections have much lower stakes and they can send this message through this party."</p><p>ANKARA, TURKEY (MARCH 27, 2024) (REUTERS - Access All)</p><p>30. VARIOUS OF PARTY FLAGS, POSTERS AND BANNERS IN THE STREETS OF ANKARA</p><p>ANKARA, TURKEY (MARCH 23, 2024) (FILISTIN ICIN 1000 GENC - Must on-screen courtesy Filistin Icin 1000 Genc)</p><p>31. VARIOUS OF PROTESTERS HOLDING BANNER READING IN TURKISH, "CUT THE TRADE WITH ISRAEL" AS ERDOGAN SPEAKS AT AK PARTY'S RALLY IN ANKARA</p><p>SAKARYA, TURKEY (FEBRUARY 24, 2024) (TURKISH PRESIDENCY - Access All)</p><p>32. PROTESTERS HOLDING SIGN AT AK PARTY RALLY, READING IN TURKISH, "END THE SHAME OF TRADE WITH ISRAEL" </p><p>33. ERDOGAN SPEAKING TO SUPPORTERS</p><p>34. BANNER BEING TAKEN DOWN</p><p>ISTANBUL, TURKEY (MARCH 24, 2024) (VIDEO OBTAINED BY REUTERS - No resale)</p><p>35. VARIOUS OF ANTI-ISRAEL TRADER BANNER AT AK PARTY RALLY BEING TAKEN DOWN</p><p>ISTANBUL, TURKEY (MARCH 24, 2024) (TURKISH PRESIDENCY - Access All)</p><p>36. ERDOGAN ARRIVING ON STAGE AND WAVING TO AUDIENCE AT AK PARTY RALLY</p><p>37. VARIOUS OF CROWD AT RALLY</p><p>38. (SOUNDBITE) (Turkish) TURKISH PRESIDENT, TAYYIP ERDOGAN, SAYING (PARTIALLY LAID OVER WIDER SHOT):</p><p>"Right now, I have 650,000 people before me. We are used to 1.5 million in this square but today there is 650,000 people."</p><p>ANKARA, TURKEY (MARCH 25, 2024) (REUTERS - Access All)</p><p>39. (SOUNDBITE) (English) ANALYST, MURAT YETKIN, SAYING:</p><p>"In his big Istanbul meeting, grand Istanbul meeting - to my surprise - he complained about the participation. It appears that it was not close to the half of what he expected and he complained about that. Economic issues will play a role."</p><p>ISTANBUL, TURKEY (MARCH 26, 2024) (REUTERS - Access All)</p><p>40. PARTY FLAGS, BANNERS AND POSTERS IN THE STREETS OF ISTANBUL</p><p>ANKARA, TURKEY (MARCH 21, 2024) (REUTERS - Access All)</p><p>41. VARIOUS OF  BALLOT, BALLOT BOX, ENVELOPE AND STAMP</p><p>42. PAPER BEING STAMPED</p><p>43. ENVELOPE WITH BALLOT BEING PUT IN BOX</p><p>44. ENVELOPE WITH BALLOT IN BOX</p></body>
+	           		</html>
+                </inlineXML>
+            </contentSet>
+        </newsItem>
+        <!-- ========================================================= -->
+        <!-- PRIMARY ITEM : SNI -Video -->
+        <newsItem guid="tag:reuters.com,2024:newsml_LWD978821032024RP1" version="1" standard="NewsML-G2" standardversion="2.1" conformance="power" xml:lang="en">
+            <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+            <rightsInfo>
+                <copyrightHolder literal="RTRS"/>
+                <copyrightNotice>(c) 2024 Thomson Reuters, unless otherwise identified. Full statement available at https://www.thomsonreuters.com/en/policies/copyright.html</copyrightNotice>
+            </rightsInfo>
+            <itemMeta>
+                  <itemClass qcode="icls:video" />
+                   <provider literal="reuters.com"/>
+                   <versionCreated>2024-03-28T07:51:47Z</versionCreated>
+                    <firstCreated>2024-03-28T07:44:20Z</firstCreated>
+                    <pubStatus qcode="stat:usable"/>
+                    <role qcode="itemRole:N" />
+                   <profile versioninfo="00.00.01">SNI-Video</profile>
+                   <rtr:versionedId guid="tag:reuters.com,2024:newsml_LWD978821032024RP1:1"/>
+               </itemMeta>
+            <contentMeta>
+                <urgency>4</urgency>
+                <infoSource role="cRole:origProv" literal="Reuters"/>
+                <infoSource role="cRole:source" literal="REUTERS / FILISTIN ICIN 1000 GENC / VIDEO OBTAINED BY REUTERS / TURKISH PRESIDENCY"/>
+                <creator literal="Reuters"/>
+                <!-- === Descriptive === -->
+                <altId type="idType:SID" rtr:isOriginal="1">LWD978821032024RP1</altId>
+                <altId type="idType:itemId">tag:reuters.com,2024:newsml_LWD978821032024RP1:1</altId>
+                <language tag="en" />
+                <by xml:lang="en">REUTERS / FILISTIN ICIN 1000 GENC / VIDEO OBTAINED BY REUTERS / TURKISH PRESIDENCY, MAR 28</by>
+                <description role="descRole:audio" xml:lang="en">NATURAL WITH TURKISH AND ENGLISH SPEECH</description>
+            </contentMeta>
+                <partMeta>
+                    <timeDelim start="00:00:00.000" end="00:00:05.000" timeunit="timeunit:normalPlayTime"/>
+                    <rtr:role qcode="partRole:slate"/>
+                </partMeta>
+                <partMeta>
+                    <timeDelim start="00:00:05.000" end="00:10:25.000" timeunit="timeunit:normalPlayTime"/>
+                    <rtr:role qcode="partRole:content"/>
+                </partMeta>
+                <partMeta>
+                    <timeDelim start="00:00:10.000" end="00:00:11.000" timeunit="timeunit:normalPlayTime"/>
+                    <rtr:role qcode="partRole:keyframe"/>
+                </partMeta>
+            <!-- ========================================================= -->
+            <!-- CONTENT -->
+            <contentSet>
+            <remoteContent residref="tag:reuters.com,2024:binary_LWD978821032024RP1-STREAM:4500:MPG" format="fmt:mp4" contenttype="video/mp4" duration="620" audiocodec="acdc:c028" audiobitrate="256000" audiovbr="false" audiosamplesize="16" audiosamplerate="48000" videocodec="vcdc:c190" videoavgbitrate="13500000" videovbr="true" videoscan="interlaced" videoaspectratio="16:9" videosampling="4:2:0" rendition="rend:stream:6756:mpg" rtr:definition="videoDef:HD" version="1">
+                    <rtr:altId type="idType:fileBIN" isPresent="1" contentType="video/mp4">202403289788WD-TURKEY-ELECTION_O_.mp4</rtr:altId>
+            </remoteContent>
+            </contentSet>
+        </newsItem>
+    </itemSet>
+</newsMessage>

@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NewsML Version="1.2">
+  <!--AFP NewsML text-photo profile evolution2-->
+  <!--Processed by Xafp1-4ToNewsML1-2 rev20-->
+  <Catalog Href="http://www.afp.com/dtd/AFPCatalog.xml" />
+  <NewsEnvelope>
+    <DateAndTime>20240327T090520+0000</DateAndTime>
+    <NewsProduct FormalName="AFP-FORUM">
+    </NewsProduct>
+    <NewsProduct FormalName="AFP-PH-AFR">
+    </NewsProduct>
+    <NewsProduct FormalName="BASE-ILLIMITEE-AFPNEWS-DE">
+    </NewsProduct>
+    <NewsProduct FormalName="PH-AFP-INT_SOCIETY">
+    </NewsProduct>
+    <NewsProduct FormalName="AFP-PH-ASI">
+    </NewsProduct>
+    <NewsProduct FormalName="AFP-PH-MOY">
+    </NewsProduct>
+    <NewsProduct FormalName="BASE-ILLIMITEE-AFPNEWS-PT">
+    </NewsProduct>
+    <NewsProduct FormalName="AFP-PH-AMN">
+    </NewsProduct>
+    <NewsProduct FormalName="AFP-PH-EUR">
+    </NewsProduct>
+    <NewsProduct FormalName="PH-AFP-INT">
+    </NewsProduct>
+    <NewsProduct FormalName="BASE-ILLIMITEE-AFPNEWS-EN">
+    </NewsProduct>
+    <NewsProduct FormalName="AFP-PH-AML">
+    </NewsProduct>
+    <NewsProduct FormalName="BASE-ILLIMITEE-AFPNEWS-FR">
+    </NewsProduct>
+    <NewsProduct FormalName="BASE-ILLIMITEE-AFPNEWS-ES">
+    </NewsProduct>
+    <NewsProduct FormalName="BASE-ILLIMITEE-AFPNEWS-AR">
+    </NewsProduct>
+    <Priority FormalName="5">
+    </Priority>
+  </NewsEnvelope>
+  <NewsItem xml:lang="en">
+    <Identification>
+      <NewsIdentifier>
+        <ProviderId>afp.com</ProviderId>
+        <DateId>20240327T090520Z</DateId>
+        <NewsItemId>doc-34mh9zy</NewsItemId>
+        <RevisionId PreviousRevision="0" Update="N">1</RevisionId>
+        <PublicIdentifier>urn:newsml:afp.com:20240327T090520Z:doc-34mh9zy:1</PublicIdentifier>
+      </NewsIdentifier>
+      <NameLabel>CYPRUS-ESTONIA-DIPLOMACY</NameLabel>
+      <Label>
+        <LabelType FormalName="CodeName" />
+        <LabelText>XPK108</LabelText>
+      </Label>
+    </Identification>
+    <NewsManagement>
+      <NewsItemType FormalName="News">
+      </NewsItemType>
+      <FirstCreated>20240327T090520+0000</FirstCreated>
+      <ThisRevisionCreated>20240327T090520+0000</ThisRevisionCreated>
+      <Status FormalName="Usable">
+      </Status>
+      <Urgency FormalName="5">
+      </Urgency>
+    </NewsManagement>
+    <NewsComponent>
+      <NewsLines>
+        <DateLine>Nicosia (), 27 mars 2024 (AFP) -</DateLine>
+        <HeadLine xml:lang="en">
+        </HeadLine>
+        <SlugLine xml:lang="en">CYPRUS-ESTONIA-DIPLOMACY</SlugLine>
+      </NewsLines>
+      <AdministrativeMetadata>
+        <FileName>AFP_34MH9ZY</FileName>
+        <Provider>
+          <Party FormalName="AFP">
+          </Party>
+        </Provider>
+        <Creator>
+          <Party FormalName="PETROS KARADJIAS ">
+          </Party>
+        </Creator>
+        <Source>
+          <Party FormalName="POOL">
+          </Party>
+        </Source>
+      </AdministrativeMetadata>
+      <DescriptiveMetadata>
+        <Language FormalName="en">
+        </Language>
+        <SubjectCode>
+          <SubjectMatter FormalName="11002000">
+          </SubjectMatter>
+        </SubjectCode>
+        <SubjectCode>
+          <Subject FormalName="11000000">
+          </Subject>
+        </SubjectCode>
+        <SubjectCode>
+          <Subject FormalName="11000000">
+          </Subject>
+        </SubjectCode>
+        <DateLineDate>20240327T090520+0000</DateLineDate>
+        <Location HowPresent="Origin">
+          <Property FormalName="Country" Value="CYP">
+          </Property>
+          <Property FormalName="City" Value="Nicosia">
+          </Property>
+        </Location>
+        <Property FormalName="Keyword" Value="diplomacy">
+        </Property>
+        <Property FormalName="Keyword" Value="Nikos Christodoulides">
+        </Property>
+        <Property FormalName="Keyword" Value="Alar Karis">
+        </Property>
+        <Property FormalName="GeneratorSoftware" Value="g2mapping">
+        </Property>
+      </DescriptiveMetadata>
+      <NewsComponent>
+        <Role FormalName="caption">
+        </Role>
+        <ContentItem>
+          <MediaType FormalName="Text">
+          </MediaType>
+          <Format FormalName="NITF3.1" />
+          <DataContent>
+            <nitf>
+              <body>
+                <body.content>
+                  <p>Cyprus’ President Nikos Christodoulides (R) speaks to Estonia President Alar Karis during their meeting at the presidential palace in Nicosia on March 27, 2024. (Photo by Petros Karadjias / POOL / AFP)</p>
+                </body.content>
+              </body>
+            </nitf>
+          </DataContent>
+        </ContentItem>
+      </NewsComponent>
+      <NewsComponent xml:lang="en">
+        <Role FormalName="main">
+        </Role>
+        <ContentItem Href="XPK108-CYPRUS-ESTONIA-DIPLOMACY-20240327-085122.jpg">
+          <MediaType FormalName="Photo">
+          </MediaType>
+          <Format FormalName="image/jpeg">
+          </Format>
+          <Characteristics>
+            <SizeInBytes>1142377</SizeInBytes>
+            <Property FormalName="Width" Value="5278">
+            </Property>
+            <Property FormalName="Height" Value="3519">
+            </Property>
+          </Characteristics>
+        </ContentItem>
+      </NewsComponent>
+    </NewsComponent>
+  </NewsItem>
+</NewsML>

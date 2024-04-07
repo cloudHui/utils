@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CNML
+    xmlns="http://www.cnml.org.cn/2005/CNMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cnml.org.cn/2005/CNMLSchema http://www.cnml.org.cn/2005/CNMLSchema/CNML_v1.020070208.xsd" schemaVersion="" template="" templateVersion="">
+    <Envelop>
+        <SystemId topicRef="cb" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-SystemId-39:39">
+            <Name>全媒体采编发系统</Name>
+        </SystemId>
+        <TransmissionID>101002024022970000242</TransmissionID>
+        <TransferTime>2024-02-29T10:30:38+08:00</TransferTime>
+        <SentFrom xsi:type="OrganizationType">
+            <NameTopic topicRef="Xinhua" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Organization-1:1">
+                <Name>Xinhua News Agency</Name>
+            </NameTopic>
+        </SentFrom>
+        <SentTo>
+            <GroupRecipient topicRef="ppppp" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115">
+                <ProductId scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115" topicRef="ppppp"/>
+                <Name>General Portuguese News Service</Name>
+                <DailySequence>100000</DailySequence>
+            </GroupRecipient>
+            <GroupRecipient topicRef="ppzbl" scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115">
+                <ProductId scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-115:115" topicRef="ppzbl"/>
+                <Name>Portuguese News Service for Domestic</Name>
+                <DailySequence>100000</DailySequence>
+            </GroupRecipient>
+        </SentTo>
+        <Priority scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Priority-1:1" topicRef="5.0"/>
+        <Services>
+            <Service scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Service-4:4" topicRef="finished">
+                <Name>成品稿</Name>
+            </Service>
+        </Services>
+        <Products>
+            <Product productID="ppppp">
+                <ProductName scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-144.xml" topicRef="ppppp">
+                    <Name>General Portuguese News Service</Name>
+                </ProductName>
+                <Columns/>
+                <SendSequence>1</SendSequence>
+            </Product>
+            <Product productID="ppzbl">
+                <ProductName scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-tProduct-144.xml" topicRef="ppzbl">
+                    <Name>Portuguese News Service for Domestic</Name>
+                </ProductName>
+                <Columns/>
+                <SendSequence>1</SendSequence>
+            </Product>
+        </Products>
+    </Envelop>
+    <Items>
+        <Item xsi:type="NewsItemType">
+            <MetaInfo>
+                <AdministrationMetaGroup>
+                    <Id>
+                        <PublicId>urn:CNML:xinhua.org:20240229:XxjwspP007007_20240229_CBTFN0:1</PublicId>
+                        <ProviderId>xinhua.org</ProviderId>
+                        <DateId>20240229</DateId>
+                        <ItemId>XxjwspP007007_20240229_CBTFN0</ItemId>
+                        <VersionId>1</VersionId>
+                    </Id>
+                    <Status>Usable</Status>
+                    <Provider xsi:type="OrganizationType">
+                        <Name>Xinhua News Agency</Name>
+                    </Provider>
+                    <FirstCreateTime>2024-02-29T08:58:35+08:00</FirstCreateTime>
+                    <CurrentRevisionTime>2024-02-29T10:30:38+08:00</CurrentRevisionTime>
+                    <Urgency scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Urgency-1:1" topicRef="5.0"/>
+                    <Importance scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Urgency-1:1" topicRef="15"/>
+                </AdministrationMetaGroup>
+                <DescriptionMetaGroup>
+                    <Titles>
+                        <HeadLine>
+                            <![CDATA[China registra mais de 7,2 bilhões de viagens inter-regionais na temporada da Festa da Primavera]]>
+                        </HeadLine>
+                    </Titles>
+                    <Language scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Language-7:7" topicRef="pt"/>
+                    <Creators>
+                        <Creator xsi:type="PersonType" kind="Author">
+                            <Name>
+                                <FullName xml:lang="zh-CN">吴昊</FullName>
+                                <FullName xml:lang="en">Wu Hao</FullName>
+                            </Name>
+                            <Affiliation>
+                                <Organization>
+                                    <NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-107:107" topicRef="Xxjwsp"/>
+                                </Organization>
+                            </Affiliation>
+                        </Creator>
+                        <Creator xsi:type="PersonType" kind="Author">
+                            <Name>
+                                <FullName xml:lang="zh-CN">赵阳</FullName>
+                                <FullName xml:lang="en">Zhao Yang</FullName>
+                            </Name>
+                            <Affiliation>
+                                <Organization>
+                                    <NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-107:107" topicRef="Xxjwzy"/>
+                                </Organization>
+                            </Affiliation>
+                        </Creator>
+                        <Creator xsi:type="PersonType" kind="Author">
+                            <Name>
+                                <FullName xml:lang="zh-CN">叶昊鸣</FullName>
+                                <FullName xml:lang="en">Ye Haoming</FullName>
+                            </Name>
+                            <Affiliation>
+                                <Organization>
+                                    <NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-107:107" topicRef="Xxjbjj"/>
+                                </Organization>
+                            </Affiliation>
+                        </Creator>
+                        <Creator xsi:type="PersonType" kind="Author">
+                            <Name>
+                                <FullName xml:lang="zh-CN">王聿昊</FullName>
+                                <FullName xml:lang="en">Wang Yuhao</FullName>
+                            </Name>
+                            <Affiliation>
+                                <Organization>
+                                    <NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-107:107" topicRef="Xxjbjj"/>
+                                </Organization>
+                            </Affiliation>
+                        </Creator>
+                        <Creator xsi:type="PersonType" kind="Author">
+                            <Name>
+                                <FullName xml:lang="zh-CN">石昊（一读）</FullName>
+                                <FullName xml:lang="en">shihao（yidu）</FullName>
+                            </Name>
+                        </Creator>
+                    </Creators>
+                    <DateTimes>
+                        <DateTime kind="HappenTime"></DateTime>
+                        <DateTime kind="InditeTime"></DateTime>
+                        <DateTime kind="RatifyTime">2024-02-29T10:30:38+08:00</DateTime>
+                    </DateTimes>
+                    <SubjectCodes>
+                        <SubjectCode kind="XH_Internalinternational">
+                            <MainCode scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-XH_InternalInternational-6:6" topicRef="01">
+                                <Name>国内新闻</Name>
+                            </MainCode>
+                        </SubjectCode>
+                        <SubjectCode kind="XH_NewsCategory">
+                            <MainCode scheme="topiclist.cnml-XH_NewsCategory-10.xml" topicRef="03">
+                                <Name>sociedade</Name>
+                            </MainCode>
+                        </SubjectCode>
+                    </SubjectCodes>
+                    <Contributors>
+                        <Contributor kind="Establisher">
+                            <Name>
+                                <FullName>吴昊</FullName>
+                            </Name>
+                            <Affiliation>
+                                <Organization>
+                                    <NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-8:8" topicRef="Xxjwsp">
+                                        <Name>对外部-葡文组</Name>
+                                    </NameTopic>
+                                </Organization>
+                            </Affiliation>
+                        </Contributor>
+                        <Contributor kind="Edit">
+                            <Name>
+                                <FullName>吴昊</FullName>
+                            </Name>
+                            <Affiliation>
+                                <Organization>
+                                    <NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-8:8" topicRef="Xxjwsp">
+                                        <Name>对外部-葡文组</Name>
+                                    </NameTopic>
+                                </Organization>
+                            </Affiliation>
+                        </Contributor>
+                        <Contributor kind="Edit">
+                            <Name>
+                                <FullName>Diogo</FullName>
+                            </Name>
+                            <Affiliation>
+                                <Organization>
+                                    <NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-8:8" topicRef="Xxjwsp">
+                                        <Name>对外部-葡文组</Name>
+                                    </NameTopic>
+                                </Organization>
+                            </Affiliation>
+                        </Contributor>
+                        <Contributor kind="Signer">
+                            <Name>
+                                <FullName>胡仁荣</FullName>
+                            </Name>
+                            <Affiliation>
+                                <Organization>
+                                    <NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-8:8" topicRef="Xxjwsp">
+                                        <Name>对外部-葡文组</Name>
+                                    </NameTopic>
+                                </Organization>
+                            </Affiliation>
+                        </Contributor>
+                        <Contributor kind="Revisor">
+                            <Name>
+                                <FullName>Diogo</FullName>
+                            </Name>
+                            <Affiliation>
+                                <Organization>
+                                    <NameTopic scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-8:8" topicRef="Xxjwsp">
+                                        <Name>对外部-葡文组</Name>
+                                    </NameTopic>
+                                </Organization>
+                            </Affiliation>
+                        </Contributor>
+                    </Contributors>
+                    <Keywords>
+                        <Keyword>
+                            <![CDATA[China,Transporte,Festa da Primavera]]>
+                        </Keyword>
+                    </Keywords>
+                    <SourceInfo>
+                        <ItemSource scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-107:107" topicRef="Xxjbzy">
+                            <Name>央采中心</Name>
+                        </ItemSource>
+                        <ItemSource scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Department-107:107" topicRef="Xxjcws">
+                            <Name>对外部</Name>
+                        </ItemSource>
+                    </SourceInfo>
+                </DescriptionMetaGroup>
+            </MetaInfo>
+            <Contents>
+                <ContentItem xsi:type="TextCIType" id="c01">
+                    <MetaInfo>
+                        <CharacteristicMetaGroup xsi:type="TextCIMetaGroupType">
+                            <Format scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-Format-1:1" topicRef="TXT"/>
+                            <MediaType scheme="urn:cnml:xinhua.org:20070701:topiclist.cnml-MediaType-1:1" topicRef="Text"/>
+                            <WordCount>1202</WordCount>
+                            <IsCDATA>1</IsCDATA>
+                        </CharacteristicMetaGroup>
+                    </MetaInfo>
+                    <DataContent>
+                        <![CDATA[   Beijing, 29 fev (Xinhua) -- Mais de 7,2 bilhões de viagens inter-regionais foram feitas na China de 26 de janeiro a 27 de fevereiro, os primeiros 33 dias da alta temporada de viagens da Festa da Primavera, mostram dados oficiais.
+   O número subiu 10,6% em relação ao mesmo período de 2023, informou uma coletiva de imprensa realizada pelo Departamento de Comunicação do Conselho de Estado na quarta-feira.
+   O tráfego rodoviário representou a maioria dessas viagens. Durante o período, mais de 5,8 bilhões de viagens foram feitas por meio de veículos particulares em vias expressas e estradas nacionais e provinciais, marcando um recorde, disse o ministro do Transporte, Li Xiaopeng, na coletiva de imprensa.
+   O tráfego ferroviário de passageiros atingiu o nível mais alto do mesmo período na história, e o tráfego de passageiros da aviação civil também atingiu um recorde, disse Li.
+   Diante do tempo adverso, como quedas de temperatura, chuva e neve, as autoridades locais de transporte ativaram planos de emergência a tempo e garantiram efetivamente as necessidades de viagem de grupos-chave, incluindo trabalhadores migrantes, estudantes, visitantes familiares e turistas, especialmente em regiões e em períodos importantes, acrescentou Li.
+   A Festa da Primavera, que caiu em 10 de fevereiro deste ano, é o maior festival tradicional da China. A temporada de viagens deste ano começou em 26 de janeiro e terminará em 5 de março. Fim]]>
+                    </DataContent>
+                </ContentItem>
+            </Contents>
+        </Item>
+    </Items>
+    <Relations>
+        <Relation name="translatedTo">
+            <Source>
+                <Role xpath="Item[1]"/>
+            </Source>
+            <Target>
+                <RoleSet>
+                    <Role href="XxjwshE007086_20240228_CBTFN0.xml"/>
+                </RoleSet>
+            </Target>
+        </Relation>
+    </Relations>
+</CNML>
