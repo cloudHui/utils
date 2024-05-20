@@ -277,7 +277,7 @@ public class ExcelUtil {
 	 *
 	 * @return 以List返回excel中内容
 	 */
-	public static void readExcelCreateJavaHead(String fileName) {
+	public static void readExcelCreateJavaHead(String fileName, String path) {
 		//读取 xls格式的文件需要使用 HSSFWorkbook;
 		//读取 xlsx 格式的文件需要使用 XSSFWorkbook;
 		String javaName = ExcelToJavaGenerator.capitalize(fileName.split("\\.")[0]);
@@ -285,7 +285,7 @@ public class ExcelUtil {
 		InputStream inputStream;
 		if (last.equals("xlsx")) {
 			try {
-				inputStream = ExcelUtil.class.getClassLoader().getResourceAsStream("xml/"+fileName);
+				inputStream = ExcelUtil.class.getClassLoader().getResourceAsStream("xml/" + fileName);
 				//定义工作簿
 				XSSFWorkbook xssfWorkbook = null;
 				try {
@@ -312,7 +312,7 @@ public class ExcelUtil {
 							XSSFCell des = desc.getCell(cellIndex);
 							titleList.add(new Title(getString(name), getString(type), getString(des)));
 						}
-						ExcelToJavaGenerator.write(javaName, titleList);
+						ExcelToJavaGenerator.write(javaName, path, titleList);
 					}
 				}
 			} catch (Exception e) {
@@ -347,17 +347,12 @@ public class ExcelUtil {
 							HSSFCell des = desc.getCell(cellIndex);
 							titleList.add(new Title(getString(name), getString(type), getString(des)));
 						}
-						ExcelToJavaGenerator.write(javaName, titleList);
+						ExcelToJavaGenerator.write(javaName, path, titleList);
 					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public static void main(String[] args){
-
-		readExcelCreateJavaHead("TableModel.xlsx");
 	}
 }

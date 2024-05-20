@@ -12,8 +12,8 @@ import utils.utils.TableUtils;
 public class ExcelToJavaGenerator {
 
 
-	private static void doWrite(String javaName, String content) {
-		String subDirectoryName = "src/main/java/model"; // 子目录名称
+	private static void doWrite(String javaName, String path, String content) {
+		String subDirectoryName = path + "/src/main/java/model"; // 子目录名称
 		String fileName = javaName + ".java"; // 文件名
 		Path directoryPath = Paths.get(subDirectoryName);
 
@@ -52,10 +52,10 @@ public class ExcelToJavaGenerator {
 	/**
 	 * 写成java 文件
 	 */
-	public static void write(String javaName, List<Title> titleList) throws Exception {
+	public static void write(String javaName, String path, List<Title> titleList) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		sb.append("package model;");
-		sb.append(" \n").append(" \n");
+		sb.append(" \n").append(" \n").append(" \n");
 		sb.append("public class ").append(javaName).append(" {\n");
 
 		for (Title title : titleList) {
@@ -67,7 +67,7 @@ public class ExcelToJavaGenerator {
 		}
 		sb.append(" }\n");
 		// 写入到Java文件
-		doWrite(javaName, sb.toString());
+		doWrite(javaName, path, sb.toString());
 		System.out.println(javaName + ".java 文件已生成。");
 	}
 
@@ -96,6 +96,7 @@ public class ExcelToJavaGenerator {
 		javaCode.append("    public void set").append(capitalize(propertyName)).append("(").append(type).append(" ").append(propertyName).append(") {\n");
 		javaCode.append("        this.").append(propertyName).append(" = ").append(propertyName).append(";\n");
 		javaCode.append("    }\n");
+		javaCode.append("\n");
 	}
 
 	private static String getTypeName(String type) {
