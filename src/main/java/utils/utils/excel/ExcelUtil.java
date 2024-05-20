@@ -270,6 +270,94 @@ public class ExcelUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
 
+	/**
+	 * 读取Excel文件的内容 创建文件
+	 *
+	 * @return 以List返回excel中内容
+	 */
+	public static void readExcelCreateJavaHead(String fileName) {
+		//读取 xls格式的文件需要使用 HSSFWorkbook;
+		//读取 xlsx 格式的文件需要使用 XSSFWorkbook;
+		String javaName = ExcelToJavaGenerator.capitalize(fileName.split("\\.")[0]);
+		String last = fileName.substring(fileName.indexOf(".") + 1);
+		InputStream inputStream;
+		if (last.equals("xlsx")) {
+			try {
+				inputStream = ExcelUtil.class.getClassLoader().getResourceAsStream("xml/"+fileName);
+				//定义工作簿
+				XSSFWorkbook xssfWorkbook = null;
+				try {
+					xssfWorkbook = new XSSFWorkbook(inputStream);
+				} catch (Exception e) {
+					System.out.println("Excel data file cannot be found!");
+				}
+				if (xssfWorkbook != null) {
+					//定义工作表
+					XSSFSheet xssfSheet;
+					xssfSheet = xssfWorkbook.getSheetAt(0);
+					if (xssfSheet != null) {
+						//定义行
+						//默认第一行为标题行，index = 0
+						XSSFRow propertyName = xssfSheet.getRow(0);
+						XSSFRow propertyType = xssfSheet.getRow(1);
+						XSSFRow desc = xssfSheet.getRow(2);
+						//循环取每行的数据
+						List<Title> titleList = new ArrayList<>();
+						//循环取每个单元格(cell)的数据
+						for (int cellIndex = 0; cellIndex < propertyName.getPhysicalNumberOfCells(); cellIndex++) {
+							XSSFCell name = propertyName.getCell(cellIndex);
+							XSSFCell type = propertyType.getCell(cellIndex);
+							XSSFCell des = desc.getCell(cellIndex);
+							titleList.add(new Title(getString(name), getString(type), getString(des)));
+						}
+						ExcelToJavaGenerator.write(javaName, titleList);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (last.equals("xls")) {
+			try {
+				inputStream = new FileInputStream(fileName);
+				//定义工作簿
+				HSSFWorkbook xssfWorkbook = null;
+				try {
+					xssfWorkbook = new HSSFWorkbook(inputStream);
+				} catch (Exception e) {
+					System.out.println("Excel data file cannot be found!");
+				}
+				if (xssfWorkbook != null) {
+					//定义工作表
+					HSSFSheet xssfSheet;
+					xssfSheet = xssfWorkbook.getSheetAt(0);
+					if (xssfSheet != null) {
+						//定义行
+						//默认第一行为标题行，index = 0
+						HSSFRow propertyName = xssfSheet.getRow(0);
+						HSSFRow propertyType = xssfSheet.getRow(1);
+						HSSFRow desc = xssfSheet.getRow(2);
+						//循环取每行的数据
+						List<Title> titleList = new ArrayList<>();
+						//循环取每个单元格(cell)的数据
+						for (int cellIndex = 0; cellIndex < propertyName.getPhysicalNumberOfCells(); cellIndex++) {
+							HSSFCell name = propertyName.getCell(cellIndex);
+							HSSFCell type = propertyType.getCell(cellIndex);
+							HSSFCell des = desc.getCell(cellIndex);
+							titleList.add(new Title(getString(name), getString(type), getString(des)));
+						}
+						ExcelToJavaGenerator.write(javaName, titleList);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void main(String[] args){
+
+		readExcelCreateJavaHead("TableModel.xlsx");
 	}
 }
