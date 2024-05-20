@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -94,5 +96,30 @@ public class ExecCommand {
 	public static boolean isWindows() {
 		String osName = System.getProperty("os.name");
 		return osName.contains("Windows");
+	}
+
+
+	public static void main(String[] args) throws InterruptedException {
+		new Thread(() -> {
+			// 通过cmd程序执行cmd命令
+			try {
+				boolean isWindows = isWindows();
+				if (isWindows) {
+					String strCmd = "ipconfig";
+					Runtime.getRuntime().exec("cmd /c  " + strCmd).waitFor();
+				} else {
+					String strCmd = "./UpdateSVN.sh";
+					Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", strCmd}).waitFor();
+				}
+				Thread.sleep(2000);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.exit(0);
+		}).start();
+		//System.out.println(new Timestamp(new Date().getTime()));
+		Thread.sleep(5000);
+		System.out.println(new Timestamp(new Date().getTime()));
 	}
 }
