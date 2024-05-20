@@ -65,6 +65,17 @@ public class ExcelToJavaGenerator {
 		for (Title title : titleList) {
 			addSetGet(sb, title);
 		}
+
+		sb.append(" \n");
+		sb.append("    @Override").append("\n");
+		sb.append("    public String toString").append("() {\n");
+		sb.append("        return \"").append(javaName).append("{\"+\n");
+		for (Title title : titleList) {
+			sb.append("                \"     ").append(title.getName()).append("=\"+").append(title.getName()).append("+ \n");
+		}
+		sb.append("                '}';\n");
+		sb.append("    }\n");
+		sb.append("\n");
 		sb.append(" }\n");
 		// 写入到Java文件
 		doWrite(javaName, path, sb.toString());
@@ -152,8 +163,7 @@ public class ExcelToJavaGenerator {
 		}
 	}
 
-
-	private Object getType(String type, String value) throws Exception {
+	public static Object getType(String type, String value) throws Exception {
 		Object obj = null;
 		switch (type) {
 			case "float": {
@@ -165,14 +175,15 @@ public class ExcelToJavaGenerator {
 			break;
 			case "int": {
 				if (!"".equals(value))
-					obj = Integer.parseInt(value);
+					//前面的转化int会转成double
+					obj = Integer.parseInt(value.split("\\.")[0]);
 				else
 					obj = 0;
 			}
 			break;
 			case "long": {
 				if (!"".equals(value))
-					obj = Long.parseLong(value);
+					obj = Long.parseLong(value.split("\\.")[0]);
 				else
 					obj = 0L;
 			}
