@@ -74,4 +74,12 @@ public class ServerConfiguration {
 
         return addresses;
     }
+
+    @Override
+    public String toString() {
+        return "ServerConfiguration{" +
+                "name='" + name + '\'' +
+                ", hostString='" + hostString + '\'' +
+                '}';
+    }
 }

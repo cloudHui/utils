@@ -1,6 +1,8 @@
 package utils.config;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,6 +15,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import utils.utils.ConfigPathUtils;
 
 public class ConfigurationManager {
 	private static ConfigurationManager INSTANCE;
@@ -38,10 +42,6 @@ public class ConfigurationManager {
 		return INSTANCE;
 	}
 
-	public static ConfigurationManager createConfigurationManager(String fileName) {
-		return (new ConfigurationManager()).load(fileName);
-	}
-
 	private ConfigurationManager() {
 		load();
 	}
@@ -58,22 +58,43 @@ public class ConfigurationManager {
 		return Collections.unmodifiableMap(this.connectConfigurationMap);
 	}
 
-	public ConfigurationManager load() {
-		return this.load(FILE_NAME);
+	public void load() {
+		load(FILE_NAME);
 	}
 
-	private synchronized ConfigurationManager load(String fileName) {
+	private synchronized void load(String fileName) {
 		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(fileName);
 		Properties properties = new Properties();
 
 		try {
+			if (inputStream == null) {
+				String filePath = ConfigPathUtils.getConfigFilePath() + fileName;
+				File file = new File(filePath);
+				if (file.exists()) {
+					inputStream = new FileInputStream(filePath);
+				}
+				if (inputStream == null) {
+					filePath = ConfigPathUtils.getResourceFilePath() + fileName;
+					file = new File(filePath);
+					if (file.exists()) {
+						inputStream = new FileInputStream(filePath);
+					}
+				}
+				if (inputStream == null) {
+					filePath = ConfigPathUtils.getProjectPath() + fileName;
+					file = new File(filePath);
+					if (file.exists()) {
+						inputStream = new FileInputStream(filePath);
+					}
+				}
+			}
+
 			properties.load(new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)));
 		} catch (IOException var5) {
 			throw new RuntimeException("Error! failed for load " + fileName, var5);
 		}
 
 		this.parse(properties);
-		return this;
 	}
 
 	private void parse(Properties properties) {

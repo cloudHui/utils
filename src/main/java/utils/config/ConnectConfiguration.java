@@ -124,4 +124,17 @@ public class ConnectConfiguration {
             return null;
         }
     }
+
+    @Override
+    public String toString() {
+        return "ConnectConfiguration{" +
+                "name='" + name + '\'' +
+                ", type=" + type +
+                ", connectId='" + connectId + '\'' +
+                ", connectString='" + connectString + '\'' +
+                ", idlePeriod=" + idlePeriod +
+                ", maxConnections=" + maxConnections +
+                ", requestTimeout=" + requestTimeout +
+                '}';
+    }
 }
