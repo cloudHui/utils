@@ -15,13 +15,12 @@ import net.codec.WSTCPMessageEncoder;
 import net.handler.Handlers;
 import net.message.Parser;
 import net.message.TCPMaker;
-import net.message.TCPMessage;
 import net.message.Transfer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Sharable
-public class WSTCPConnect extends ConnectHandler<WSTCPConnect, TCPMessage> {
+public class WSTCPConnect extends ConnectHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WSTCPConnect.class);
 	private final EventLoopGroup eventLoopGroup;
 	private final SocketAddress socketAddress;

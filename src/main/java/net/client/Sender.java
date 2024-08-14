@@ -1,18 +1,21 @@
 package net.client;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.Message;
-
 import java.util.Map;
 
-public interface Sender<T, M> {
-	void sendMessage(int msgId, Message var2, Map<Long, String> var3);
+import com.google.protobuf.ByteString;
+import com.google.protobuf.Message;
+import net.message.TCPMessage;
 
-	void sendMessage(int msgId, Message var2, Map<Long, String> var3,int mapId);
+public interface Sender {
+	void sendMessage(int msgId, Message msg, Map<Long, String> attach);
 
-	void sendMessage(int msgId, ByteString var2, Map<Long, String> var3);
+	void sendMessage(int msgId, Message msg, Map<Long, String> attach, int mapId);
 
-	void sendMessage(int var1, Integer var2, Message var3, Map<Long, String> var4);
+	void sendMessage(int msgId, ByteString var2, Map<Long, String> attach);
 
-	void sendMessage(M var1);
+	void sendMessage(int msgId, int var2, Message var3, Map<Long, String> attach);
+
+	void sendMessage(TCPMessage msg);
+
+	void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg);
 }

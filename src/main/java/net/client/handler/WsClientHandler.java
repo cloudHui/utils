@@ -17,28 +17,27 @@ import net.channel.ChannelAttr;
 import net.client.Sender;
 import net.client.event.CloseEvent;
 import net.client.event.RegisterEvent;
-import net.codec.HAProxyDecoder;
 import net.handler.Handler;
 import net.handler.Handlers;
 import net.message.Maker;
-import net.message.Makers;
 import net.message.Parser;
+import net.message.TCPMaker;
 import net.message.TCPMessage;
 import net.message.Transfer;
 import net.safe.Safe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WsClientHandler<T extends WsClientHandler, M> extends SimpleChannelInboundHandler implements Sender<T, M> {
+public class WsClientHandler extends SimpleChannelInboundHandler implements Sender {
 	private static final Logger logger = LoggerFactory.getLogger(WsClientHandler.class);
 	private static final ClientManager clientManager;
 	private final long id;
 	private Channel channel;
 	private Safe safe;
-	private Transfer transfer;
-	private Parser parser;
-	private Handlers handlers;
-	private Maker maker;
+	private final Transfer transfer;
+	private final Parser parser;
+	private final Handlers handlers;
+	private final Maker maker;
 	private static final byte[] DEFAULT_DATA;
 	private RegisterEvent registerEvent;
 	private CloseEvent closeEvent;
@@ -51,32 +50,20 @@ public class WsClientHandler<T extends WsClientHandler, M> extends SimpleChannel
 		if (null == clientHandler.channel) {
 			return null;
 		} else {
-			Object obj = clientHandler.channel.attr(HAProxyDecoder.HAPROXY).get();
-			if (obj instanceof String) {
-				String data = (String) obj;
-				logger.info("{} {}", clientHandler.channel, data);
-				if (!data.isEmpty()) {
-					String[] splData = data.split(" ");
-					if (splData.length == 6) {
-						return new InetSocketAddress(splData[2], Integer.parseInt(splData[4]));
-					}
-				}
-			}
-
 			return (InetSocketAddress) clientHandler.channel.remoteAddress();
 		}
 	}
 
 	public WsClientHandler(Parser parser, Handlers handlers) {
-		this(parser, handlers, Transfer::DEFAULT, Makers.getMaker());
+		this(parser, handlers, (t, msg) -> Transfer.DEFAULT(), TCPMaker.INSTANCE);
 	}
 
 	public WsClientHandler(Parser parser, Handlers handlers, Transfer transfer) {
-		this(parser, handlers, transfer, Makers.getMaker());
+		this(parser, handlers, transfer, TCPMaker.INSTANCE);
 	}
 
 	public WsClientHandler(Parser parser, Handlers handlers, Transfer transfer, Maker maker) {
-		this.safe = Safe::DEFAULT;
+		this.safe = (msgId) -> Safe.DEFAULT();
 		this.id = clientManager.getId();
 		this.parser = parser;
 		this.handlers = handlers;
@@ -184,23 +171,23 @@ public class WsClientHandler<T extends WsClientHandler, M> extends SimpleChannel
 	}
 
 	@Override
-	public void sendMessage(int sequence, Integer msgId, Message message, Map<Long, String> attachments) {
-		if (0 == sequence) {
-			this.sendMessage(msgId, message, attachments);
-		} else {
-			this.channel.writeAndFlush(this.maker.wrap(sequence, msgId, message, attachments));
-		}
-
+	public void sendMessage(int sequence, int msgId, Message message, Map<Long, String> attachments) {
+		this.channel.writeAndFlush(this.maker.wrap(sequence, msgId, message, attachments));
 	}
 
 	@Override
-	public void sendMessage(M msg) {
+	public void sendMessage(TCPMessage msg) {
 		this.channel.writeAndFlush(msg);
+	}
+
+	@Override
+	public void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg) {
+		this.channel.writeAndFlush(this.maker.wrap(roleId, msgId, mapId, resultId, msg));
 	}
 
 	private void processTCPMessage(TCPMessage tcpMessage) {
 		try {
-			if (!this.safe.isValid(this, tcpMessage)) {
+			if (!this.safe.isValid(tcpMessage.getMessageId())) {
 				logger.error("[{}] ERROR! {} is not safe message id", this.channel, String.format("0x%08x", tcpMessage.getMessageId()));
 				this.channel.close();
 				return;
@@ -225,7 +212,7 @@ public class WsClientHandler<T extends WsClientHandler, M> extends SimpleChannel
 			}
 
 			long now = System.currentTimeMillis();
-			boolean close = handler.handler(this, (long) tcpMessage.getRoleId(), msg, tcpMessage.getMapId());
+			boolean close = handler.handler(this, tcpMessage.getRoleId(), msg, tcpMessage.getMapId());
 			now = System.currentTimeMillis() - now;
 			if (now > 1000L) {
 				logger.error("client handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);

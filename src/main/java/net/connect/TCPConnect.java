@@ -15,13 +15,12 @@ import net.codec.TCPMessageEncoder;
 import net.handler.Handlers;
 import net.message.Parser;
 import net.message.TCPMaker;
-import net.message.TCPMessage;
 import net.message.Transfer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Sharable
-public class TCPConnect extends ConnectHandler<TCPConnect, TCPMessage> {
+public class TCPConnect extends ConnectHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TCPConnect.class);
 	private final EventLoopGroup eventLoopGroup;
 	private final SocketAddress socketAddress;

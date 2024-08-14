@@ -1,9 +1,11 @@
 package net.message;
 
-public interface Transfer<T, M> {
-	boolean isTransfer(T var1, M var2) throws Exception;
+import io.netty.channel.ChannelHandler;
 
-	static <T, M> boolean DEFAULT(T t, M msg) {
+public interface Transfer {
+	boolean isTransfer(ChannelHandler connect, TCPMessage message) throws Exception;
+
+	static boolean DEFAULT() {
 		return false;
 	}
 }

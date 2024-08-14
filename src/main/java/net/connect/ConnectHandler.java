@@ -26,15 +26,14 @@ import net.client.event.RegisterEvent;
 import net.handler.Handler;
 import net.handler.Handlers;
 import net.message.Maker;
-import net.message.Makers;
 import net.message.Parser;
+import net.message.TCPMaker;
 import net.message.TCPMessage;
 import net.message.Transfer;
-import net.proto.SysProto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundHandlerAdapter implements Sender<T, M> {
+public class ConnectHandler extends ChannelInboundHandlerAdapter implements Sender {
 	private static final Logger logger = LoggerFactory.getLogger(ConnectHandler.class);
 	private static final ConnectManager connectManager;
 	private final long id;
@@ -54,11 +53,11 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 	}
 
 	public ConnectHandler(Transfer transfer, Parser parser, Handlers handlers) {
-		this(transfer, parser, handlers, Makers.getMaker());
+		this(transfer, parser, handlers, TCPMaker.INSTANCE);
 	}
 
 	public ConnectHandler(Transfer transfer, Parser parser, Handlers handlers, Maker maker) {
-		this.transfer = Transfer::DEFAULT;
+		this.transfer = (t, msg) -> Transfer.DEFAULT();
 		this.MSG_DEFAULT = "".getBytes();
 		this.id = connectManager.getId();
 		if (null != transfer) {
@@ -131,42 +130,10 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 	}
 
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object o) throws Exception {
+	public void channelRead(ChannelHandlerContext ctx, Object o) {
 		Message innerMsg;
 		Handler handler;
-		Completer completer;
-		if (o instanceof SysProto.SysMessage) {
-			SysProto.SysMessage msg = (SysProto.SysMessage) o;
-
-			try {
-				if (this.transfer.isTransfer(this, msg)) {
-					return;
-				}
-
-				innerMsg = null;
-				if (msg.hasInnerMsg()) {
-					innerMsg = this.parser.parser(msg.getMsgId(), msg.getInnerMsg().toByteArray());
-				}
-
-				//有双序号保证消息发送成功
-				if (msg.hasSequence()) {
-					completer = this.completerGroup.popCompleter(msg.getSequence());
-					if (null != completer) {
-						completer.msg = innerMsg;
-						ctx.channel().eventLoop().execute(completer);
-					}
-				} else {
-					handler = this.handlers.getHandler(msg.getMsgId());
-					if (null != handler) {
-						handler.handler(this, msg.hasSequence() ? msg.getSequence() : null, innerMsg, 0);
-					} else {
-						logger.error("[{}] ERROR! can not find handler for SysMessage({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()));
-					}
-				}
-			} catch (Exception var7) {
-				logger.error("[{}] ERROR! failed for process SysMessage({})", ctx.channel(), String.format("0x%08x", msg.getMsgId()), var7);
-			}
-		} else if (o instanceof TCPMessage) {
+		if (o instanceof TCPMessage) {
 			TCPMessage msg = (TCPMessage) o;
 
 			try {
@@ -218,18 +185,18 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 	}
 
 	@Override
-	public void sendMessage(int sequence, Integer msgId, Message msg, Map<Long, String> attachments) {
-		if (0 == sequence) {
-			this.sendMessage(msgId, msg, attachments);
-		} else {
-			this.channel.writeAndFlush(this.maker.wrap(sequence, msgId, msg, attachments));
-		}
-
+	public void sendMessage(int sequence, int msgId, Message msg, Map<Long, String> attachments) {
+		this.channel.writeAndFlush(this.maker.wrap(sequence, msgId, msg, attachments));
 	}
 
 	@Override
-	public void sendMessage(M msg) {
+	public void sendMessage(TCPMessage msg) {
 		this.channel.writeAndFlush(msg);
+	}
+
+	@Override
+	public void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg) {
+		this.channel.writeAndFlush(this.maker.wrap(roleId, msgId, mapId, resultId, msg));
 	}
 
 	public CompletableFuture sendMessage(int msgId, Message msg, Map<Long, String> attachments, long timeout) {

@@ -1,5 +1,7 @@
 package net.client.event;
 
-public interface CloseEvent<T> {
-	void onClose(T var1);
+import io.netty.channel.ChannelHandler;
+
+public interface CloseEvent {
+	void onClose(ChannelHandler channelHandler);
 }

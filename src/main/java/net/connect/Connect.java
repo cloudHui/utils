@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Sharable
-public class Connect<M> extends ConnectHandler<Connect, M> {
+public class Connect<M> extends ConnectHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Connect.class);
 	private EventLoopGroup eventLoopGroup;
 	private SocketAddress socketAddress;

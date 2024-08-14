@@ -98,11 +98,11 @@
             <version>4.1.2</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>cn.kdyzm</groupId>-->
-<!--            <artifactId>kdyzm-util</artifactId>-->
-<!--            <version>0.0.2</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>cn.kdyzm</groupId>
+            <artifactId>kdyzm-util</artifactId>
+            <version>0.0.2</version>
+        </dependency>
 
     </dependencies>
     <build>

@@ -1,5 +1,7 @@
 package net.client.event;
 
-public interface RegisterEvent<T> {
-	void register(T var1);
+import io.netty.channel.ChannelHandler;
+
+public interface RegisterEvent {
+	void register(ChannelHandler channelHandler);
 }

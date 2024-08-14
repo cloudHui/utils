@@ -7,33 +7,27 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.ReferenceCountUtil;
 import net.channel.ChannelAttr;
 import net.client.Sender;
 import net.client.event.CloseEvent;
 import net.client.event.RegisterEvent;
-import net.codec.HAProxyDecoder;
 import net.handler.Handler;
 import net.handler.Handlers;
 import net.message.Maker;
-import net.message.Makers;
 import net.message.Parser;
+import net.message.TCPMaker;
 import net.message.TCPMessage;
 import net.message.Transfer;
 import net.safe.Safe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static net.proto.SysProto.SysMessage;
-
-public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHandlerAdapter implements Sender<T, M> {
+public class ClientHandler extends ChannelInboundHandlerAdapter implements Sender {
 	private static final Logger logger = LoggerFactory.getLogger(ClientHandler.class);
 	private static final ClientManager clientManager;
 	private final long id;
@@ -55,32 +49,20 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 		if (null == clientHandler.channel) {
 			return null;
 		} else {
-			Object obj = clientHandler.channel.attr(HAProxyDecoder.HAPROXY).get();
-			if (obj instanceof String) {
-				String data = (String) obj;
-				logger.info("{} {}", clientHandler.channel, data);
-				if (!data.isEmpty()) {
-					String[] splData = data.split(" ");
-					if (splData.length == 6) {
-						return new InetSocketAddress(splData[2], Integer.parseInt(splData[4]));
-					}
-				}
-			}
-
 			return (InetSocketAddress) clientHandler.channel.remoteAddress();
 		}
 	}
 
 	public ClientHandler(Parser parser, Handlers handlers) {
-		this(parser, handlers, Transfer::DEFAULT, Makers.getMaker());
+		this(parser, handlers, (t, msg) -> Transfer.DEFAULT(), TCPMaker.INSTANCE);
 	}
 
 	public ClientHandler(Parser parser, Handlers handlers, Transfer transfer) {
-		this(parser, handlers, transfer, Makers.getMaker());
+		this(parser, handlers, transfer, TCPMaker.INSTANCE);
 	}
 
 	public ClientHandler(Parser parser, Handlers handlers, Transfer transfer, Maker maker) {
-		this.safe = Safe::DEFAULT;
+		this.safe = (msgId) -> Safe.DEFAULT();
 		this.id = clientManager.getId();
 		this.parser = parser;
 		this.handlers = handlers;
@@ -167,27 +149,7 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object object) throws Exception {
-		if (object instanceof WebSocketFrame) {
-			WebSocketFrame frame = (WebSocketFrame) object;
-			ByteBuf buf = frame.content();
-
-			try {
-				byte[] bytes = new byte[buf.readableBytes()];
-				buf.readBytes(bytes);
-				SysMessage msg = SysMessage.parseFrom(bytes);
-				if (null != msg) {
-					this.processSysMessage(msg);
-					return;
-				}
-
-				logger.error("[{}] ERROR! sysmessage is null", ctx.channel());
-			} finally {
-				ReferenceCountUtil.release(frame);
-			}
-
-		} else if (object instanceof SysMessage) {
-			this.processSysMessage((SysMessage) object);
-		} else if (object instanceof TCPMessage) {
+		if (object instanceof TCPMessage) {
 			this.processTCPMessage((TCPMessage) object);
 		} else {
 			ctx.fireChannelRead(object);
@@ -211,67 +173,23 @@ public class ClientHandler<T extends ClientHandler, M> extends ChannelInboundHan
 	}
 
 	@Override
-	public void sendMessage(int sequence, Integer msgId, Message message, Map<Long, String> attachments) {
-		if (0 == sequence) {
-			this.sendMessage(msgId, message, attachments);
-		} else {
-			this.channel.writeAndFlush(this.maker.wrap(sequence, msgId, message, attachments));
-		}
-
+	public void sendMessage(int roleId, int msgId, Message message, Map<Long, String> attachments) {
+		this.channel.writeAndFlush(this.maker.wrap(roleId, msgId, message, attachments));
 	}
 
 	@Override
-	public void sendMessage(M msg) {
+	public void sendMessage(TCPMessage msg) {
 		this.channel.writeAndFlush(msg);
 	}
 
-	private void processSysMessage(SysMessage sysMsg) {
-		try {
-			if (!this.safe.isValid(this, sysMsg)) {
-				logger.error("[{}] ERROR! {} is not safe message id", this.channel, String.format("0x%08x", sysMsg.getMsgId()));
-				this.channel.close();
-				return;
-			}
-
-			if (this.transfer.isTransfer(this, sysMsg)) {
-				return;
-			}
-
-			Message msg;
-			if (sysMsg.hasInnerMsg()) {
-				msg = this.parser.parser(sysMsg.getMsgId(), sysMsg.getInnerMsg().toByteArray());
-			} else {
-				msg = this.parser.parser(sysMsg.getMsgId(), DEFAULT_DATA);
-			}
-
-
-			Handler handler = this.handlers.getHandler(sysMsg.getMsgId());
-			if (null == handler) {
-				logger.error("[{}] ERROR! can not find handler for message({})", this.channel, String.format("0x%08x", sysMsg.getMsgId()));
-				return;
-			}
-			long now = System.currentTimeMillis();
-			boolean noCloseChanel = handler.handler(this, sysMsg.hasSequence() ? sysMsg.getSequence() : null, msg, 0);
-			now = System.currentTimeMillis() - now;
-			if (now > 1000L) {
-				logger.error("client handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
-			} else {
-				logger.warn("client handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
-			}
-			if (noCloseChanel) {
-				return;
-			}
-
-			this.channel.close();
-		} catch (Exception var4) {
-			logger.error("[{}] ERROR! failed for process message({})", this.channel, String.format("0x%08x", sysMsg.getMsgId()), var4);
-		}
-
+	@Override
+	public void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg) {
+		this.channel.writeAndFlush(this.maker.wrap(roleId, msgId, mapId, resultId, msg));
 	}
 
 	private void processTCPMessage(TCPMessage tcpMessage) {
 		try {
-			if (!this.safe.isValid(this, tcpMessage)) {
+			if (!this.safe.isValid(tcpMessage.getMessageId())) {
 				logger.error("[{}] ERROR! {} is not safe message id", this.channel, String.format("0x%08x", tcpMessage.getMessageId()));
 				this.channel.close();
 				return;

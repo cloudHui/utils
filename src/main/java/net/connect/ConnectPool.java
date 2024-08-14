@@ -2,7 +2,6 @@ package net.connect;
 
 import java.net.SocketAddress;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -31,12 +29,13 @@ import net.client.Sender;
 import net.handler.Handlers;
 import net.message.Maker;
 import net.message.Parser;
+import net.message.TCPMessage;
 import net.message.Transfer;
 import net.proto.SysProto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectPool<M> implements Sender<ConnectPool, M> {
+public class ConnectPool<M> implements Sender {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectPool.class);
 	private final SocketAddress socketAddress;
 	private final ClientFactory clientFactory;
@@ -125,12 +124,12 @@ public class ConnectPool<M> implements Sender<ConnectPool, M> {
 	}
 
 	@Override
-	public void sendMessage(int sequence, Integer msgId, Message msg, Map<Long, String> attachments) {
+	public void sendMessage(int roleId, int msgId, Message msg, Map<Long, String> attachments) {
 		Channel channel = null;
 
 		try {
 			channel = this.pool.acquire().get();
-			channel.writeAndFlush(this.maker.wrap(sequence, msgId, msg, attachments));
+			channel.writeAndFlush(this.maker.wrap(roleId, msgId, msg, attachments));
 		} catch (Exception var10) {
 			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var10);
 		} finally {
@@ -143,7 +142,7 @@ public class ConnectPool<M> implements Sender<ConnectPool, M> {
 	}
 
 	@Override
-	public void sendMessage(M msg) {
+	public void sendMessage(TCPMessage msg) {
 		Channel channel = null;
 
 		try {
@@ -158,6 +157,23 @@ public class ConnectPool<M> implements Sender<ConnectPool, M> {
 
 		}
 
+	}
+
+	@Override
+	public void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg) {
+		Channel channel = null;
+
+		try {
+			channel = this.pool.acquire().get();
+			channel.writeAndFlush(this.maker.wrap(roleId, msgId, mapId, resultId, msg));
+		} catch (Exception var10) {
+			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var10);
+		} finally {
+			if (null != channel) {
+				this.pool.release(channel);
+			}
+
+		}
 	}
 
 	class InnerChannelPoolHandler implements ChannelPoolHandler {
