@@ -2,7 +2,6 @@ package net.connect;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -181,27 +180,18 @@ public class ConnectHandler<T extends ConnectHandler, M> extends ChannelInboundH
 					innerMsg = this.parser.parser(msg.getMessageId(), this.MSG_DEFAULT);
 				}
 
-				//有双序号保证消息发送成功  否则一直打印错误日志 然后链接重试是在connect里面
-				if (msg.getSequence() > 0) {
-					completer = this.completerGroup.popCompleter(msg.getSequence());
-					if (null != completer) {
-						completer.msg = innerMsg;
-						ctx.channel().eventLoop().execute(completer);
+				handler = this.handlers.getHandler(msg.getMessageId());
+				if (null != handler) {
+					long now = System.currentTimeMillis();
+					handler.handler(this, (long) msg.getRoleId(), innerMsg, msg.getMapId());
+					now = System.currentTimeMillis() - now;
+					if (now > 1000L) {
+						logger.error("connect handler:{} cost too long :{}ms", handler.getClass().getSimpleName(), now);
+					} else {
+						logger.warn("connect handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
 					}
 				} else {
-					handler = this.handlers.getHandler(msg.getMessageId());
-					if (null != handler) {
-						long now = System.currentTimeMillis();
-						handler.handler(this, (long) msg.getSequence(), innerMsg, msg.getMapId());
-						now = System.currentTimeMillis() - now;
-						if (now > 1000L) {
-							logger.error("connect handler:{} cost too long :{}ms", handler.getClass().getSimpleName(), now);
-						} else {
-							logger.warn("connect handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
-						}
-					} else {
-						logger.error("[{}] ERROR! can not find handler for TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()));
-					}
+					logger.error("[{}] ERROR! can not find handler for TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()));
 				}
 			} catch (Exception var6) {
 				logger.error("[{}] ERROR! failed for process TCPMessage({})", new Object[]{ctx.channel(), String.format("0x%08x", msg.getMessageId()), var6});

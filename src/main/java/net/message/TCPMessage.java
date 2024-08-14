@@ -3,30 +3,30 @@ package net.message;
 public class TCPMessage {
 	private int result;
 	private int messageId;
-	private int sequence;
+	private int roleId;
 	private int mapId;
 	private byte[] message;
 
-	public static TCPMessage newInstance(int result, int messageId, int sequence, byte[] message) {
-		return new TCPMessage(result, messageId, sequence, message);
+	public static TCPMessage newInstance(int result, int messageId, int roleId, byte[] message) {
+		return new TCPMessage(result, messageId, roleId, message);
 	}
 
-	public static TCPMessage newInstance(int result, int messageId, int sequence, byte[] message, int mapId) {
-		return new TCPMessage(result, messageId, sequence, message,mapId);
+	public static TCPMessage newInstance(int result, int messageId, int roleId, byte[] message, int mapId) {
+		return new TCPMessage(result, messageId, roleId, message,mapId);
 	}
 
-	public TCPMessage(int result, int messageId, int sequence, byte[] message, int mapId) {
+	public TCPMessage(int result, int messageId, int roleId, byte[] message, int mapId) {
 		this.result = result;
 		this.messageId = messageId;
-		this.sequence = sequence;
+		this.roleId = roleId;
 		this.message = message;
 		this.mapId = mapId;
 	}
 
-	public TCPMessage(int result, int messageId, int sequence, byte[] message) {
+	public TCPMessage(int result, int messageId, int roleId, byte[] message) {
 		this.result = result;
 		this.messageId = messageId;
-		this.sequence = sequence;
+		this.roleId = roleId;
 		this.message = message;
 	}
 
@@ -46,12 +46,12 @@ public class TCPMessage {
 		this.messageId = messageId;
 	}
 
-	public int getSequence() {
-		return this.sequence;
+	public int getRoleId() {
+		return this.roleId;
 	}
 
-	public void setSequence(int sequence) {
-		this.sequence = sequence;
+	public void setRoleId(int roleId) {
+		this.roleId = roleId;
 	}
 
 	public byte[] getMessage() {

@@ -7,15 +7,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.ReferenceCountUtil;
 import net.channel.ChannelAttr;
 import net.client.Sender;
 import net.client.event.CloseEvent;
@@ -31,8 +28,6 @@ import net.message.Transfer;
 import net.safe.Safe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static net.proto.SysProto.SysMessage;
 
 public class WsClientHandler<T extends WsClientHandler, M> extends SimpleChannelInboundHandler implements Sender<T, M> {
 	private static final Logger logger = LoggerFactory.getLogger(WsClientHandler.class);
@@ -230,7 +225,7 @@ public class WsClientHandler<T extends WsClientHandler, M> extends SimpleChannel
 			}
 
 			long now = System.currentTimeMillis();
-			boolean close = handler.handler(this, (long) tcpMessage.getSequence(), msg, tcpMessage.getMapId());
+			boolean close = handler.handler(this, (long) tcpMessage.getRoleId(), msg, tcpMessage.getMapId());
 			now = System.currentTimeMillis() - now;
 			if (now > 1000L) {
 				logger.error("client handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
