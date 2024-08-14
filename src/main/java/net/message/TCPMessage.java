@@ -1,41 +1,41 @@
 package net.message;
 
 public class TCPMessage {
-	private int version;
+	private int result;
 	private int messageId;
 	private int sequence;
 	private int mapId;
 	private byte[] message;
 
-	public static TCPMessage newInstance(int version, int messageId, int sequence, byte[] message) {
-		return new TCPMessage(version, messageId, sequence, message);
+	public static TCPMessage newInstance(int result, int messageId, int sequence, byte[] message) {
+		return new TCPMessage(result, messageId, sequence, message);
 	}
 
-	public static TCPMessage newInstance(int version, int messageId, int sequence, byte[] message, int mapId) {
-		return new TCPMessage(version, messageId, sequence, message,mapId);
+	public static TCPMessage newInstance(int result, int messageId, int sequence, byte[] message, int mapId) {
+		return new TCPMessage(result, messageId, sequence, message,mapId);
 	}
 
-	public TCPMessage(int version, int messageId, int sequence, byte[] message, int mapId) {
-		this.version = version;
+	public TCPMessage(int result, int messageId, int sequence, byte[] message, int mapId) {
+		this.result = result;
 		this.messageId = messageId;
 		this.sequence = sequence;
 		this.message = message;
 		this.mapId = mapId;
 	}
 
-	public TCPMessage(int version, int messageId, int sequence, byte[] message) {
-		this.version = version;
+	public TCPMessage(int result, int messageId, int sequence, byte[] message) {
+		this.result = result;
 		this.messageId = messageId;
 		this.sequence = sequence;
 		this.message = message;
 	}
 
-	public int getVersion() {
-		return this.version;
+	public int getResult() {
+		return this.result;
 	}
 
-	public void setVersion(int version) {
-		this.version = version;
+	public void setResult(int result) {
+		this.result = result;
 	}
 
 	public int getMessageId() {

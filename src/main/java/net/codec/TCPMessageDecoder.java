@@ -22,7 +22,7 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 		ByteBuf buf = (ByteBuf) super.decode(ctx, in);
 		if (null != buf) {
 			ByteBuf rec = buf.order(ByteOrder.LITTLE_ENDIAN);
-			int version = rec.readInt();//lengthFieldOffset 4
+			int result = rec.readInt();//lengthFieldOffset 4
 			int id = rec.readInt();//lengthFieldOffset total 8
 			int length = rec.readInt();//lengthFieldLength 4
 			int sequence = rec.readInt();//lengthAdjustment 4
@@ -34,7 +34,7 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 			}
 
 			rec.release();
-			return TCPMessage.newInstance(version, id, sequence, data, mapId);
+			return TCPMessage.newInstance(result, id, sequence, data, mapId);
 		} else {
 			return null;
 		}
