@@ -11,7 +11,8 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.0.30.Final</version>
+            <version>4.1.68.Final</version>
+<!--            <version>4.0.30.Final</version>-->
         </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
@@ -98,10 +99,12 @@
             <version>4.1.2</version>
         </dependency>
 
+
+
         <dependency>
-            <groupId>cn.kdyzm</groupId>
-            <artifactId>kdyzm-util</artifactId>
-            <version>0.0.2</version>
+            <groupId>io.jpower.kcp</groupId>
+            <artifactId>kcp-netty</artifactId>
+            <version>1.5.2</version>
         </dependency>
 
     </dependencies>

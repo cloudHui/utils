@@ -5,23 +5,21 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import net.message.TCPMessage;
 
-import java.nio.ByteOrder;
 
 public class TCPMessageEncoder extends MessageToByteEncoder<TCPMessage> {
 	public TCPMessageEncoder() {
 	}
 
 	@Override
-	protected void encode(ChannelHandlerContext ctx, TCPMessage msg, ByteBuf out) throws Exception {
-		ByteBuf buf = out.order(ByteOrder.LITTLE_ENDIAN);
-		buf.writeInt(msg.getResult());
-		buf.writeInt(msg.getMessageId());
+	protected void encode(ChannelHandlerContext ctx, TCPMessage msg, ByteBuf out) {
+		out.writeIntLE(msg.getResult());
+		out.writeIntLE(msg.getMessageId());
 		int length = msg.getMessage() == null ? 0 : msg.getMessage().length;
-		buf.writeInt(length);
-		buf.writeInt(msg.getRoleId());
-		buf.writeInt(msg.getMapId());
+		out.writeIntLE(length);
+		out.writeIntLE(msg.getRoleId());
+		out.writeIntLE(msg.getMapId());
 		if (length > 0) {
-			buf.writeBytes(msg.getMessage());
+			out.writeBytes(msg.getMessage());
 		}
 
 	}

@@ -18,12 +18,11 @@ import threadtutil.timer.model.TimeNode;
 public class Timer implements Runnable {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Timer.class);
 	private final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
-	private final List<TimeNode> nodes = new LinkedList();
+	private final List<TimeNode> nodes = new LinkedList<>();
 	private final Lock lock = new ReentrantLock(false);
 	private final TimeSignal timeSignal = new TimeSignal();
 	private ExecutorPool runners;
 	private int loops = 0;
-	private long waitTime = 9223372036854775807L;
 
 	public Timer() {
 	}
@@ -61,8 +60,9 @@ public class Timer implements Runnable {
 
 	@Override
 	public void run() {
-		for (int loop = this.loops; loop == this.loops; this.timeSignal.waitSignal(this.waitTime)) {
-			this.waitTime = 180000L;
+		long waitTime = 9223372036854775807L;
+		for (int loop = this.loops; loop == this.loops; this.timeSignal.waitSignal(waitTime)) {
+			waitTime = 180000L;
 			this.lock.lock();
 
 			try {
@@ -76,7 +76,7 @@ public class Timer implements Runnable {
 					} else {
 						long diff = timeNode.timeDifference(now);
 						if (diff > 0L) {
-							this.waitTime = Math.min(diff, this.waitTime);
+							waitTime = Math.min(diff, waitTime);
 						} else {
 							it.remove();
 							CompletableFuture future;

@@ -14,8 +14,8 @@ import net.codec.TCPMessageEncoder;
 import net.handler.IdleHandler;
 
 public class TCPServiceHandler extends ChannelInitializer<SocketChannel> {
-	private ClientFactory clientFactory;
-	private int idleTime;
+	private final ClientFactory clientFactory;
+	private final int idleTime;
 
 	public TCPServiceHandler(ClientFactory clientFactory) {
 		this(0, clientFactory);

@@ -21,19 +21,18 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 	protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
 		ByteBuf buf = (ByteBuf) super.decode(ctx, in);
 		if (null != buf) {
-			ByteBuf rec = buf.order(ByteOrder.LITTLE_ENDIAN);
-			int result = rec.readInt();//lengthFieldOffset 4
-			int id = rec.readInt();//lengthFieldOffset total 8
-			int length = rec.readInt();//lengthFieldLength 4
-			int sequence = rec.readInt();//lengthAdjustment 4
-			int mapId = rec.readInt();  //lengthAdjustment total 8
+			int result = in.readIntLE();//lengthFieldOffset 4
+			int id = in.readIntLE();//lengthFieldOffset total 8
+			int length = in.readIntLE();//lengthFieldLength 4
+			int sequence = in.readIntLE();//lengthAdjustment 4
+			int mapId = in.readIntLE();  //lengthAdjustment total 8
 			byte[] data = null;
 			if (length > 0) {
 				data = new byte[length];
-				rec.readBytes(data);//initialBytesToStrip 0
+				in.readBytes(data);//initialBytesToStrip 0
 			}
 
-			rec.release();
+			in.release();
 			return TCPMessage.newInstance(result, id, sequence, data, mapId);
 		} else {
 			return null;

@@ -7,9 +7,9 @@ import threadtutil.timer.Runner;
 public class TimeNode<T> implements Runnable {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimeNode.class);
 	private final int id;
-	private Runner runner;
-	private T param;
-	private long interval;
+	private final Runner runner;
+	private final T param;
+	private final long interval;
 	private int count;
 	private long triggerTime;
 

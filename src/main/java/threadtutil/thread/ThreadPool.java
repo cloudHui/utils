@@ -17,7 +17,7 @@ public class ThreadPool {
 	private final String threadPrefix;
 	private final AtomicInteger threadNumber;
 	private final Map<Long, String> threadName;
-	private int size;
+	private final int size;
 
 	public ThreadPool(String prefix) {
 		this(prefix, 0);

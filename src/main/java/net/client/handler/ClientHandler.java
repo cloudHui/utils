@@ -33,10 +33,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	private final long id;
 	private Channel channel;
 	private Safe safe;
-	private Transfer transfer;
-	private Parser parser;
-	private Handlers handlers;
-	private Maker maker;
+	private final Transfer transfer;
+	private final Parser parser;
+	private final Handlers handlers;
+	private final Maker maker;
 	private static final byte[] DEFAULT_DATA;
 	private RegisterEvent registerEvent;
 	private CloseEvent closeEvent;

@@ -1,5 +1,6 @@
 package net.service;
 
+import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import net.client.handler.ClientHandler;
@@ -35,7 +36,7 @@ public class SysMessageService extends Service {
 
 	public SysMessageService start(List<SocketAddress> socketAddresses) {
 		super.start(new SysMessageServiceHandler(this.idleTime, (channel) -> {
-			List channels = new ArrayList(1);
+			List<ChannelHandlerAdapter> channels = new ArrayList<>();
 
 			try {
 				channels.add(this.clazz.newInstance());

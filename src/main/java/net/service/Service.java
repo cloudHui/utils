@@ -18,9 +18,9 @@ import java.util.List;
 
 public class Service {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Service.class);
-	private EventLoopGroup bossGroup;
-	private EventLoopGroup workerGroup;
-	private List<Channel> channels = new ArrayList<>();
+	private final EventLoopGroup bossGroup;
+	private final EventLoopGroup workerGroup;
+	private final List<Channel> channels = new ArrayList<>();
 
 	public Service(EventLoopGroup bossGroup, EventLoopGroup workerGroup) {
 		this.bossGroup = bossGroup;

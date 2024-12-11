@@ -42,11 +42,11 @@ public class ConnectPool<M> implements Sender {
 	private final EventLoopGroup eventLoopGroup;
 	private ChannelPool pool;
 	private final int maxSize;
-	private Maker maker;
+	private final Maker maker;
 
 	public ConnectPool(int maxSize, SocketAddress socketAddress, EventLoopGroup eventLoopGroup, Maker maker, Transfer transfer, Parser parser, Handlers handlers) {
 		this(maxSize, socketAddress, (channel) -> {
-			List<ChannelHandlerAdapter> h = new ArrayList();
+			List<ChannelHandlerAdapter> h = new ArrayList<>();
 			h.add(new ProtobufVarint32LengthFieldPrepender());
 			h.add(new ProtobufEncoder());
 			h.add(new IdleStateHandler(0, 180, 0));
@@ -181,15 +181,15 @@ public class ConnectPool<M> implements Sender {
 		}
 
 		@Override
-		public void channelReleased(Channel channel) throws Exception {
+		public void channelReleased(Channel channel) {
 		}
 
 		@Override
-		public void channelAcquired(Channel channel) throws Exception {
+		public void channelAcquired(Channel channel) {
 		}
 
 		@Override
-		public void channelCreated(Channel channel) throws Exception {
+		public void channelCreated(Channel channel) {
 			ChannelPipeline p = channel.pipeline();
 			for (ChannelHandlerAdapter c : ConnectPool.this.clientFactory.create(channel)) {
 				p.addLast(c);

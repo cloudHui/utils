@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class TaskList {
 	private final AtomicLong processor;
 	private Date time;
-	private List<Task> tasks;
+	private final List<Task> tasks;
 
 
 	public TaskList() {

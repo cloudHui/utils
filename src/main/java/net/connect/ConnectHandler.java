@@ -90,7 +90,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 	@Override
-	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+	public void channelActive(ChannelHandlerContext ctx) {
 		this.channel = ctx.channel();
 		connectManager.addConnect(this);
 		this.completerGroup = new CompleterGroup(this.channel.eventLoop());
@@ -105,7 +105,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 	@Override
-	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+	public void channelInactive(ChannelHandlerContext ctx) {
 		connectManager.removeConnect(this.getId());
 		this.completerGroup.destroy();
 		this.completerGroup = null;
@@ -114,7 +114,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 	@Override
-	public void userEventTriggered(ChannelHandlerContext ctx, Object event) throws Exception {
+	public void userEventTriggered(ChannelHandlerContext ctx, Object event) {
 		if (IdleStateEvent.class.isAssignableFrom(event.getClass())) {
 			IdleStateEvent idle = (IdleStateEvent) event;
 			if (IdleState.WRITER_IDLE == idle.state() && null != this.idleRunner) {
@@ -161,7 +161,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 					logger.error("[{}] ERROR! can not find handler for TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()));
 				}
 			} catch (Exception var6) {
-				logger.error("[{}] ERROR! failed for process TCPMessage({})", new Object[]{ctx.channel(), String.format("0x%08x", msg.getMessageId()), var6});
+				logger.error("[{}] ERROR! failed for process TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()), var6);
 			}
 		} else {
 			ctx.fireChannelRead(o);
@@ -301,7 +301,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 
 			try {
 				Thread.sleep(3000L);
-			} catch (Exception var6) {
+			} catch (Exception ignored) {
 			}
 
 			Completer completer;
@@ -355,7 +355,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 	private static class Completer<T> extends CompletableFuture<T> implements Runnable {
-		private long timeout;
+		private final long timeout;
 		public Throwable ex;
 		public T msg;
 

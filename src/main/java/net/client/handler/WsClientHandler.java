@@ -28,7 +28,7 @@ import net.safe.Safe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WsClientHandler extends SimpleChannelInboundHandler implements Sender {
+public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame> implements Sender {
 	private static final Logger logger = LoggerFactory.getLogger(WsClientHandler.class);
 	private static final ClientManager clientManager;
 	private final long id;
@@ -149,13 +149,6 @@ public class WsClientHandler extends SimpleChannelInboundHandler implements Send
 	}
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-		if (msg instanceof WebSocketFrame) {
-			logger.error(msg.toString());
-		}
-	}
-
-	@Override
 	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments) {
 		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
 	}
@@ -235,6 +228,13 @@ public class WsClientHandler extends SimpleChannelInboundHandler implements Send
 		DEFAULT_DATA = "".getBytes();
 	}
 
+
+	@Override
+	protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) {
+		if (msg != null) {
+			logger.error(msg.toString());
+		}
+	}
 	private static class ClientManager {
 		private static final ClientManager INSTANCE = new ClientManager();
 		private final AtomicLong ID = new AtomicLong(0L);
