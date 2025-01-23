@@ -148,7 +148,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	}
 
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object object) throws Exception {
+	public void channelRead(ChannelHandlerContext ctx, Object object) {
 		if (object instanceof TCPMessage) {
 			this.processTCPMessage((TCPMessage) object);
 		} else {
@@ -163,18 +163,18 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	}
 
 	@Override
-	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments, int mapId) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId));
+	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments, int mapId, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId,sequence));
 	}
 
 	@Override
-	public void sendMessage(int msgId, ByteString msg, Map<Long, String> attachments) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
+	public void sendMessage(int msgId, ByteString str, Map<Long, String> attachments, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, str, attachments,sequence));
 	}
 
 	@Override
-	public void sendMessage(int roleId, int msgId, Message message, Map<Long, String> attachments) {
-		this.channel.writeAndFlush(this.maker.wrap(roleId, msgId, message, attachments));
+	public void sendMessage(int roleId, int mapId, Message msg, Map<Long, String> attachments, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(roleId, mapId, msg, attachments,sequence));
 	}
 
 	@Override
@@ -183,38 +183,38 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	}
 
 	@Override
-	public void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg) {
-		this.channel.writeAndFlush(this.maker.wrap(roleId, msgId, mapId, resultId, msg));
+	public void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(roleId, msgId, mapId, resultId, msg,sequence));
 	}
 
-	private void processTCPMessage(TCPMessage tcpMessage) {
+	private void processTCPMessage(TCPMessage tMsg) {
 		try {
-			if (!this.safe.isValid(tcpMessage.getMessageId())) {
-				logger.error("[{}] ERROR! {} is not safe message id", this.channel, String.format("0x%08x", tcpMessage.getMessageId()));
+			if (!this.safe.isValid(tMsg.getMessageId())) {
+				logger.error("[{}] ERROR! {} is not safe message id", this.channel, String.format("0x%08x", tMsg.getMessageId()));
 				this.channel.close();
 				return;
 			}
 
-			if (this.transfer.isTransfer(this, tcpMessage)) {
+			if (this.transfer.isTransfer(this, tMsg)) {
 				return;
 			}
 
 			Message msg;
-			if (null != tcpMessage.getMessage() && tcpMessage.getMessage().length > 0) {
-				msg = this.parser.parser(tcpMessage.getMessageId(), tcpMessage.getMessage());
+			if (null != tMsg.getMessage() && tMsg.getMessage().length > 0) {
+				msg = this.parser.parser(tMsg.getMessageId(), tMsg.getMessage());
 			} else {
-				msg = this.parser.parser(tcpMessage.getMessageId(), DEFAULT_DATA);
+				msg = this.parser.parser(tMsg.getMessageId(), DEFAULT_DATA);
 			}
 
 
-			Handler handler = this.handlers.getHandler(tcpMessage.getMessageId());
+			Handler handler = this.handlers.getHandler(tMsg.getMessageId());
 			if (null == handler) {
-				logger.error("[{}] ERROR! can not find handler for message({})", this.channel, String.format("0x%08x", tcpMessage.getMessageId()));
+				logger.error("[{}] ERROR! can not find handler for message({})", this.channel, String.format("0x%08x", tMsg.getMessageId()));
 				return;
 			}
 
 			long now = System.currentTimeMillis();
-			boolean noCloseChannel = handler.handler(this, (long) tcpMessage.getRoleId(), msg, tcpMessage.getMapId());
+			boolean noCloseChannel = handler.handler(this, tMsg.getClientId(), msg, tMsg.getMapId(),tMsg.getSequence());
 			now = System.currentTimeMillis() - now;
 			if (now > 1000L) {
 				logger.error("client handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
@@ -227,7 +227,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 
 			this.channel.close();
 		} catch (Exception var4) {
-			logger.error("[{}] ERROR! failed for process message({})", this.channel, String.format("0x%08x", tcpMessage.getMessageId()), var4);
+			logger.error("[{}] ERROR! failed for process message({})", this.channel, String.format("0x%08x", tMsg.getMessageId()), var4);
 		}
 
 	}

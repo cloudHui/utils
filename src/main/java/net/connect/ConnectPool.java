@@ -89,12 +89,12 @@ public class ConnectPool<M> implements Sender {
 	}
 
 	@Override
-	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments, int mapId) {
+	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments, int mapId, long sequence) {
 		Channel channel = null;
 
 		try {
 			channel = this.pool.acquire().get();
-			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId));
+			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId, sequence));
 		} catch (Exception var9) {
 			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var9);
 		} finally {
@@ -106,12 +106,12 @@ public class ConnectPool<M> implements Sender {
 	}
 
 	@Override
-	public void sendMessage(int msgId, ByteString msg, Map<Long, String> attachments) {
+	public void sendMessage(int msgId, ByteString msg, Map<Long, String> attachments, long sequence) {
 		Channel channel = null;
 
 		try {
 			channel = this.pool.acquire().get();
-			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
+			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, sequence));
 		} catch (Exception var9) {
 			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var9);
 		} finally {
@@ -124,12 +124,12 @@ public class ConnectPool<M> implements Sender {
 	}
 
 	@Override
-	public void sendMessage(int roleId, int msgId, Message msg, Map<Long, String> attachments) {
+	public void sendMessage(int roleId, int msgId, Message msg, Map<Long, String> attachments, long sequence) {
 		Channel channel = null;
 
 		try {
 			channel = this.pool.acquire().get();
-			channel.writeAndFlush(this.maker.wrap(roleId, msgId, msg, attachments));
+			channel.writeAndFlush(this.maker.wrap(roleId, msgId, msg, attachments, sequence));
 		} catch (Exception var10) {
 			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var10);
 		} finally {
@@ -160,12 +160,12 @@ public class ConnectPool<M> implements Sender {
 	}
 
 	@Override
-	public void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg) {
+	public void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg, long sequence) {
 		Channel channel = null;
 
 		try {
 			channel = this.pool.acquire().get();
-			channel.writeAndFlush(this.maker.wrap(roleId, msgId, mapId, resultId, msg));
+			channel.writeAndFlush(this.maker.wrap(roleId, msgId, mapId, resultId, msg, sequence));
 		} catch (Exception var10) {
 			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var10);
 		} finally {

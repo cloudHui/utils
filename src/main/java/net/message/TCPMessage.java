@@ -3,31 +3,57 @@ package net.message;
 public class TCPMessage {
 	private int result;
 	private int messageId;
-	private int roleId;
+	private int clientId;
 	private int mapId;
+	private long sequence;
 	private byte[] message;
 
-	public static TCPMessage newInstance(int result, int messageId, int roleId, byte[] message) {
-		return new TCPMessage(result, messageId, roleId, message);
+	public static TCPMessage newInstance(int result, int messageId, int clientId, byte[] message) {
+		return new TCPMessage(result, messageId, clientId, message);
 	}
 
-	public static TCPMessage newInstance(int result, int messageId, int roleId, byte[] message, int mapId) {
-		return new TCPMessage(result, messageId, roleId, message,mapId);
+	public static TCPMessage newInstance(int result, int messageId, int clientId, byte[] message, int mapId) {
+		return new TCPMessage(result, messageId, clientId, message, mapId);
 	}
 
-	public TCPMessage(int result, int messageId, int roleId, byte[] message, int mapId) {
+	public static TCPMessage newInstance(int result, int messageId, int clientId, byte[] message, long sequence) {
+		return new TCPMessage(result, messageId, clientId, message, sequence);
+	}
+
+	public static TCPMessage newInstance(int result, int messageId, int clientId, byte[] message, int mapId, long sequence) {
+		return new TCPMessage(result, messageId, clientId, message, mapId,sequence);
+	}
+
+	public TCPMessage(int result, int messageId, int clientId, byte[] message, int mapId) {
 		this.result = result;
 		this.messageId = messageId;
-		this.roleId = roleId;
+		this.clientId = clientId;
 		this.message = message;
 		this.mapId = mapId;
 	}
 
-	public TCPMessage(int result, int messageId, int roleId, byte[] message) {
+	public TCPMessage(int result, int messageId, int clientId, byte[] message) {
 		this.result = result;
 		this.messageId = messageId;
-		this.roleId = roleId;
+		this.clientId = clientId;
 		this.message = message;
+	}
+
+	public TCPMessage(int result, int messageId, int clientId, byte[] message, long sequence) {
+		this.result = result;
+		this.messageId = messageId;
+		this.clientId = clientId;
+		this.message = message;
+		this.sequence = sequence;
+	}
+
+	public TCPMessage(int result, int messageId, int clientId, byte[] message, int mapId, long sequence) {
+		this.result = result;
+		this.messageId = messageId;
+		this.clientId = clientId;
+		this.message = message;
+		this.mapId = mapId;
+		this.sequence = sequence;
 	}
 
 	public int getResult() {
@@ -46,12 +72,12 @@ public class TCPMessage {
 		this.messageId = messageId;
 	}
 
-	public int getRoleId() {
-		return this.roleId;
+	public int getClientId() {
+		return this.clientId;
 	}
 
-	public void setRoleId(int roleId) {
-		this.roleId = roleId;
+	public void setClientId(int clientId) {
+		this.clientId = clientId;
 	}
 
 	public byte[] getMessage() {
@@ -68,5 +94,13 @@ public class TCPMessage {
 
 	public void setMapId(int mapId) {
 		this.mapId = mapId;
+	}
+
+	public long getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(long sequence) {
+		this.sequence = sequence;
 	}
 }

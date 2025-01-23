@@ -20,7 +20,7 @@ public class WSTCPMessageEncoder extends MessageToMessageEncoder<TCPMessage> {
 		buf.writeInt(msg.getResult());
 		buf.writeInt(msg.getMessageId());
 		buf.writeInt(length);
-		buf.writeInt(msg.getRoleId());
+		buf.writeInt(msg.getClientId());
 		if (length > 0) {
 			buf.writeBytes(msg.getMessage());
 		}

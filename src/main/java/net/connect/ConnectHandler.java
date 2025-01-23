@@ -147,19 +147,29 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 					innerMsg = this.parser.parser(msg.getMessageId(), this.MSG_DEFAULT);
 				}
 
-				handler = this.handlers.getHandler(msg.getMessageId());
-				if (null != handler) {
-					long now = System.currentTimeMillis();
-					handler.handler(this, (long) msg.getRoleId(), innerMsg, msg.getMapId());
-					now = System.currentTimeMillis() - now;
-					if (now > 1000L) {
-						logger.error("connect handler:{} cost too long :{}ms", handler.getClass().getSimpleName(), now);
-					} else {
-						logger.warn("connect handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
+
+				if (msg.getSequence() != 0) {
+					Completer completer = this.completerGroup.popCompleter(msg.getSequence());
+					if (null != completer) {
+						completer.msg = innerMsg;
+						ctx.channel().eventLoop().execute(completer);
 					}
 				} else {
-					logger.error("[{}] ERROR! can not find handler for TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()));
+					handler = this.handlers.getHandler(msg.getMessageId());
+					if (null != handler) {
+						long now = System.currentTimeMillis();
+						handler.handler(this, msg.getClientId(), innerMsg, msg.getMapId(), msg.getSequence());
+						now = System.currentTimeMillis() - now;
+						if (now > 1000L) {
+							logger.error("connect handler:{} cost too long :{}ms", handler.getClass().getSimpleName(), now);
+						} else {
+							logger.warn("connect handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
+						}
+					} else {
+						logger.error("[{}] ERROR! can not find handler for TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()));
+					}
 				}
+
 			} catch (Exception var6) {
 				logger.error("[{}] ERROR! failed for process TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()), var6);
 			}
@@ -170,23 +180,23 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 	@Override
-	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
+	public void sendMessage(int msgId, Message msg, Map<Long, String> attach) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attach, 0, 0));
 	}
 
 	@Override
-	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments, int mapId) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId));
+	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments, int mapId, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId, sequence));
 	}
 
 	@Override
-	public void sendMessage(int msgId, ByteString msg, Map<Long, String> attachments) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
+	public void sendMessage(int msgId, ByteString str, Map<Long, String> attachments, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, str, attachments, sequence));
 	}
 
 	@Override
-	public void sendMessage(int sequence, int msgId, Message msg, Map<Long, String> attachments) {
-		this.channel.writeAndFlush(this.maker.wrap(sequence, msgId, msg, attachments));
+	public void sendMessage(int msgId, int mapId, Message msg, Map<Long, String> attach, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attach));
 	}
 
 	@Override
@@ -195,15 +205,18 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 	@Override
-	public void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg) {
-		this.channel.writeAndFlush(this.maker.wrap(roleId, msgId, mapId, resultId, msg));
+	public void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(roleId, msgId, mapId, resultId, msg, sequence));
 	}
 
-	public CompletableFuture sendMessage(int msgId, Message msg, Map<Long, String> attachments, long timeout) {
-		int sequence = this.completerGroup.getSequence();
+	/**
+	 * 有后续处理的加超时处理
+	 */
+	public CompletableFuture sendMessage(int msgId, Message msg, Map<Long, String> attachments, int timeout) {
+		long sequence = this.completerGroup.getSequence();
 		Completer completer = new Completer(timeout);
 		this.completerGroup.addCompleter(sequence, completer);
-		this.sendMessage(sequence, msgId, msg, attachments);
+		this.sendMessage(msgId, 0, msg, attachments, sequence);
 		return completer;
 	}
 
@@ -385,7 +398,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	private static class ConnectManager {
 		private static final ConnectManager INSTANCE = new ConnectManager();
 		private final AtomicLong ID = new AtomicLong(0L);
-		private final Map<Long, ConnectHandler> connectMap = new HashMap(64);
+		private final Map<Long, ConnectHandler> connectMap = new HashMap<>(64);
 		private final ReadWriteLock lock = new ReentrantReadWriteLock(false);
 
 		private ConnectManager() {
