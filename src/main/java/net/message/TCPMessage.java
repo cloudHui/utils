@@ -8,6 +8,10 @@ public class TCPMessage {
 	private long sequence;
 	private byte[] message;
 
+	public static TCPMessage newInstance(int messageId, byte[] message, long sequence) {
+		return new TCPMessage( messageId, message,sequence);
+	}
+
 	public static TCPMessage newInstance(int result, int messageId, int clientId, byte[] message) {
 		return new TCPMessage(result, messageId, clientId, message);
 	}
@@ -24,6 +28,11 @@ public class TCPMessage {
 		return new TCPMessage(result, messageId, clientId, message, mapId,sequence);
 	}
 
+	public TCPMessage( int messageId, byte[] message, long sequence) {
+		this.messageId = messageId;
+		this.message = message;
+		this.sequence = sequence;
+	}
 	public TCPMessage(int result, int messageId, int clientId, byte[] message, int mapId) {
 		this.result = result;
 		this.messageId = messageId;

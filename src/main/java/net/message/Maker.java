@@ -7,6 +7,8 @@ import com.google.protobuf.Message;
 
 public interface Maker {
 
+	TCPMessage wrap(int msgId, Message msg, long sequence);
+
 	TCPMessage wrap(int msgId, Message msg, Map<Long, String> attach);
 
 	TCPMessage wrap(int msgId, Message msg, Map<Long, String> attach, int mapId, long sequence);

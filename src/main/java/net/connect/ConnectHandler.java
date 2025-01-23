@@ -180,6 +180,11 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 	@Override
+	public void sendMessage(int msgId, Message msg, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, sequence));
+	}
+
+	@Override
 	public void sendMessage(int msgId, Message msg, Map<Long, String> attach) {
 		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attach, 0, 0));
 	}
@@ -196,7 +201,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 
 	@Override
 	public void sendMessage(int msgId, int mapId, Message msg, Map<Long, String> attach, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attach));
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, sequence));
 	}
 
 	@Override
@@ -205,14 +210,14 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 	@Override
-	public void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(roleId, msgId, mapId, resultId, msg, sequence));
+	public void sendMessage(int clientId, int msgId, int mapId, int resultId, Message msg, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(clientId, msgId, mapId, resultId, msg, sequence));
 	}
 
 	/**
 	 * 有后续处理的加超时处理
 	 */
-	public CompletableFuture sendMessage(int msgId, Message msg, Map<Long, String> attachments, int timeout) {
+	public CompletableFuture<com.google.protobuf.Message> sendMessage(int msgId, Message msg, Map<Long, String> attachments, int timeout) {
 		long sequence = this.completerGroup.getSequence();
 		Completer completer = new Completer(timeout);
 		this.completerGroup.addCompleter(sequence, completer);
@@ -226,10 +231,10 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 
 	private static class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 		private static final Throwable TIMEOUT = new RuntimeException("timeout");
-		private Map<Long, Completer> completerMap = new ConcurrentHashMap(128);
+		private final Map<Long, Completer> completerMap = new ConcurrentHashMap<>(128);
 		private EventLoop executors;
 		private static final AtomicInteger sequence = new AtomicInteger(0);
-		private static final Set<Runnable> runners = new ConcurrentSkipListSet();
+		private static final Set<Runnable> runners = new ConcurrentSkipListSet<>((o1, o2) -> 0);
 		private static final Thread checker = new Thread(() -> {
 			long waitTime;
 
@@ -367,10 +372,10 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		}
 	}
 
-	private static class Completer<T> extends CompletableFuture<T> implements Runnable {
+	private static class Completer extends CompletableFuture<com.google.protobuf.Message> implements Runnable {
 		private final long timeout;
 		public Throwable ex;
-		public T msg;
+		public Message msg;
 
 		public Completer(long timeout) {
 			this.timeout = timeout * 1000L + System.currentTimeMillis();

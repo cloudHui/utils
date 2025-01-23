@@ -71,6 +71,11 @@ public class ConnectPool<M> implements Sender {
 	}
 
 	@Override
+	public void sendMessage(int msgId, Message msg, long sequence) {
+		sendMessage(0, msgId, msg, null, sequence);
+	}
+
+	@Override
 	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments) {
 		Channel channel = null;
 
@@ -160,12 +165,12 @@ public class ConnectPool<M> implements Sender {
 	}
 
 	@Override
-	public void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg, long sequence) {
+	public void sendMessage(int clientId, int msgId, int mapId, int resultId, Message msg, long sequence) {
 		Channel channel = null;
 
 		try {
 			channel = this.pool.acquire().get();
-			channel.writeAndFlush(this.maker.wrap(roleId, msgId, mapId, resultId, msg, sequence));
+			channel.writeAndFlush(this.maker.wrap(clientId, msgId, mapId, resultId, msg, sequence));
 		} catch (Exception var10) {
 			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var10);
 		} finally {

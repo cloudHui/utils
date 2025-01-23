@@ -158,6 +158,11 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	}
 
 	@Override
+	public void sendMessage(int msgId, Message msg, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, sequence));
+	}
+
+	@Override
 	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments) {
 		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
 	}
@@ -183,8 +188,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	}
 
 	@Override
-	public void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(roleId, msgId, mapId, resultId, msg,sequence));
+	public void sendMessage(int clientId, int msgId, int mapId, int resultId, Message msg, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(clientId, msgId, mapId, resultId, msg,sequence));
 	}
 
 	private void processTCPMessage(TCPMessage tMsg) {

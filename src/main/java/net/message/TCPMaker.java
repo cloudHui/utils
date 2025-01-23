@@ -12,6 +12,11 @@ public class TCPMaker implements Maker {
 	}
 
 	@Override
+	public TCPMessage wrap(int msgId, Message msg, long sequence) {
+		return TCPMessage.newInstance(msgId, msg.toByteArray(), sequence);
+	}
+
+	@Override
 	public TCPMessage wrap(int msgId, Message msg, Map<Long, String> attachments) {
 		return TCPMessage.newInstance(0, msgId, 0, msg.toByteArray());
 	}

@@ -7,6 +7,8 @@ import com.google.protobuf.Message;
 import net.message.TCPMessage;
 
 public interface Sender {
+	void sendMessage(int msgId, Message msg, long sequence);
+
 	void sendMessage(int msgId, Message msg, Map<Long, String> attach);
 
 	void sendMessage(int msgId, Message msg, Map<Long, String> attach, int mapId, long sequence);
@@ -17,5 +19,5 @@ public interface Sender {
 
 	void sendMessage(TCPMessage msg);
 
-	void sendMessage(int roleId, int msgId, int mapId, int resultId, Message msg, long sequence);
+	void sendMessage(int clientId, int msgId, int mapId, int resultId, Message msg, long sequence);
 }
