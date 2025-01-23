@@ -1,7 +1,5 @@
 package net.message;
 
-import java.util.Map;
-
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 
@@ -17,22 +15,22 @@ public class TCPMaker implements Maker {
 	}
 
 	@Override
-	public TCPMessage wrap(int msgId, Message msg, Map<Long, String> attachments) {
+	public TCPMessage wrap(int msgId, Message msg) {
 		return TCPMessage.newInstance(0, msgId, 0, msg.toByteArray());
 	}
 
 	@Override
-	public TCPMessage wrap(int msgId, Message msg, Map<Long, String> attachments, int mapId, long sequence) {
+	public TCPMessage wrap(int msgId, Message msg, int mapId, long sequence) {
 		return TCPMessage.newInstance(0, msgId, 0, msg.toByteArray(), mapId, sequence);
 	}
 
 	@Override
-	public TCPMessage wrap(int roleId, int msgId, Message msg, Map<Long, String> attachments, long sequence) {
+	public TCPMessage wrap(int roleId, int msgId, Message msg, long sequence) {
 		return TCPMessage.newInstance(0, msgId, roleId, msg.toByteArray(), sequence);
 	}
 
 	@Override
-	public TCPMessage wrap(int msgId, ByteString msg, Map<Long, String> attachments, long sequence) {
+	public TCPMessage wrap(int msgId, ByteString msg, long sequence) {
 		return TCPMessage.newInstance(0, msgId, 0, msg.toByteArray(), sequence);
 	}
 

@@ -163,23 +163,23 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	}
 
 	@Override
-	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
+	public void sendMessage(int msgId, Message msg) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg));
 	}
 
 	@Override
-	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments, int mapId, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId,sequence));
+	public void sendMessage(int msgId, Message msg, int mapId, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, mapId,sequence));
 	}
 
 	@Override
-	public void sendMessage(int msgId, ByteString str, Map<Long, String> attachments, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, str, attachments,sequence));
+	public void sendMessage(int msgId, ByteString str, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, str,sequence));
 	}
 
 	@Override
-	public void sendMessage(int roleId, int mapId, Message msg, Map<Long, String> attachments, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(roleId, mapId, msg, attachments,sequence));
+	public void sendMessage(int roleId, int mapId, Message msg, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(roleId, mapId, msg,sequence));
 	}
 
 	@Override

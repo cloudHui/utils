@@ -185,22 +185,22 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 	@Override
-	public void sendMessage(int msgId, Message msg, Map<Long, String> attach) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attach, 0, 0));
+	public void sendMessage(int msgId, Message msg) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg,  0, 0));
 	}
 
 	@Override
-	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments, int mapId, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId, sequence));
+	public void sendMessage(int msgId, Message msg, int mapId, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg,  mapId, sequence));
 	}
 
 	@Override
-	public void sendMessage(int msgId, ByteString str, Map<Long, String> attachments, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, str, attachments, sequence));
+	public void sendMessage(int msgId, ByteString str, long sequence) {
+		this.channel.writeAndFlush(this.maker.wrap(msgId, str,  sequence));
 	}
 
 	@Override
-	public void sendMessage(int msgId, int mapId, Message msg, Map<Long, String> attach, long sequence) {
+	public void sendMessage(int msgId, int mapId, Message msg, long sequence) {
 		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, sequence));
 	}
 
@@ -217,11 +217,11 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	/**
 	 * 有后续处理的加超时处理
 	 */
-	public CompletableFuture<com.google.protobuf.Message> sendMessage(int msgId, Message msg, Map<Long, String> attachments, int timeout) {
+	public CompletableFuture<com.google.protobuf.Message> sendMessage(int msgId, Message msg, int timeout) {
 		long sequence = this.completerGroup.getSequence();
 		Completer completer = new Completer(timeout);
 		this.completerGroup.addCompleter(sequence, completer);
-		this.sendMessage(msgId, 0, msg, attachments, sequence);
+		this.sendMessage(msgId, 0, msg,  sequence);
 		return completer;
 	}
 

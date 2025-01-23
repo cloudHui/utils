@@ -3,7 +3,6 @@ package net.connect;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
@@ -35,7 +34,7 @@ import net.proto.SysProto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectPool<M> implements Sender {
+public class ConnectPool implements Sender {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectPool.class);
 	private final SocketAddress socketAddress;
 	private final ClientFactory clientFactory;
@@ -72,16 +71,16 @@ public class ConnectPool<M> implements Sender {
 
 	@Override
 	public void sendMessage(int msgId, Message msg, long sequence) {
-		sendMessage(0, msgId, msg, null, sequence);
+		sendMessage(msgId, msg, 0, sequence);
 	}
 
 	@Override
-	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments) {
+	public void sendMessage(int msgId, Message msg) {
 		Channel channel = null;
 
 		try {
 			channel = this.pool.acquire().get();
-			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments));
+			channel.writeAndFlush(this.maker.wrap(msgId, msg));
 		} catch (Exception var9) {
 			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var9);
 		} finally {
@@ -94,12 +93,12 @@ public class ConnectPool<M> implements Sender {
 	}
 
 	@Override
-	public void sendMessage(int msgId, Message msg, Map<Long, String> attachments, int mapId, long sequence) {
+	public void sendMessage(int msgId, Message msg, int mapId, long sequence) {
 		Channel channel = null;
 
 		try {
 			channel = this.pool.acquire().get();
-			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, mapId, sequence));
+			channel.writeAndFlush(this.maker.wrap(msgId, msg, mapId, sequence));
 		} catch (Exception var9) {
 			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var9);
 		} finally {
@@ -111,12 +110,12 @@ public class ConnectPool<M> implements Sender {
 	}
 
 	@Override
-	public void sendMessage(int msgId, ByteString msg, Map<Long, String> attachments, long sequence) {
+	public void sendMessage(int msgId, ByteString msg, long sequence) {
 		Channel channel = null;
 
 		try {
 			channel = this.pool.acquire().get();
-			channel.writeAndFlush(this.maker.wrap(msgId, msg, attachments, sequence));
+			channel.writeAndFlush(this.maker.wrap(msgId, msg, sequence));
 		} catch (Exception var9) {
 			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var9);
 		} finally {
@@ -129,12 +128,12 @@ public class ConnectPool<M> implements Sender {
 	}
 
 	@Override
-	public void sendMessage(int roleId, int msgId, Message msg, Map<Long, String> attachments, long sequence) {
+	public void sendMessage(int roleId, int msgId, Message msg, long sequence) {
 		Channel channel = null;
 
 		try {
 			channel = this.pool.acquire().get();
-			channel.writeAndFlush(this.maker.wrap(roleId, msgId, msg, attachments, sequence));
+			channel.writeAndFlush(this.maker.wrap(roleId, msgId, msg, sequence));
 		} catch (Exception var10) {
 			LOGGER.error("id:{} msg:{}", msgId, msg.toString(), var10);
 		} finally {
