@@ -156,6 +156,7 @@ public class HttpClientPool {
 			httpResponse = httpClient.execute(httpPost, HttpClientContext.create());
 
 			if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				LOGGER.error("httpPost:{}",httpPost.toString());
 				throw new RuntimeException("HTTP Request is not success, Response code is " + httpResponse.getStatusLine().getStatusCode());
 			} else {
 				HttpEntity entity = httpResponse.getEntity();

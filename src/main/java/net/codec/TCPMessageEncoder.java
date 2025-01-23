@@ -1,5 +1,7 @@
 package net.codec;
 
+import java.nio.ByteOrder;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -12,14 +14,15 @@ public class TCPMessageEncoder extends MessageToByteEncoder<TCPMessage> {
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, TCPMessage msg, ByteBuf out) {
-		out.writeIntLE(msg.getResult());
-		out.writeIntLE(msg.getMessageId());
+		ByteBuf buf = out.order(ByteOrder.LITTLE_ENDIAN);
+		buf.writeIntLE(msg.getResult());
+		buf.writeIntLE(msg.getMessageId());
 		int length = msg.getMessage() == null ? 0 : msg.getMessage().length;
-		out.writeIntLE(length);
-		out.writeIntLE(msg.getRoleId());
-		out.writeIntLE(msg.getMapId());
+		buf.writeIntLE(length);
+		buf.writeIntLE(msg.getRoleId());
+		buf.writeIntLE(msg.getMapId());
 		if (length > 0) {
-			out.writeBytes(msg.getMessage());
+			buf.writeBytes(msg.getMessage());
 		}
 
 	}

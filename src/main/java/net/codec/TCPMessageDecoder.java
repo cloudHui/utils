@@ -13,29 +13,35 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 		//lengthFieldLength ： 长度域的所占的字节数
 		//lengthAdjustment ： 长度值的调整值
 		//initialBytesToStrip ： 需要跳过的字节数
-		super(ByteOrder.LITTLE_ENDIAN, 2097152, 8, 4,
-				8, 0, true);
+		//super(ByteOrder.LITTLE_ENDIAN, 2097152, 8, 4, 4, 0, true);
+		//super(ByteOrder.LITTLE_ENDIAN, 2097152, 8, 4, 8, 0, true);
+		super(ByteOrder.LITTLE_ENDIAN, 2097152, 8, 4, 8, 0, true);
 	}
+
 
 	@Override
 	protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
 		ByteBuf buf = (ByteBuf) super.decode(ctx, in);
 		if (null != buf) {
-			int result = in.readIntLE();//lengthFieldOffset 4
-			int id = in.readIntLE();//lengthFieldOffset total 8
-			int length = in.readIntLE();//lengthFieldLength 4
-			int sequence = in.readIntLE();//lengthAdjustment 4
-			int mapId = in.readIntLE();  //lengthAdjustment total 8
-			byte[] data = null;
-			if (length > 0) {
-				data = new byte[length];
-				in.readBytes(data);//initialBytesToStrip 0
-			}
+			try {
+				int result = buf.readIntLE();
+				int messageId = buf.readIntLE();
+				int length = buf.readIntLE();
+				int roleId = buf.readIntLE();
+				int mapId = buf.readIntLE();
+				byte[] data = null;
+				if (length > 0) {
+					data = new byte[length];
+					buf.readBytes(data);//initialBytesToStrip 0
+				}
 
-			in.release();
-			return TCPMessage.newInstance(result, id, sequence, data, mapId);
-		} else {
-			return null;
+				buf.release();
+				return TCPMessage.newInstance(result, messageId, roleId, data, mapId);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw e;
+			}
 		}
+		return null;
 	}
 }
