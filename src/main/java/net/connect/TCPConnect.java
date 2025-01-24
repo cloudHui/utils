@@ -51,12 +51,16 @@ public class TCPConnect extends ConnectHandler {
 			@Override
 			protected void initChannel(SocketChannel ch) {
 				ChannelPipeline p = ch.pipeline();
-				p.addLast(new IdleStateHandler(0, 60, 0));
+				p.addLast(new IdleStateHandler(0, 1, 0));
 				p.addLast(new TCPMessageEncoder());
 				p.addLast(new TCPMessageDecoder());
 				p.addLast(TCPConnect.this);
 			}
 		}, disconnectRetry);
 		return this;
+	}
+
+	public TCPConnect connect() {
+		return connect(0);
 	}
 }

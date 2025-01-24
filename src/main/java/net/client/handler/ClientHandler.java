@@ -112,7 +112,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 				logger.error("[{}] failed for close event", ctx.channel(), e);
 			}
 		}
-
 	}
 
 	public void closeChannel() {

@@ -51,7 +51,7 @@ public class WSTCPConnect extends ConnectHandler {
 			@Override
 			protected void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline p = ch.pipeline();
-				p.addLast(new IdleStateHandler(0, 60, 0));
+				p.addLast(new IdleStateHandler(1, 1, 1));
 				p.addLast(new WSTCPMessageDecoder());
 				p.addLast(new WSTCPMessageEncoder());
 				p.addLast(WSTCPConnect.this);

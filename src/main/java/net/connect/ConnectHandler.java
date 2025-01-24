@@ -22,6 +22,7 @@ import io.netty.channel.EventLoop;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import net.client.Sender;
+import net.client.event.CloseEvent;
 import net.client.event.RegisterEvent;
 import net.handler.Handler;
 import net.handler.Handlers;
@@ -47,6 +48,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	private Channel channel;
 	private RegisterEvent registerEvent;
 	private long serverId;
+	private CloseEvent closeEvent;
 
 	public static Sender getSender(long id) {
 		return connectManager.getConnect(id);
@@ -89,6 +91,15 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		return this.serverId;
 	}
 
+
+	public CloseEvent getCloseEvent() {
+		return closeEvent;
+	}
+
+	public void setCloseEvent(CloseEvent closeEvent) {
+		this.closeEvent = closeEvent;
+	}
+
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) {
 		this.channel = ctx.channel();
@@ -110,7 +121,13 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		this.completerGroup.destroy();
 		this.completerGroup = null;
 		this.channel = null;
-
+		if (null != this.closeEvent) {
+			try {
+				this.closeEvent.onClose(this);
+			} catch (Exception e) {
+				logger.error("[{}] failed for close event", ctx.channel(), e);
+			}
+		}
 	}
 
 	@Override
