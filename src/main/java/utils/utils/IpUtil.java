@@ -3,6 +3,7 @@ package utils.utils;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.List;
@@ -53,6 +54,31 @@ public class IpUtil {
 			}
 			return sb.toString();
 		} catch (Exception ignored) {
+		}
+		return null;
+	}
+
+	/**
+	 * 获取内网ip
+	 */
+	public static String getLocal() {
+		try {
+			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+			while (interfaces.hasMoreElements()) {
+				NetworkInterface networkInterface = interfaces.nextElement();
+				if (networkInterface.isLoopback() || !networkInterface.isUp()) {
+					continue;
+				}
+				Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+				while (addresses.hasMoreElements()) {
+					InetAddress address = addresses.nextElement();
+					if (address instanceof Inet4Address) {
+						return address.getHostAddress();
+					}
+				}
+			}
+		} catch (SocketException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}

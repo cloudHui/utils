@@ -102,9 +102,9 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) {
-		this.channel = ctx.channel();
+		channel = ctx.channel();
 		connectManager.addConnect(this);
-		this.completerGroup = new CompleterGroup(this.channel.eventLoop());
+		completerGroup = new CompleterGroup(channel.eventLoop());
 		if (null != this.registerEvent) {
 			try {
 				this.registerEvent.register(this);
@@ -118,14 +118,16 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) {
 		connectManager.removeConnect(this.getId());
-		this.completerGroup.destroy();
-		this.completerGroup = null;
+		if (completerGroup != null) {
+			completerGroup.destroy();
+			completerGroup = null;
+		}
 		this.channel = null;
 		if (null != this.closeEvent) {
 			try {
 				this.closeEvent.onClose(this);
 			} catch (Exception e) {
-				logger.error("[{}] failed for close event", ctx.channel(), e);
+				logger.error("[{}] failed for close event", getId(), e);
 			}
 		}
 	}
@@ -138,8 +140,8 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 				ctx.channel().eventLoop().execute(() -> {
 					try {
 						this.idleRunner.accept(this);
-					} catch (Exception var2) {
-						logger.error("failed for run idleRunner", var2);
+					} catch (Exception exception) {
+						logger.error("[failed for run idleRunner]", exception);
 					}
 				});
 			}
@@ -187,8 +189,8 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 					}
 				}
 
-			} catch (Exception var6) {
-				logger.error("[{}] ERROR! failed for process TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()), var6);
+			} catch (Exception exception) {
+				logger.error("[{}] ERROR! failed for process TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()), exception);
 			}
 		} else {
 			ctx.fireChannelRead(o);
