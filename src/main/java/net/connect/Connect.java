@@ -110,8 +110,8 @@ public class Connect extends ConnectHandler {
 				}
 
 			}).sync();
-		} catch (Exception var6) {
-			LOGGER.error("", var6);
+		} catch (Exception e) {
+			LOGGER.error("{}", e.getMessage());
 		}
 	}
 }

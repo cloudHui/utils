@@ -215,7 +215,7 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 			if (now > 1000L) {
 				logger.error("client handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
 			} else {
-				logger.warn("client handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
+				logger.debug("client handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
 			}
 			if (noCloseChannel) {
 				return;

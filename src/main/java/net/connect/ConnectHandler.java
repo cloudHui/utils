@@ -165,8 +165,8 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 				}
 
 
-				if (msg.getSequence() != 0) {
-					Completer completer = this.completerGroup.popCompleter(msg.getSequence());
+				if (msg.getSequence() != 0 && completerGroup != null) {
+					Completer completer = completerGroup.popCompleter(msg.getSequence());
 					if (null != completer) {
 						completer.msg = innerMsg;
 						ctx.channel().eventLoop().execute(completer);
@@ -203,17 +203,17 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 
 	@Override
 	public void sendMessage(int msgId, Message msg) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg,  0, 0));
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, 0, 0));
 	}
 
 	@Override
 	public void sendMessage(int msgId, Message msg, int mapId, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg,  mapId, sequence));
+		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, mapId, sequence));
 	}
 
 	@Override
 	public void sendMessage(int msgId, ByteString str, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, str,  sequence));
+		this.channel.writeAndFlush(this.maker.wrap(msgId, str, sequence));
 	}
 
 	@Override
@@ -238,7 +238,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		long sequence = this.completerGroup.getSequence();
 		Completer completer = new Completer(timeout);
 		this.completerGroup.addCompleter(sequence, completer);
-		this.sendMessage(msgId, 0, msg,  sequence);
+		this.sendMessage(msgId, 0, msg, sequence);
 		return completer;
 	}
 

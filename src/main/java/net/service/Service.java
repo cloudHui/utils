@@ -19,6 +19,7 @@ import java.util.List;
 public class Service {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Service.class);
 	private final EventLoopGroup bossGroup;
+
 	private final EventLoopGroup workerGroup;
 	private final List<Channel> channels = new ArrayList<>();
 
@@ -46,6 +47,11 @@ public class Service {
 			}
 		}
 
+	}
+
+
+	public EventLoopGroup getWorkerGroup() {
+		return workerGroup;
 	}
 
 	public void destroy() {
