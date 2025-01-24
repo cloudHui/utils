@@ -48,7 +48,6 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	private Channel channel;
 	private RegisterEvent registerEvent;
 	private long serverId;
-	private CloseEvent closeEvent;
 
 	public static Sender getSender(long id) {
 		return connectManager.getConnect(id);
@@ -92,14 +91,6 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 
-	public CloseEvent getCloseEvent() {
-		return closeEvent;
-	}
-
-	public void setCloseEvent(CloseEvent closeEvent) {
-		this.closeEvent = closeEvent;
-	}
-
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) {
 		channel = ctx.channel();
@@ -123,13 +114,6 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 			completerGroup = null;
 		}
 		this.channel = null;
-		if (null != this.closeEvent) {
-			try {
-				this.closeEvent.onClose(this);
-			} catch (Exception e) {
-				logger.error("[{}] failed for close event", getId(), e);
-			}
-		}
 	}
 
 	@Override

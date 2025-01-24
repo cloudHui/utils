@@ -33,7 +33,7 @@ public class Connect extends ConnectHandler {
 	private final SocketAddress socketAddress;
 	private final int registerRetry;//注册重试
 
-	private final int disconnectRetry;//断链重试
+	private final int disconnectRetry;//断链重试 最好不要重试  这个值会让链接多条
 
 	public Connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, Transfer transfer,
 				   Parser parser, Handlers handlers, RegisterEvent registerEvent, int registerRetry) {
@@ -96,7 +96,6 @@ public class Connect extends ConnectHandler {
 						if (disRetry > 0) {
 							f1.channel().eventLoop().schedule(() -> connect(f1.channel().eventLoop(), socketAddress, retryInterval, channelInitializer, disRetry), 3, TimeUnit.SECONDS);
 						}
-
 					});
 					LOGGER.info("connect {}:{} is success!!!", sad.getAddress().getHostAddress(), sad.getPort());
 				} else {
@@ -105,7 +104,6 @@ public class Connect extends ConnectHandler {
 					if (regRetry > 0) {
 						channelFuture.channel().eventLoop().schedule(() -> connect(channelFuture.channel().eventLoop(), socketAddress, regRetry, channelInitializer, disconnectRetry), 3, TimeUnit.SECONDS);
 					}
-
 					LOGGER.error("failed for connect {}:{}!!!", sad.getAddress().getHostAddress(), sad.getPort());
 				}
 
