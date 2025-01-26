@@ -18,7 +18,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import net.client.Sender;
 import net.client.event.EventHandle;
@@ -149,10 +148,9 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object event) {
-		LOGGER.error("[userEventTriggered :{}]", event.getClass().getSimpleName());
 		if (event instanceof IdleStateEvent) {
-			IdleStateEvent idle = (IdleStateEvent) event;
-			if (IdleState.WRITER_IDLE == idle.state() && null != idleRunner) {
+			LOGGER.debug("[userEventTriggered:{}]", ((IdleStateEvent) event).state());
+			if (null != idleRunner) {
 				ctx.channel().eventLoop().execute(() -> {
 					try {
 						idleRunner.accept(this);
@@ -161,6 +159,8 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 					}
 				});
 			}
+		} else {
+			LOGGER.debug("[userEventTriggered:{}]", event.getClass().getName());
 		}
 	}
 
@@ -275,13 +275,13 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 			bootstrap.connect(socketAddress).addListener((ChannelFutureListener) cFuture -> {
 				InetSocketAddress sad = (InetSocketAddress) socketAddress;
 				if (cFuture.isSuccess()) {
-					if(diRetry){
+					if (diRetry) {
 						//链接成功被关闭了也会一直重连
 						cFuture.channel().closeFuture().addListener((ChannelFutureListener) f1 -> f1.channel().eventLoop().schedule(() -> connect(f1.channel().eventLoop(), socketAddress, channelInitializer), 3, TimeUnit.SECONDS));
 						LOGGER.info("[connect {} is success!!! ]", sad.getHostName() + ":" + sad.getPort());
 					}
 				} else {
-					if(conRetry){
+					if (conRetry) {
 						//链接失败也会一直重连
 						cFuture.channel().eventLoop().schedule(() -> connect(cFuture.channel().eventLoop(), socketAddress, channelInitializer), 3, TimeUnit.SECONDS);
 						LOGGER.error("[failed for connect {}!!!]", sad.getHostName() + ":" + sad.getPort());
