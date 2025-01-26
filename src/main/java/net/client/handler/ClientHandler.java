@@ -2,8 +2,11 @@ package net.client.handler;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
@@ -243,35 +246,82 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	private static class ClientManager {
 		private static final ClientManager INSTANCE = new ClientManager();
 		private int id = 1;
-		private final Map<Integer, ClientHandler> clientMap = new ConcurrentHashMap<>(4096);
+		private final int INIT_SIZE = 4096;
+		private final Map<Integer, ClientHandler> clientMap = new HashMap<>(INIT_SIZE);
+		private final ReadWriteLock lock;
+		private final Set<Integer> clientIds = new LinkedHashSet<>(INIT_SIZE);
 
 		private ClientManager() {
+			lock = new ReentrantReadWriteLock();
 		}
 
-		private synchronized int getId() {
-			//先不要考虑什么上亿条链接了好吧
-			if (id < Integer.MAX_VALUE) {
-				return ++id;
-			} else {
-				id = 1;
-				return id;
+		/**
+		 * 获取id 要么从废旧ID池子 直接拿 要么就再生成 有个隐患 除非同时在线 超过了 Integer.MAX_VALUE 就有几率重复然后客户端错误
+		 *
+		 * @return 获取链接自增id
+		 */
+		private int getId() {
+			lock.writeLock().lock();
+			try {
+				int outId = 0;
+				if (!clientIds.isEmpty()) {
+					for (Integer id : clientIds) {
+						outId = id;
+						break;
+					}
+				}
+
+				if (outId > 0) {
+					clientIds.remove(outId);
+				} else {
+					if (id < Integer.MAX_VALUE) {
+						outId = ++id;
+					} else {
+						outId = id = 1;
+					}
+				}
+				return outId;
+			} finally {
+				lock.writeLock().unlock();
 			}
 		}
 
 		private void addClient(ClientHandler client) {
-			clientMap.put(client.getId(), client);
+			lock.writeLock().lock();
+			try {
+				clientMap.put(client.getId(), client);
+			} finally {
+				lock.writeLock().unlock();
+			}
 		}
 
 		private void removeClient(ClientHandler client) {
-			removeClient(client.getId());
+			lock.writeLock().lock();
+			try {
+				removeClient(client.getId());
+
+			} finally {
+				lock.writeLock().unlock();
+			}
 		}
 
 		private void removeClient(int id) {
-			clientMap.remove(id);
+			lock.writeLock().lock();
+			try {
+				clientMap.remove(id);
+				clientIds.add(id);
+			} finally {
+				lock.writeLock().unlock();
+			}
 		}
 
 		private ClientHandler getClient(int id) {
-			return clientMap.get(id);
+			lock.writeLock().lock();
+			try {
+				return clientMap.get(id);
+			} finally {
+				lock.writeLock().unlock();
+			}
 		}
 	}
 }

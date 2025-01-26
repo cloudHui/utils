@@ -25,8 +25,8 @@ public class TCPMaker implements Maker {
 	}
 
 	@Override
-	public TCPMessage wrap(int roleId, int msgId, Message msg, long sequence) {
-		return TCPMessage.newInstance(0, msgId, roleId, msg.toByteArray(), sequence);
+	public TCPMessage wrap(int clientId, int msgId, Message msg, long sequence) {
+		return TCPMessage.newInstance(0, msgId, clientId, msg.toByteArray(), sequence);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class TCPMaker implements Maker {
 	}
 
 	@Override
-	public TCPMessage wrap(int roleId, int msgId, int mapId, int resultId, Message msg, long sequence) {
-		return TCPMessage.newInstance(resultId, msgId, roleId, msg.toByteArray(), mapId, sequence);
+	public TCPMessage wrap(int clientId, int msgId, int mapId, int resultId, Message msg, long sequence) {
+		return TCPMessage.newInstance(resultId, msgId, clientId, msg.toByteArray(), mapId, sequence);
 	}
 }
