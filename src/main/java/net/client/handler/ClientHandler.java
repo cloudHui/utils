@@ -14,8 +14,7 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import net.channel.ChannelAttr;
 import net.client.Sender;
-import net.client.event.CloseEvent;
-import net.client.event.RegisterEvent;
+import net.client.event.EventHandle;
 import net.handler.Handler;
 import net.handler.Handlers;
 import net.message.Maker;
@@ -38,8 +37,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	private final Handlers handlers;
 	private final Maker maker;
 	private static final byte[] DEFAULT_DATA;
-	private RegisterEvent registerEvent;
-	private CloseEvent closeEvent;
+	private EventHandle activeHandle;
+	private EventHandle closeEvent;
 
 	public static ClientHandler getClient(long id) {
 		return clientManager.getClient(id);
@@ -74,11 +73,11 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 		return this.id;
 	}
 
-	public void setRegisterEvent(RegisterEvent registerEvent) {
-		this.registerEvent = registerEvent;
+	public void setActiveEvent(EventHandle eventHandle) {
+		this.activeHandle = eventHandle;
 	}
 
-	public void setCloseEvent(CloseEvent closeEvent) {
+	public void setCloseEvent(EventHandle closeEvent) {
 		this.closeEvent = closeEvent;
 	}
 
@@ -88,9 +87,9 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) {
-		if (null != this.registerEvent) {
+		if (null != this.activeHandle) {
 			try {
-				this.registerEvent.register(this);
+				this.activeHandle.handle(this);
 			} catch (Exception e) {
 				logger.error("[{}] failed for register event", ctx.channel(), e);
 			}
@@ -107,7 +106,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 		clientManager.removeClient(this);
 		if (null != this.closeEvent) {
 			try {
-				this.closeEvent.onClose(this);
+				this.closeEvent.handle(this);
 			} catch (Exception e) {
 				logger.error("[{}] failed for close event", ctx.channel(), e);
 			}

@@ -2,56 +2,38 @@ package net.connect;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.concurrent.TimeUnit;
 
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
-import net.client.event.RegisterEvent;
+import net.client.event.EventHandle;
+import net.connect.handle.ConnectHandler;
 import net.handler.Handlers;
 import net.message.Parser;
 import net.message.Transfer;
 import net.proto.SysProto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Sharable
 public class Connect extends ConnectHandler {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Connect.class);
 	private final EventLoopGroup eventLoopGroup;
 	private final SocketAddress socketAddress;
-	private final int registerRetry;//注册重试
-
-	private final int disconnectRetry;//断链重试 最好不要重试  这个值会让链接多条
-
-	public Connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, Transfer transfer,
-				   Parser parser, Handlers handlers, RegisterEvent registerEvent, int registerRetry) {
-		this(eventLoopGroup, socketAddress, registerRetry, transfer, parser, handlers, registerEvent);
-	}
 
 	/**
-	 * @param registerRetry 默认重试
-	 * @param registerEvent 链接成功后触发的事件
+	 * @param eventHandle 链接成功后触发的事件
 	 */
-	public Connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, int registerRetry,
-				   Transfer transfer, Parser parser, Handlers handlers, RegisterEvent registerEvent) {
+	public Connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, Transfer transfer, Parser parser, Handlers handlers, EventHandle eventHandle, EventHandle close) {
 		super(transfer, parser, handlers);
 		this.eventLoopGroup = eventLoopGroup;
 		this.socketAddress = socketAddress;
-		this.registerRetry = registerRetry;
-		this.disconnectRetry = 0;
-		this.setRegisterEvent(registerEvent);
+		setActiveEvent(eventHandle);
+		setCloseEvent(close);
 	}
 
 	public String getIP() {
@@ -63,7 +45,7 @@ public class Connect extends ConnectHandler {
 	}
 
 	public Connect connect() {
-		connect(this.eventLoopGroup, this.socketAddress, this.registerRetry, new ChannelInitializer<SocketChannel>() {
+		connect(this.eventLoopGroup, this.socketAddress, new ChannelInitializer<SocketChannel>() {
 			@Override
 			protected void initChannel(SocketChannel ch) {
 				ChannelPipeline p = ch.pipeline();
@@ -74,42 +56,7 @@ public class Connect extends ConnectHandler {
 				p.addLast(new ProtobufDecoder(SysProto.SysMessage.getDefaultInstance()));
 				p.addLast(Connect.this);
 			}
-		}, this.disconnectRetry);
+		});
 		return this;
-	}
-
-	public static void connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, int retryInterval,
-	                           ChannelInitializer<SocketChannel> channelInitializer, int disconnectRetry) {
-		Bootstrap bootstrap = ((new Bootstrap()).group(eventLoopGroup))
-				.channel(NioSocketChannel.class)
-				.option(ChannelOption.SO_KEEPALIVE, true)
-				.option(ChannelOption.TCP_NODELAY, true)
-				.handler(channelInitializer);
-
-		try {
-			bootstrap.connect(socketAddress).addListener((ChannelFutureListener) channelFuture -> {
-				InetSocketAddress sad = (InetSocketAddress) socketAddress;
-				if (channelFuture.isSuccess()) {
-					//链接成功被关闭了也会重试
-					final int disRetry = disconnectRetry - 1;
-					channelFuture.channel().closeFuture().addListener((ChannelFutureListener) f1 -> {
-						if (disRetry > 0) {
-							f1.channel().eventLoop().schedule(() -> connect(f1.channel().eventLoop(), socketAddress, retryInterval, channelInitializer, disRetry), 3, TimeUnit.SECONDS);
-						}
-					});
-					LOGGER.info("connect {}:{} is success!!!", sad.getAddress().getHostAddress(), sad.getPort());
-				} else {
-					//链接失败也会重试
-					final int regRetry = retryInterval - 1;
-					if (regRetry > 0) {
-						channelFuture.channel().eventLoop().schedule(() -> connect(channelFuture.channel().eventLoop(), socketAddress, regRetry, channelInitializer, disconnectRetry), 3, TimeUnit.SECONDS);
-					}
-					LOGGER.error("failed for connect {}:{}!!!", sad.getAddress().getHostAddress(), sad.getPort());
-				}
-
-			}).sync();
-		} catch (Exception e) {
-			LOGGER.error("{}", e.getMessage());
-		}
 	}
 }
