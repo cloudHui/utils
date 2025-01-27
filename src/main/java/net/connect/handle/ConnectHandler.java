@@ -252,11 +252,23 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	/**
 	 * 有后续处理的加超时处理
 	 */
-	public CompletableFuture<com.google.protobuf.Message> sendMessage(int msgId, Message msg, int timeout) {
+	public CompletableFuture<Message> sendMessage(int msgId, Message msg, int timeout) {
 		long sequence = completerGroup.getSequence();
 		Completer completer = new Completer(timeout);
 		completerGroup.addCompleter(sequence, completer);
 		sendMessage(msgId, 0, msg, sequence);
+		return completer;
+	}
+
+	/**
+	 * 有后续处理的加超时处理
+	 */
+	public CompletableFuture<Message> sendMessage(TCPMessage msg, int timeout) {
+		long sequence = completerGroup.getSequence();
+		msg.setSequence(sequence);
+		Completer completer = new Completer(timeout);
+		completerGroup.addCompleter(sequence, completer);
+		sendMessage(msg);
 		return completer;
 	}
 
