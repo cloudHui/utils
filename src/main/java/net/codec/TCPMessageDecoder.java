@@ -45,7 +45,6 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 				return TCPMessage.newInstance(result, messageId, clientId, data, mapId, sequence);
 			} catch (Exception e) {
 				logger.error("decode error",e);
-				throw e;
 			}
 		}
 		return null;
