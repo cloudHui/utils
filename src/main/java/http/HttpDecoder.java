@@ -72,24 +72,24 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 	private void dealFullHttpMsg(ChannelHandlerContext ctx, Object o) {
 		FullHttpRequest request = (FullHttpRequest) o;
 		try {
-			String path = request.getUri();
+			String path = request.uri();
 			if (null != path && path.startsWith("/")) {
 				path = path.substring(1);
 			}
 
 			String[] data = path.split("\\?");
 			if (data.length > 0) {
-				if (HttpMethod.POST.equals(request.getMethod())) {
+				if (HttpMethod.POST.equals(request.method())) {
 					httpPost(data, request, ctx, path);
-				} else if (HttpMethod.GET.equals(request.getMethod())) {
+				} else if (HttpMethod.GET.equals(request.method())) {
 					httpGet(data, request, ctx, path);
 				} else {
 					ctx.close();
-					LOGGER.info("[{}] unsupported method({} path:{})", ctx.channel(), request.getMethod().name(), path);
+					LOGGER.info("[{}] unsupported method({} path:{})", ctx.channel(), request.method().name(), path);
 				}
 			} else {
 				ctx.close();
-				LOGGER.info("[{}] unsupported({} path:{})", ctx.channel(), request.getMethod().name(), path);
+				LOGGER.info("[{}] unsupported({} path:{})", ctx.channel(), request.method().name(), path);
 			}
 		} catch (Throwable e) {
 			LOGGER.error("", e);
@@ -105,7 +105,7 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 		if (null != handler) {
 
 			long now = System.currentTimeMillis();
-			HttpMethod method = request.getMethod();
+			HttpMethod method = request.method();
 			boolean keepChannel = handler.handler(this, data[0], method.name(), handler.parser(data.length > 1 ? data[1] : null));
 
 			now = System.currentTimeMillis() - now;
