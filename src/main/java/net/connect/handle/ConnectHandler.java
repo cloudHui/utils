@@ -122,8 +122,8 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		if (null != activeHandle) {
 			try {
 				activeHandle.handle(this);
-			} catch (Exception exception) {
-				LOGGER.error("[{}] ERROR! failed for activeHandle", ctx.channel());
+			} catch (Exception e) {
+				LOGGER.error("[{}] ERROR! failed for activeHandle", ctx.channel(), e);
 			}
 		}
 
@@ -140,8 +140,8 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		if (closeEvent != null) {
 			try {
 				closeEvent.handle(this);
-			} catch (Exception exception) {
-				LOGGER.error("[{}] ERROR! failed for closeEvent", ctx.channel());
+			} catch (Exception e) {
+				LOGGER.error("[{}] ERROR! failed for closeEvent", ctx.channel(),e);
 			}
 		}
 	}
@@ -302,7 +302,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 
 			}).sync();
 		} catch (Exception e) {
-			LOGGER.error("{}", e.getMessage());
+			LOGGER.error("", e);
 		}
 	}
 }
