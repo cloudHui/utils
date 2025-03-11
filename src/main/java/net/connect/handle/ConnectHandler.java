@@ -141,7 +141,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 			try {
 				closeEvent.handle(this);
 			} catch (Exception e) {
-				LOGGER.error("[{}] ERROR! failed for closeEvent", ctx.channel(),e);
+				LOGGER.error("[{}] ERROR! failed for closeEvent", ctx.channel(), e);
 			}
 		}
 	}
@@ -210,8 +210,8 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 			}
 		} else {
 			ctx.fireChannelRead(o);
+			LOGGER.error("channelRead:{}", o.getClass());
 		}
-
 	}
 
 	@Override
@@ -247,6 +247,13 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	@Override
 	public void sendMessage(int clientId, int msgId, int mapId, int resultId, Message msg, long sequence) {
 		channel.writeAndFlush(maker.wrap(clientId, msgId, mapId, resultId, msg, sequence));
+	}
+
+	/**
+	 * 发送任任何消息
+	 */
+	public void sendMessage(Object obj) {
+		channel.writeAndFlush(obj);
 	}
 
 	/**

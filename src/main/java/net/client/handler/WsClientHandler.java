@@ -102,9 +102,18 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 	}
 
 	@Override
+	public void channelRead(ChannelHandlerContext ctx, Object object) {
+		if (object instanceof TCPMessage) {
+			processTCPMessage((TCPMessage) object);
+		} else {
+			logger.error("un handle msgType {}", object.getClass().getSimpleName());
+			ctx.fireChannelRead(object);
+		}
+	}
+
+	@Override
 	public void channelInactive(ChannelHandlerContext ctx) {
 		logger.error("[{}] close", ctx.channel());
-		clientManager.removeClient(this);
 		if (null != this.closeEvent) {
 			try {
 				this.closeEvent.handle(this);
@@ -112,7 +121,7 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 				logger.error("[{}] failed for close event", ctx.channel(), e);
 			}
 		}
-
+		closeChannel();
 	}
 
 	public void closeChannel() {
@@ -131,7 +140,7 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
 		Channel channel = ctx.channel();
 		if (channel.isActive()) {
-			channel.close();
+			closeChannel();
 		}
 
 	}

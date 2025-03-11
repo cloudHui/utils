@@ -32,6 +32,5 @@ public class WSServiceHandler extends ChannelInitializer<SocketChannel> {
 		for (ChannelHandlerAdapter channelInboundHandlerAdapter : this.clientFactory.create(ch)) {
 			p.addLast(channelInboundHandlerAdapter);
 		}
-
 	}
 }

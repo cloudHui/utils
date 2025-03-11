@@ -38,7 +38,6 @@ public class TCPServiceHandler extends ChannelInitializer<SocketChannel> {
 		for (ChannelHandlerAdapter c : this.clientFactory.create(socketChannel)) {
 			p.addLast(c);
 		}
-
 	}
 
 	public ClientFactory getClientFactory() {

@@ -155,7 +155,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 		} else {
 			ctx.fireChannelRead(object);
 		}
-
 	}
 
 	@Override
