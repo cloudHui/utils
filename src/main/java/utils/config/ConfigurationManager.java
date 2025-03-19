@@ -16,7 +16,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import utils.utils.ConfigPathUtils;
+import utils.other.ConfigPathUtils;
 
 public class ConfigurationManager {
 	private static ConfigurationManager INSTANCE;
