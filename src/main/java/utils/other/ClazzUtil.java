@@ -2,7 +2,6 @@ package utils.other;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import utils.other.test.BattleEventListener;
 
 /**
  * Java类操作工具类
@@ -21,10 +19,12 @@ public class ClazzUtil {
 
 	/**
 	 * 获取某个类的实现类
+	 *
+	 * @param except 需要排除的包名 offline 可以用，分割 "offline,handle"
 	 */
-	public static List<Class<?>> getAllAssignedClass(Class<?> cls) throws Exception {
+	public static List<Class<?>> getAllAssignedClass(Class<?> cls, String except) throws Exception {
 		List<Class<?>> classes = new ArrayList<>();
-		for (Class<?> c : getClasses(cls)) {
+		for (Class<?> c : getClasses(cls, except)) {
 			if (cls.isAssignableFrom(c) && !cls.equals(c)) {
 				classes.add(c);
 			}
@@ -32,45 +32,39 @@ public class ClazzUtil {
 		return classes;
 	}
 
-	public static void main(String[] args) {
-
-		try {
-			List<Class<?>> classes = getClasses(ClazzUtil.class.getPackage().getName());
-			classes.forEach(acClass -> {
-				try {
-					Method[] methods = acClass.getMethods();
-					for (Method method : methods) {
-						if (method.getAnnotation(BattleEventListener.class) != null) {
-							System.out.println(method.getName());
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
+	/**
+	 * 获取某个类的同包下的所有其他类
+	 *
+	 * @param except 需要排除的包名 offline 可以用，分割 "offline,handle"
+	 */
+	public static List<Class<?>> getAllClassExceptPackageClass(Class<?> packageClass, String except) throws Exception {
+		List<Class<?>> classes = new ArrayList<>();
+		for (Class<?> c : getClasses(packageClass, except)) {
+			if (!packageClass.equals(c)) {
+				classes.add(c);
+			}
 		}
+		return classes;
 	}
 
 	/**
 	 * 读取指定类所在包下所有类
 	 */
-	public static List<Class<?>> getClasses(Class<?> cls) throws Exception {
-		return getClasses(cls.getPackage().getName(), cls);
+	public static List<Class<?>> getClasses(Class<?> packageClass, String except) throws Exception {
+		return getClasses(packageClass.getPackage().getName(), packageClass, except);
 	}
 
 	/**
 	 * 读取某个包下所有类
 	 */
 	public static List<Class<?>> getClasses(String pk) throws Exception {
-		return getClasses(pk, null);
+		return getClasses(pk, null, null);
 	}
 
 	/**
 	 * 读取某个包下所有类
 	 */
-	public static List<Class<?>> getClasses(String pk, Class<?> cls) throws Exception {
+	public static List<Class<?>> getClasses(String pk, Class<?> cls, String except) throws Exception {
 		String path = pk.replace('.', '/');
 		URL url;
 		if (cls != null) {
@@ -84,7 +78,7 @@ public class ClazzUtil {
 		}
 		String protocol = url.getProtocol();
 		if ("file".equals(protocol)) { // 适用于class文件
-			return getClasses(new File(url.getFile()), pk);
+			return getClasses(new File(url.getFile()), pk, except);
 		} else if ("jar".equals(protocol)) { // 适用于jar包
 			JarFile jarFile = ((JarURLConnection) url.openConnection()).getJarFile();
 			return getClassesFromJarFile(jarFile);
@@ -108,22 +102,34 @@ public class ClazzUtil {
 	}
 
 	//根据路径获取
-	public static List<Class<?>> getClasses(File dir, String pk) throws ClassNotFoundException {
+	public static List<Class<?>> getClasses(File dir, String pk, String except) throws ClassNotFoundException {
 		List<Class<?>> classes = new ArrayList<>();
 		if (!dir.exists()) {
 			return classes;
 		}
+
 		for (File f : dir.listFiles()) {
-			if (f.isDirectory()) {
-				classes.addAll(getClasses(f, pk + "." + f.getName()));
+			if (f.isDirectory() && !needExcept(except, f.getName())) {
+				classes.addAll(getClasses(f, pk + "." + f.getName(), except));
 			}
 			String name = f.getName();
-			if (name.endsWith(".class") && !name.endsWith("SqlSession.class")) {
+			//排除
+			if (name.endsWith(".class") && !name.contains("$")) {
 				String className = pk + "." + name.substring(0, name.length() - 6);
 				classes.add(Class.forName(className, false, Thread.currentThread().getContextClassLoader()));
 			}
 		}
 		return classes;
+	}
+
+	private static boolean needExcept(String except, String name){
+		String[] split = except.split(",");
+		for(String value: split){
+			if(name.equals(value)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	//动态获取，根据反射，比如获取xx.xx.xx.xx.Action 这个所有的实现类。 xx.xx.xx.xx 表示包名  Action为接口名或者类名
@@ -144,7 +150,7 @@ public class ClazzUtil {
 		for (Object o : v) {
 			Class<?> c = (Class<?>) o;
 			if (cls.isAssignableFrom(c) && !cls.equals(c)) {
-				allSubclass.add((Class<?>) c);
+				allSubclass.add(c);
 			}
 		}
 		return allSubclass;
