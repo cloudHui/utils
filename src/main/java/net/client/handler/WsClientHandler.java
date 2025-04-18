@@ -2,7 +2,6 @@ package net.client.handler;
 
 import java.net.InetSocketAddress;
 
-import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -155,26 +154,6 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 	@Override
 	public void sendMessage(int msgId, Message msg, long sequence) {
 		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, sequence));
-	}
-
-	@Override
-	public void sendMessage(int msgId, Message msg) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg));
-	}
-
-	@Override
-	public void sendMessage(int msgId, Message msg, int mapId, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, mapId, sequence));
-	}
-
-	@Override
-	public void sendMessage(int msgId, ByteString str, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, str, sequence));
-	}
-
-	@Override
-	public void sendMessage(int msgId, int mapId, Message msg, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, mapId, msg, sequence));
 	}
 
 	@Override

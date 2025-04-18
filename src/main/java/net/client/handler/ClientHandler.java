@@ -4,7 +4,6 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -158,26 +157,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	}
 
 	@Override
-	public void sendMessage(int msgId, Message msg) {
-		channel.writeAndFlush(maker.wrap(msgId, msg));
-	}
-
-	@Override
-	public void sendMessage(int msgId, Message msg, int mapId, long sequence) {
-		channel.writeAndFlush(maker.wrap(msgId, msg, mapId, sequence));
-	}
-
-	@Override
-	public void sendMessage(int msgId, ByteString str, long sequence) {
-		channel.writeAndFlush(maker.wrap(msgId, str, sequence));
-	}
-
-	@Override
-	public void sendMessage(int roleId, int mapId, Message msg, long sequence) {
-		channel.writeAndFlush(maker.wrap(roleId, mapId, msg, sequence));
-	}
-
-	@Override
 	public void sendMessage(TCPMessage msg) {
 		channel.writeAndFlush(msg);
 	}
@@ -185,6 +164,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	@Override
 	public void sendMessage(int clientId, int msgId, int mapId, int resultId, Message msg, long sequence) {
 		channel.writeAndFlush(maker.wrap(clientId, msgId, mapId, resultId, msg, sequence));
+	}
+
+	public void sendMessage(int msgId, Message msg) {
+		channel.writeAndFlush(maker.wrap(msgId, msg, 0));
 	}
 
 	private void processTCPMessage(TCPMessage tMsg) {

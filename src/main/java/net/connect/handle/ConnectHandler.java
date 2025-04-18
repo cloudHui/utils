@@ -206,33 +206,18 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 	@Override
-	public void sendMessage(int msgId, Message msg) {
-		channel.writeAndFlush(maker.wrap(msgId, msg, 0, 0));
-	}
-
-	@Override
-	public void sendMessage(int msgId, Message msg, int mapId, long sequence) {
-		channel.writeAndFlush(maker.wrap(msgId, msg, mapId, sequence));
-	}
-
-	@Override
-	public void sendMessage(int msgId, ByteString str, long sequence) {
-		channel.writeAndFlush(maker.wrap(msgId, str, sequence));
-	}
-
-	@Override
-	public void sendMessage(int msgId, int mapId, Message msg, long sequence) {
-		channel.writeAndFlush(maker.wrap(msgId, msg, sequence));
-	}
-
-	@Override
 	public void sendMessage(TCPMessage msg) {
 		channel.writeAndFlush(msg);
 	}
 
 	@Override
+
 	public void sendMessage(int clientId, int msgId, int mapId, int resultId, Message msg, long sequence) {
 		channel.writeAndFlush(maker.wrap(clientId, msgId, mapId, resultId, msg, sequence));
+	}
+
+	public void sendMessage(int msgId, Message msg) {
+		channel.writeAndFlush(maker.wrap(msgId, msg, 0));
 	}
 
 	/**
@@ -245,11 +230,11 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	/**
 	 * 有后续处理的加超时处理
 	 */
-	public CompletableFuture<Message> sendMessage(int msgId, Message msg, int timeout) {
+	public CompletableFuture<Message> sendMessage(Message msg, int msgId, int timeout) {
 		long sequence = completerGroup.getSequence();
 		Completer completer = new Completer(timeout);
 		completerGroup.addCompleter(sequence, completer);
-		sendMessage(msgId, 0, msg, sequence);
+		sendMessage(msgId, msg, sequence);
 		return completer;
 	}
 
