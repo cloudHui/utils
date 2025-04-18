@@ -1,9 +1,9 @@
 package net.client.handler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -15,7 +15,7 @@ public class SenderManager {
 	private final int INIT_SIZE = 4096;
 	public final Map<Integer, Sender> clientMap = new HashMap<>(INIT_SIZE);
 	private final ReadWriteLock lock;
-	private final Set<Integer> clientIds = new LinkedHashSet<>(INIT_SIZE);
+	private final List<Integer> clientIds = new ArrayList<>(INIT_SIZE);
 
 	private SenderManager() {
 		lock = new ReentrantReadWriteLock();
@@ -31,10 +31,7 @@ public class SenderManager {
 		try {
 			int outId = 0;
 			if (!clientIds.isEmpty()) {
-				for (Integer id : clientIds) {
-					outId = id;
-					break;
-				}
+				outId = clientIds.remove(0);
 			}
 
 			if (outId > 0) {
@@ -55,9 +52,9 @@ public class SenderManager {
 	public void addClient(Sender client) {
 		lock.writeLock().lock();
 		try {
-			if(client instanceof ClientHandler){
+			if (client instanceof ClientHandler) {
 				clientMap.put(((ClientHandler) client).getId(), client);
-			} else if(client instanceof WsClientHandler){
+			} else if (client instanceof WsClientHandler) {
 				clientMap.put(((WsClientHandler) client).getId(), client);
 			}
 		} finally {
@@ -68,12 +65,11 @@ public class SenderManager {
 	public void removeClient(Sender client) {
 		lock.writeLock().lock();
 		try {
-			if(client instanceof ClientHandler){
+			if (client instanceof ClientHandler) {
 				removeClient(((ClientHandler) client).getId());
-			} else if(client instanceof WsClientHandler){
+			} else if (client instanceof WsClientHandler) {
 				removeClient(((WsClientHandler) client).getId());
 			}
-
 		} finally {
 			lock.writeLock().unlock();
 		}
