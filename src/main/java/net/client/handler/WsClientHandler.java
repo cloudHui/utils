@@ -1,9 +1,6 @@
 package net.client.handler;
 
 import java.net.InetSocketAddress;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
@@ -28,8 +25,8 @@ import org.slf4j.LoggerFactory;
 
 public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame> implements Sender {
 	private static final Logger logger = LoggerFactory.getLogger(WsClientHandler.class);
-	private static final ClientManager clientManager;
-	private final long id;
+	private static final SenderManager clientManager;
+	private final int id;
 	private Channel channel;
 	private Safe safe;
 	private final Transfer transfer;
@@ -41,7 +38,7 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 	private EventHandle closeEvent;
 
 	public static WsClientHandler getClient(long id) {
-		return clientManager.getClient(id);
+		return (WsClientHandler) clientManager.getClient((int) id);
 	}
 
 	public static InetSocketAddress getRemoteIP(WsClientHandler clientHandler) {
@@ -69,7 +66,7 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 		this.maker = maker;
 	}
 
-	public final long getId() {
+	public final int getId() {
 		return this.id;
 	}
 
@@ -236,7 +233,7 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 	}
 
 	static {
-		clientManager = ClientManager.INSTANCE;
+		clientManager = SenderManager.INSTANCE;
 		DEFAULT_DATA = "".getBytes();
 	}
 
@@ -248,33 +245,4 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 		}
 	}
 
-	private static class ClientManager {
-		private static final ClientManager INSTANCE = new ClientManager();
-		private final AtomicLong ID = new AtomicLong(0L);
-		private final Map<Long, WsClientHandler> clientMap = new ConcurrentHashMap<>(4096);
-
-		private ClientManager() {
-		}
-
-		private long getId() {
-			return this.ID.incrementAndGet();
-		}
-
-		private void addClient(WsClientHandler client) {
-			this.clientMap.put(client.getId(), client);
-		}
-
-		private void removeClient(WsClientHandler client) {
-			this.removeClient(client.getId());
-		}
-
-		private void removeClient(long id) {
-			this.clientMap.remove(id);
-
-		}
-
-		private WsClientHandler getClient(long id) {
-			return this.clientMap.get(id);
-		}
-	}
 }

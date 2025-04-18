@@ -2,11 +2,7 @@ package net.client.handler;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
@@ -29,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 public class ClientHandler extends ChannelInboundHandlerAdapter implements Sender {
 	private static final Logger logger = LoggerFactory.getLogger(ClientHandler.class);
-	private static final ClientManager clientManager;
+	private static final SenderManager SENDER_MANAGER;
 	private final int id;
 	private Channel channel;
 	private Safe safe;
@@ -42,7 +38,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	private EventHandle closeEvent;
 
 	public static ClientHandler getClient(int id) {
-		return clientManager.getClient(id);
+		return (ClientHandler) SENDER_MANAGER.getClient(id);
 	}
 
 	public static InetSocketAddress getRemoteIP(ClientHandler clientHandler) {
@@ -63,7 +59,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 
 	public ClientHandler(Parser parser, Handlers handlers, Transfer transfer, TCPMaker maker) {
 		safe = (msgId) -> Safe.DEFAULT();
-		id = clientManager.getId();
+		id = SENDER_MANAGER.getId();
 		this.parser = parser;
 		this.handlers = handlers;
 		this.transfer = transfer;
@@ -74,8 +70,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 		return id;
 	}
 
-	public static Map<Integer, ClientHandler> getAllClient() {
-		return new HashMap<>(ClientHandler.clientManager.clientMap);
+	public static Map<Integer, Sender> getAllClient() {
+		return new HashMap<>(SENDER_MANAGER.clientMap);
 	}
 
 	public void setActiveEvent(EventHandle eventHandle) {
@@ -102,13 +98,13 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 
 		channel = ctx.channel();
 		ChannelAttr.setId(channel, getId());
-		clientManager.addClient(this);
+		SENDER_MANAGER.addClient(this);
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) {
 		logger.error("[{}] close", ctx.channel());
-		clientManager.removeClient(this);
+		SENDER_MANAGER.removeClient(this);
 		if (null != closeEvent) {
 			try {
 				closeEvent.handle(this);
@@ -119,7 +115,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	}
 
 	public void closeChannel() {
-		clientManager.removeClient(this);
+		SENDER_MANAGER.removeClient(this);
 		if (null != channel) {
 			try {
 				channel.close();
@@ -237,89 +233,9 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	}
 
 	static {
-		clientManager = ClientManager.INSTANCE;
+		SENDER_MANAGER = SenderManager.INSTANCE;
 		DEFAULT_DATA = "".getBytes();
 	}
 
-	private static class ClientManager {
-		private static final ClientManager INSTANCE = new ClientManager();
-		private int id = 1;
-		private final int INIT_SIZE = 4096;
-		private final Map<Integer, ClientHandler> clientMap = new HashMap<>(INIT_SIZE);
-		private final ReadWriteLock lock;
-		private final Set<Integer> clientIds = new LinkedHashSet<>(INIT_SIZE);
 
-		private ClientManager() {
-			lock = new ReentrantReadWriteLock();
-		}
-
-		/**
-		 * 获取id 要么从废旧ID池子 直接拿 要么就再生成 有个隐患 除非同时在线 超过了 Integer.MAX_VALUE 就有几率重复然后客户端错误
-		 *
-		 * @return 获取链接自增id
-		 */
-		private int getId() {
-			lock.writeLock().lock();
-			try {
-				int outId = 0;
-				if (!clientIds.isEmpty()) {
-					for (Integer id : clientIds) {
-						outId = id;
-						break;
-					}
-				}
-
-				if (outId > 0) {
-					clientIds.remove(outId);
-				} else {
-					if (id < Integer.MAX_VALUE) {
-						outId = ++id;
-					} else {
-						outId = id = 1;
-					}
-				}
-				return outId;
-			} finally {
-				lock.writeLock().unlock();
-			}
-		}
-
-		private void addClient(ClientHandler client) {
-			lock.writeLock().lock();
-			try {
-				clientMap.put(client.getId(), client);
-			} finally {
-				lock.writeLock().unlock();
-			}
-		}
-
-		private void removeClient(ClientHandler client) {
-			lock.writeLock().lock();
-			try {
-				removeClient(client.getId());
-
-			} finally {
-				lock.writeLock().unlock();
-			}
-		}
-
-		private void removeClient(int id) {
-			lock.writeLock().lock();
-			try {
-				clientMap.remove(id);
-				clientIds.add(id);
-			} finally {
-				lock.writeLock().unlock();
-			}
-		}
-
-		private ClientHandler getClient(int id) {
-			lock.writeLock().lock();
-			try {
-				return clientMap.get(id);
-			} finally {
-				lock.writeLock().unlock();
-			}
-		}
-	}
 }
