@@ -507,8 +507,7 @@ public class ExcelUtil {
 
 			// 使用构造器创建实例
 			return constructor.newInstance();
-		} catch (ClassNotFoundException | NoSuchMethodException | InstantiationException |
-				IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
+		} catch (Exception e) {
 			System.err.println("Failed to create object for class: " + className);
 			e.printStackTrace();
 			return null;

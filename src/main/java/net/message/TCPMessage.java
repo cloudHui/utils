@@ -9,7 +9,7 @@ public class TCPMessage {
 	private byte[] message;
 
 	public static TCPMessage newInstance(int messageId, byte[] message, long sequence) {
-		return new TCPMessage( messageId, message,sequence);
+		return new TCPMessage(messageId, message, sequence);
 	}
 
 	public static TCPMessage newInstance(int result, int messageId, int clientId, byte[] message) {
@@ -25,14 +25,15 @@ public class TCPMessage {
 	}
 
 	public static TCPMessage newInstance(int result, int messageId, int clientId, byte[] message, int mapId, long sequence) {
-		return new TCPMessage(result, messageId, clientId, message, mapId,sequence);
+		return new TCPMessage(result, messageId, clientId, message, mapId, sequence);
 	}
 
-	public TCPMessage( int messageId, byte[] message, long sequence) {
+	public TCPMessage(int messageId, byte[] message, long sequence) {
 		this.messageId = messageId;
 		this.message = message;
 		this.sequence = sequence;
 	}
+
 	public TCPMessage(int result, int messageId, int clientId, byte[] message, int mapId) {
 		this.result = result;
 		this.messageId = messageId;

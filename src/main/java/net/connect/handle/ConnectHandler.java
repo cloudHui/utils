@@ -309,7 +309,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 
 			}).sync();
 		} catch (Exception e) {
-			LOGGER.error("", e);
+			LOGGER.error("connect:{}",connectServer, e);
 		}
 	}
 }

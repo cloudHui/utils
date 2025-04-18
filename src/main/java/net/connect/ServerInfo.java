@@ -16,6 +16,11 @@ public class ServerInfo {
 		this.ipConfig = ipConfig;
 	}
 
+	public ServerInfo(int serverType, String ipConfig) {
+		this.serverType = serverType;
+		this.ipConfig = ipConfig;
+	}
+
 	public int getServerType() {
 		return serverType;
 	}
