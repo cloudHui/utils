@@ -24,7 +24,6 @@ import net.client.event.EventHandle;
 import net.connect.ServerInfo;
 import net.handler.Handler;
 import net.handler.Handlers;
-import net.message.Maker;
 import net.message.Parser;
 import net.message.TCPMaker;
 import net.message.TCPMessage;
@@ -34,12 +33,10 @@ import org.slf4j.LoggerFactory;
 
 public class ConnectHandler extends ChannelInboundHandlerAdapter implements Sender {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectHandler.class);
-	private static final ConnectManager connectManager;
-	private final long id;
 	private Transfer transfer;
 	private final Parser parser;
 	private final Handlers handlers;
-	private final Maker maker;
+	private final TCPMaker maker;
 	private final byte[] MSG_DEFAULT;
 	private Consumer<ConnectHandler> idleRunner;
 	private CompleterGroup completerGroup;
@@ -61,18 +58,13 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 
-	public static Sender getSender(long id) {
-		return connectManager.getConnect(id);
-	}
-
 	public ConnectHandler(Transfer transfer, Parser parser, Handlers handlers) {
 		this(transfer, parser, handlers, TCPMaker.INSTANCE);
 	}
 
-	public ConnectHandler(Transfer transfer, Parser parser, Handlers handlers, Maker maker) {
+	public ConnectHandler(Transfer transfer, Parser parser, Handlers handlers, TCPMaker maker) {
 		this.transfer = (t, msg) -> Transfer.DEFAULT();
 		MSG_DEFAULT = "".getBytes();
-		id = connectManager.getId();
 		if (null != transfer) {
 			this.transfer = transfer;
 		}
@@ -80,10 +72,6 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		this.parser = parser;
 		this.handlers = handlers;
 		this.maker = maker;
-	}
-
-	public long getId() {
-		return id;
 	}
 
 	public void setActiveEvent(EventHandle activeEvent) {
@@ -117,7 +105,6 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) {
 		channel = ctx.channel();
-		connectManager.addConnect(this);
 		completerGroup = new CompleterGroup(channel.eventLoop());
 		if (null != activeHandle) {
 			try {
@@ -131,7 +118,6 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) {
-		connectManager.removeConnect(getId());
 		if (completerGroup != null) {
 			completerGroup.destroy();
 			completerGroup = null;
@@ -279,10 +265,6 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		return completer;
 	}
 
-	static {
-		connectManager = ConnectManager.getInstance();
-	}
-
 	public void connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, ChannelInitializer<SocketChannel> channelInitializer) {
 		Bootstrap bootstrap = ((new Bootstrap()).group(eventLoopGroup))
 				.channel(NioSocketChannel.class)
@@ -309,7 +291,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 
 			}).sync();
 		} catch (Exception e) {
-			LOGGER.error("connect:{}",connectServer, e);
+			LOGGER.error("connect:{}", connectServer, e);
 		}
 	}
 }

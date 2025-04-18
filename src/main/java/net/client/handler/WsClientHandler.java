@@ -18,7 +18,6 @@ import net.client.Sender;
 import net.client.event.EventHandle;
 import net.handler.Handler;
 import net.handler.Handlers;
-import net.message.Maker;
 import net.message.Parser;
 import net.message.TCPMaker;
 import net.message.TCPMessage;
@@ -36,7 +35,7 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 	private final Transfer transfer;
 	private final Parser parser;
 	private final Handlers handlers;
-	private final Maker maker;
+	private final TCPMaker maker;
 	private static final byte[] DEFAULT_DATA;
 	private EventHandle activeHandle;
 	private EventHandle closeEvent;
@@ -61,7 +60,7 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 		this(parser, handlers, transfer, TCPMaker.INSTANCE);
 	}
 
-	public WsClientHandler(Parser parser, Handlers handlers, Transfer transfer, Maker maker) {
+	public WsClientHandler(Parser parser, Handlers handlers, Transfer transfer, TCPMaker maker) {
 		this.safe = (msgId) -> Safe.DEFAULT();
 		this.id = clientManager.getId();
 		this.parser = parser;
