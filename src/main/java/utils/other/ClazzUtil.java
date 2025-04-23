@@ -81,13 +81,13 @@ public class ClazzUtil {
 			return getClasses(new File(url.getFile()), pk, except);
 		} else if ("jar".equals(protocol)) { // 适用于jar包
 			JarFile jarFile = ((JarURLConnection) url.openConnection()).getJarFile();
-			return getClassesFromJarFile(jarFile);
+			return getClassesFromJarFile(jarFile,except, pk);
 		} else {
 			throw new Exception("未识别的文件协议！" + protocol);
 		}
 	}
 
-	public static List<Class<?>> getClassesFromJarFile(JarFile jarFile) throws Exception {
+	public static List<Class<?>> getClassesFromJarFile(JarFile jarFile, String except, String include) throws Exception {
 		List<Class<?>> classes = new ArrayList<>();
 		Enumeration entries = jarFile.entries();
 		while (entries.hasMoreElements()) {
@@ -95,11 +95,18 @@ public class ClazzUtil {
 			String name = entry.getName();
 			if (name.endsWith(".class")) {
 				name = name.substring(0, name.length() - 6).replaceAll("/", ".");
+				if (!name.contains(include)) {
+					continue;
+				}
+				if (needExcept(except, name)) {
+					continue;
+				}
 				classes.add(Class.forName(name, false, Thread.currentThread().getContextClassLoader()));
 			}
 		}
 		return classes;
 	}
+
 
 	//根据路径获取
 	public static List<Class<?>> getClasses(File dir, String pk, String except) throws ClassNotFoundException {
