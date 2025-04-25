@@ -67,8 +67,6 @@
             <optional>true</optional>
         </dependency>
 
-
-
         <dependency>
             <groupId>org.apache.ibatis</groupId>
             <artifactId>ibatis-core</artifactId>
@@ -98,8 +96,6 @@
             <artifactId>poi-ooxml</artifactId>
             <version>4.1.2</version>
         </dependency>
-
-
 
         <dependency>
             <groupId>io.jpower.kcp</groupId>
