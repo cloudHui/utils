@@ -58,7 +58,7 @@ public class ClazzUtil {
 	 * 读取某个包下所有类
 	 */
 	public static List<Class<?>> getClasses(String pk) throws Exception {
-		return getClasses(pk, null, null);
+		return getClasses(pk, null, "");
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class ClazzUtil {
 				if (!name.contains(include)) {
 					continue;
 				}
-				if (needExcept(except, name)) {
+				if (needExceptPackage(except, name)) {
 					continue;
 				}
 				classes.add(Class.forName(name, false, Thread.currentThread().getContextClassLoader()));
@@ -116,7 +116,7 @@ public class ClazzUtil {
 		}
 
 		for (File f : dir.listFiles()) {
-			if (f.isDirectory() && !needExcept(except, f.getName())) {
+			if (f.isDirectory() && !needExceptFile(except, f.getName())) {
 				classes.addAll(getClasses(f, pk + "." + f.getName(), except));
 			}
 			String name = f.getName();
@@ -129,16 +129,39 @@ public class ClazzUtil {
 		return classes;
 	}
 
-	private static boolean needExcept(String except, String name){
+	/**
+	 * 排除文件名带except
+	 *
+	 * @param except 需要排出的包名 逗号分开的
+	 */
+	private static boolean needExceptFile(String except, String name) {
 		String[] split = except.split(",");
-		for(String value: split){
-			if(name.equals(value)){
+		for (String value : split) {
+			if (name.equals(value)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
+
+	/**
+	 * 排除包名带 except的
+	 *
+	 * @param except 需要排出的包名 逗号分开的
+	 */
+	private static boolean needExceptPackage(String except, String name) {
+		String[] splitExcept = except.split(",");
+		for (String value : splitExcept) {
+			String[] nameSplit = name.split("\\.");
+			for (String names : nameSplit) {
+				if (value.equals(names)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	//动态获取，根据反射，比如获取xx.xx.xx.xx.Action 这个所有的实现类。 xx.xx.xx.xx 表示包名  Action为接口名或者类名
 	public static List<Class<?>> getAllActionSubClass(String classPackageAndName) throws Exception {
 		Field field;
