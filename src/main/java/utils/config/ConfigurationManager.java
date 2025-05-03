@@ -58,30 +58,26 @@ public class ConfigurationManager {
 		return Collections.unmodifiableMap(this.connectConfigurationMap);
 	}
 
-	public void load() {
-		load(FILE_NAME);
-	}
-
-	private synchronized void load(String fileName) {
-		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(fileName);
+	public synchronized void load() {
+		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(FILE_NAME);
 		Properties properties = new Properties();
 
 		try {
 			if (inputStream == null) {
-				String filePath = ConfigPathUtils.getConfigFilePath() + fileName;
+				String filePath = ConfigPathUtils.getConfigFilePath() + FILE_NAME;
 				File file = new File(filePath);
 				if (file.exists()) {
 					inputStream = new FileInputStream(filePath);
 				}
 				if (inputStream == null) {
-					filePath = ConfigPathUtils.getResourceFilePath() + fileName;
+					filePath = ConfigPathUtils.getResourceFilePath() + FILE_NAME;
 					file = new File(filePath);
 					if (file.exists()) {
 						inputStream = new FileInputStream(filePath);
 					}
 				}
 				if (inputStream == null) {
-					filePath = ConfigPathUtils.getProjectPath() + fileName;
+					filePath = ConfigPathUtils.getProjectPath() + FILE_NAME;
 					file = new File(filePath);
 					if (file.exists()) {
 						inputStream = new FileInputStream(filePath);
@@ -91,7 +87,7 @@ public class ConfigurationManager {
 
 			properties.load(new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)));
 		} catch (IOException var5) {
-			throw new RuntimeException("Error! failed for load " + fileName, var5);
+			throw new RuntimeException("Error! failed for load " + FILE_NAME, var5);
 		}
 
 		this.parse(properties);
