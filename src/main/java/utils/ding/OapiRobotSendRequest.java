@@ -1,8 +1,5 @@
 package utils.ding;
 
-import java.util.List;
-import java.util.Map;
-
 public class OapiRobotSendRequest{
     private String actionCard;
     private String at;
