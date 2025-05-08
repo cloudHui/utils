@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ExecCommand {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecCommand.class);
 
 	/**
@@ -45,7 +46,7 @@ public class ExecCommand {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		LOGGER.info("exeCommand:{} cost:{}ms", command, System.currentTimeMillis() - startTime);
+		LOGGER.info("exeCommand:{} results:{} cost:{}ms", command, results, System.currentTimeMillis() - startTime);
 		return results;
 	}
 
@@ -90,36 +91,30 @@ public class ExecCommand {
 		}
 	}
 
+
+	/**
+	 * 执行脚本
+	 */
+	public static void exeScript(String batName) {
+		String cmd;
+		String osName = System.getProperty("os.name");
+		if (osName.contains("Windows")) {
+			cmd = "cmd.exe /c " + batName + ".bat";
+		} else {
+			cmd = "sh " + batName + ".sh";
+		}
+		try {
+			Runtime.getRuntime().exec(cmd).waitFor();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * 是否是windows系统
 	 */
 	public static boolean isWindows() {
 		String osName = System.getProperty("os.name");
 		return osName.contains("Windows");
-	}
-
-
-	public static void main(String[] args) throws InterruptedException {
-		new Thread(() -> {
-			// 通过cmd程序执行cmd命令
-			try {
-				boolean isWindows = isWindows();
-				if (isWindows) {
-					String strCmd = "ipconfig";
-					Runtime.getRuntime().exec("cmd /c  " + strCmd).waitFor();
-				} else {
-					String strCmd = "./UpdateSVN.sh";
-					Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", strCmd}).waitFor();
-				}
-				Thread.sleep(2000);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.exit(0);
-		}).start();
-		//System.out.println(new Timestamp(new Date().getTime()));
-		Thread.sleep(5000);
-		System.out.println(new Timestamp(new Date().getTime()));
 	}
 }
