@@ -79,11 +79,11 @@
             <version>2.6.2</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.dingtalk.open</groupId>-->
-<!--            <artifactId>taobao-sdk-java-auto</artifactId>-->
-<!--            <version>1479188381469-20200430</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.dingtalk.open</groupId>
+            <artifactId>taobao-sdk-java-auto</artifactId>
+            <version>1479188381469-20200430</version>
+        </dependency>
 
         <dependency>
             <groupId>com.github.oshi</groupId>

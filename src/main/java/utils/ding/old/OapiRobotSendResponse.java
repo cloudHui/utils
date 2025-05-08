@@ -1,4 +1,4 @@
-package utils.ding;
+package utils.ding.old;
 
 public class OapiRobotSendResponse {
     private Long errcode;

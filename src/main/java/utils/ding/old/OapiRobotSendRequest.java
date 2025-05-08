@@ -1,4 +1,4 @@
-package utils.ding;
+package utils.ding.old;
 
 public class OapiRobotSendRequest{
     private String actionCard;
