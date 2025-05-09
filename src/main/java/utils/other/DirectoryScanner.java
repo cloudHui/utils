@@ -31,14 +31,14 @@ public class DirectoryScanner {
 	 * @param directoryPath 路径
 	 * @param fileMap       存成 文件和修改时间是为了 map get 直接取相同的值方便
 	 */
-	public static void listFiles(String directoryPath, Map<File, Long> fileMap) {
+	public static void listFiles(String directoryPath, Map<String, Long> fileMap) {
 		File directory = new File(directoryPath);
 		if (directory.exists() && directory.isDirectory()) {
 			File[] files = directory.listFiles();
 			if (files != null) {
 				for (File file : files) {
 					if (file.isFile()) {
-						fileMap.put(file, file.lastModified());
+						fileMap.put(file.getName(), file.lastModified());
 					} else if (file.isDirectory()) {
 						// 如果你想递归获取子目录中的文件，可以在這裡添加遞歸调用
 						listFiles(file.getAbsolutePath(), fileMap);
