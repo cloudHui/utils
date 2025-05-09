@@ -210,67 +210,35 @@ public class ConfigurationManager {
 			if (needSet) {
 				field.setAccessible(false);
 			}
-
 		}
 
 	}
 
-	private Object parseValue(Class<?> type, String value) {
-		String var3;
-		byte var4;
-		if (type.isPrimitive()) {
-			var3 = type.getName();
-			var4 = -1;
-			if (var3.equals("double")) {
-				var4 = 5;
-			}
-			if (var3.equals("int")) {
-				var4 = 2;
-			}
-			if (var3.equals("byte")) {
-				var4 = 0;
-			}
-			if (var3.equals("long")) {
-				var4 = 3;
-			}
-			if (var3.equals("boolean")) {
-				var4 = 6;
-			}
-			if (var3.equals("float")) {
-				var4 = 4;
-			}
-			if (var3.equals("short")) {
-				var4 = 1;
-			}
-
-			switch (var4) {
-				case 0:
-					return Byte.parseByte(value);
-				case 1:
-					return Short.parseShort(value);
-				case 2:
-					return Integer.parseInt(value);
-				case 3:
-					return Long.parseLong(value);
-				case 4:
-					return Float.parseFloat(value);
-				case 5:
+	private Object parseValue(Class<?> classType, String value) {
+		if (classType.isPrimitive()) {
+			switch (classType.getName()) {
+				case "double":
 					return Double.parseDouble(value);
-				case 6:
+				case "int":
+					return Integer.parseInt(value);
+				case "byte":
+					return Byte.parseByte(value);
+				case "long":
+					return Long.parseLong(value);
+				case "boolean":
 					return Boolean.parseBoolean(value);
+				case "float":
+					return Float.parseFloat(value);
+				case "short":
+					return Short.parseShort(value);
 			}
 		} else {
-			var3 = type.getName();
-			var4 = -1;
-			if (var3.equals("java.lang.String")) {
-				var4 = 0;
-			}
-			if (var4 == 0) {
+			if (classType.getName().equals("java.lang.String")) {
 				return value;
 			}
 		}
 
-		throw new UnsupportedOperationException("Only primitive type allowed now! type=" + type.getName());
+		throw new UnsupportedOperationException("Only primitive type allowed now! type=" + classType.getName());
 	}
 
 	public Integer getInt(String name, Integer defaultValue) {
