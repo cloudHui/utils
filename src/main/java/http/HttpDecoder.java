@@ -1,6 +1,7 @@
 package http;
 
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
 
 import http.handler.Handler;
 import http.handler.Maker;
@@ -77,19 +78,24 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 				path = path.substring(1);
 			}
 
+			if (path == null) {
+				ctx.close();
+				LOGGER.info("[{}] unsupported({} path:null)", ctx.channel(), request.content().toString(CharsetUtil.UTF_8));
+				return;
+			}
 			String[] data = path.split("\\?");
-			if (data.length > 0) {
-				if (HttpMethod.POST.equals(request.method())) {
-					httpPost(data, request, ctx, path);
-				} else if (HttpMethod.GET.equals(request.method())) {
-					httpGet(data, request, ctx, path);
-				} else {
-					ctx.close();
-					LOGGER.info("[{}] unsupported method({} path:{})", ctx.channel(), request.method().name(), path);
-				}
+			if (data.length <= 0) {
+				ctx.close();
+				LOGGER.info("[{}] unsupported({} data:null)", ctx.channel(), path);
+				return;
+			}
+			if (HttpMethod.POST.equals(request.method())) {
+				httpPost(data, request, ctx, path);
+			} else if (HttpMethod.GET.equals(request.method())) {
+				httpGet(data, request, ctx, path);
 			} else {
 				ctx.close();
-				LOGGER.info("[{}] unsupported({} path:{})", ctx.channel(), request.method().name(), path);
+				LOGGER.info("[{}] unsupported method({} path:{})", ctx.channel(), request.method().name(), path);
 			}
 		} catch (Throwable e) {
 			LOGGER.error("", e);
@@ -132,7 +138,7 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 		if (null != handler) {
 
 			long now = System.currentTimeMillis();
-			HttpMethod method = request.getMethod();
+			HttpMethod method = request.method();
 			boolean keepChannel = handler.handler(this, data[0], method.name(), handler.parser(getBody(request)));
 
 			now = System.currentTimeMillis() - now;
