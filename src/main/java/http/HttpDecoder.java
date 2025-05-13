@@ -1,7 +1,6 @@
 package http;
 
 import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
 
 import http.handler.Handler;
 import http.handler.Maker;
@@ -108,25 +107,25 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 	 */
 	private void httpGet(String[] data, FullHttpRequest request, ChannelHandlerContext ctx, String path) {
 		Handler handler = getHandler(data[0]);
-		if (null != handler) {
+		if (null == handler) {
+			LOGGER.info("[{}] can not find handler httpGet for {}  path:{}", ctx.channel(), data[0], path);
+			ctx.close();
+			return;
+		}
+		long now = System.currentTimeMillis();
+		HttpMethod method = request.method();
+		boolean keepChannel = handler.handler(this, data[0], method.name(), handler.parser(data.length > 1 ? data[1] : null));
 
-			long now = System.currentTimeMillis();
-			HttpMethod method = request.method();
-			boolean keepChannel = handler.handler(this, data[0], method.name(), handler.parser(data.length > 1 ? data[1] : null));
-
-			now = System.currentTimeMillis() - now;
-			if (now > 1000L) {
-				LOGGER.error("httpGet handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
-			} else {
-				LOGGER.warn("httpGet handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
-			}
-
-			if (!keepChannel) {
-				LOGGER.info("[{}] process message return false", ctx.channel());
-				ctx.close();
-			}
+		now = System.currentTimeMillis() - now;
+		if (now > 1000L) {
+			LOGGER.error("httpGet handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
 		} else {
-			LOGGER.info("[{}] can not find handler(GET) for path({} {})", ctx.channel(), data[0], path);
+			LOGGER.warn("httpGet handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
+		}
+
+		if (!keepChannel) {
+			LOGGER.info("[{}] process message return false", ctx.channel());
+			ctx.close();
 		}
 	}
 
@@ -135,25 +134,26 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 	 */
 	private void httpPost(String[] data, FullHttpRequest request, ChannelHandlerContext ctx, String path) {
 		Handler handler = getHandler(data[0]);
-		if (null != handler) {
+		if (null == handler) {
+			LOGGER.info("[{}] can not find handler httpPost for path:{}", ctx.channel(), path);
+			ctx.close();
+			return;
+		}
 
-			long now = System.currentTimeMillis();
-			HttpMethod method = request.method();
-			boolean keepChannel = handler.handler(this, data[0], method.name(), handler.parser(getBody(request)));
+		long now = System.currentTimeMillis();
+		HttpMethod method = request.method();
+		boolean keepChannel = handler.handler(this, data[0], method.name(), handler.parser(getBody(request)));
 
-			now = System.currentTimeMillis() - now;
-			if (now > 1000L) {
-				LOGGER.error("httpPost handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
-			} else {
-				LOGGER.warn("httpPost handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
-			}
-
-			if (!keepChannel) {
-				LOGGER.info("[{}] process message return false", ctx.channel());
-				ctx.close();
-			}
+		now = System.currentTimeMillis() - now;
+		if (now > 1000L) {
+			LOGGER.error("httpPost handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
 		} else {
-			LOGGER.info("[{}] can not find handler(POST) for path({})", ctx.channel(), path);
+			LOGGER.warn("httpPost handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
+		}
+
+		if (!keepChannel) {
+			LOGGER.info("[{}] process message return false", ctx.channel());
+			ctx.close();
 		}
 	}
 
