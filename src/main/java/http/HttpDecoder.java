@@ -50,14 +50,14 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 	public void channelRead(ChannelHandlerContext ctx, Object o) throws Exception {
 		try {
 			long now = System.currentTimeMillis();
-			if (lastMsgStamp != 0 && now - lastMsgStamp < 2000) {
+			if (lastMsgStamp != 0 && now - lastMsgStamp < 1000L) {
 				return;
 			}
 			lastMsgStamp = now;
 			if (o instanceof FullHttpRequest) {
-				dealFullHttpMsg(ctx, o);
+				dealFullHttpMsg(o);
 			} else if (o instanceof WebSocketFrame) {
-				dealWebsocketMsg(ctx, o);
+				dealWebsocketMsg(o);
 			} else {
 				ctx.fireChannelRead(o);
 			}
@@ -69,7 +69,7 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 	/**
 	 * 处理http消息
 	 */
-	private void dealFullHttpMsg(ChannelHandlerContext ctx, Object o) {
+	private void dealFullHttpMsg(Object o) {
 		FullHttpRequest request = (FullHttpRequest) o;
 		try {
 			String path = request.uri();
@@ -78,89 +78,89 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 			}
 
 			if (path == null) {
-				ctx.close();
-				LOGGER.info("[{}] unsupported({} path:null)", ctx.channel(), request.content().toString(CharsetUtil.UTF_8));
+				channel.close();
+				LOGGER.info("[{}] unsupported({} path:null)", channel, request.content().toString(CharsetUtil.UTF_8));
 				return;
 			}
 			String[] data = path.split("\\?");
 			if (data.length <= 0) {
-				ctx.close();
-				LOGGER.info("[{}] unsupported({} data:null)", ctx.channel(), path);
+				channel.close();
+				LOGGER.info("[{}] unsupported({} data:null)", channel, path);
 				return;
 			}
 			if (HttpMethod.POST.equals(request.method())) {
-				httpPost(data, request, ctx, path);
+				httpPost(data, request, path);
 			} else if (HttpMethod.GET.equals(request.method())) {
-				httpGet(data, request, ctx, path);
+				httpGet(data, path);
 			} else {
-				ctx.close();
-				LOGGER.info("[{}] unsupported method({} path:{})", ctx.channel(), request.method().name(), path);
+				channel.close();
+				LOGGER.info("[{}] unsupported method({} path:{})", channel, request.method().name(), path);
 			}
 		} catch (Throwable e) {
 			LOGGER.error("", e);
-			ctx.close();
+			channel.close();
 		}
 	}
 
 	/**
 	 * http get
 	 */
-	private void httpGet(String[] data, FullHttpRequest request, ChannelHandlerContext ctx, String path) {
+	private void httpGet(String[] data, String path) {
 		Handler handler = getHandler(data[0]);
 		if (null == handler) {
-			LOGGER.info("[{}] can not find handler httpGet for {}  path:{}", ctx.channel(), data[0], path);
-			ctx.close();
+			LOGGER.info("[{}] can not find handler httpGet for {}  path:{}", channel, data[0], path);
+			channel.close();
 			return;
 		}
 		long now = System.currentTimeMillis();
-		HttpMethod method = request.method();
-		boolean keepChannel = handler.handler(this, data[0], method.name(), handler.parser(data.length > 1 ? data[1] : null));
+
+
+		boolean keepChannel = handler.handler(this, handler.parser(data.length > 1 ? data[1] : null), ip);
 
 		now = System.currentTimeMillis() - now;
 		if (now > 1000L) {
 			LOGGER.error("httpGet handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
 		} else {
-			LOGGER.warn("httpGet handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
+			LOGGER.debug("httpGet handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
 		}
 
 		if (!keepChannel) {
-			LOGGER.info("[{}] process message return false", ctx.channel());
-			ctx.close();
+			LOGGER.info("[{}] process message return false", channel);
+			channel.close();
 		}
 	}
 
 	/**
 	 * http post
 	 */
-	private void httpPost(String[] data, FullHttpRequest request, ChannelHandlerContext ctx, String path) {
+	private void httpPost(String[] data, FullHttpRequest request, String path) {
 		Handler handler = getHandler(data[0]);
 		if (null == handler) {
-			LOGGER.info("[{}] can not find handler httpPost for path:{}", ctx.channel(), path);
-			ctx.close();
+			LOGGER.info("[{}] can not find handler httpPost for path:{}", channel, path);
+			channel.close();
 			return;
 		}
 
 		long now = System.currentTimeMillis();
-		HttpMethod method = request.method();
-		boolean keepChannel = handler.handler(this, data[0], method.name(), handler.parser(getBody(request)));
+		boolean keepChannel = handler.handler(this, handler.parser(getBody(request)), ip);
 
 		now = System.currentTimeMillis() - now;
 		if (now > 1000L) {
 			LOGGER.error("httpPost handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
 		} else {
-			LOGGER.warn("httpPost handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
+			LOGGER.debug("httpPost handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
 		}
 
 		if (!keepChannel) {
-			LOGGER.info("[{}] process message return false", ctx.channel());
-			ctx.close();
+			LOGGER.info("[{}] process message return false", channel);
+			channel.close();
 		}
 	}
 
 	/**
 	 * 处理 websocket消息
 	 */
-	private void dealWebsocketMsg(ChannelHandlerContext ctx, Object o) {
+	private void dealWebsocketMsg(Object o) {
 		WebSocketFrame frame = (WebSocketFrame) o;
 		try {
 			ByteBuf buf = frame.content();
@@ -169,17 +169,18 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 				buf.readBytes(bytes);
 				Handler handler = getHandler(WEB_SOCKET);
 				if (null != handler) {
-					if (!handler.handler(this, null, WEB_SOCKET, handler.parser(new String(bytes, CharsetUtil.UTF_8)))) {
-						LOGGER.info("[{}] process message return false", ctx.channel());
-						ctx.close();
+					LOGGER.info("remote {}", channel.remoteAddress().toString().replace("/", "").split(":")[0]);
+					if (!handler.handler(this, handler.parser(new String(bytes, CharsetUtil.UTF_8)), ip)) {
+						LOGGER.info("[{}] process message return false", channel);
+						channel.close();
 					}
 				} else {
-					LOGGER.info("[{}] can not find handler for web socket", ctx.channel());
+					LOGGER.info("[{}] can not find handler for web socket", channel);
 				}
 			}
 		} catch (Throwable e) {
 			LOGGER.error("", e);
-			ctx.close();
+			channel.close();
 		} finally {
 			ReferenceCountUtil.release(frame);
 		}
