@@ -18,6 +18,8 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateHandler;
+import net.handler.IdleHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +56,8 @@ public class HttpService {
 						p.addLast(new HttpResponseEncoder());
 						p.addLast(new HttpObjectAggregator(10 * 1024 * 1024));
 						p.addLast(clazz.newInstance().setMaker(maker));
+						p.addLast(new IdleStateHandler(60, 60, 60));
+						p.addLast(new IdleHandler());
 					}
 				});
 
