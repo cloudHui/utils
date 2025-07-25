@@ -1,0 +1,24 @@
+{
+  "baseBack": "..\\..\\..\\",
+  "servers": [
+    "if2-battleManagerServer",
+    "if2-gameServer",
+    "if2-gatewayServer",
+    "if2-gmOrderServer",
+    "if2-httpServer",
+    "if2-notificServer",
+    "if2-pressureTestServer",
+    "if2-routerServer",
+    "if2-socialServer",
+    "if2-battleServer"
+  ],
+  "lanSever": [
+    "if2-gameServer",
+    "if2-httpServer",
+    "if2-notificServer"
+  ],
+  "resourceConXml": "resources\\resource.xml",
+  "resourceDir": "resources\\xml\\",
+  "excelDir": "Document\\Configure\\kongzhongtest\\XML\\",
+  "lanConXlsx": "Languages\\languages.xlsx"
+}
