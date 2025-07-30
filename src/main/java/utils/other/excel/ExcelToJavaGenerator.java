@@ -115,7 +115,7 @@ public class ExcelToJavaGenerator {
 			case "string":
 				return "String";
 			case "bool":
-				return "booelan";
+				return "boolean";
 			//case "Vector2": {
 			//	if (!"".equals(value))
 			//		obj = TableUtils.Vector2Parse(value);
@@ -164,7 +164,7 @@ public class ExcelToJavaGenerator {
 	}
 
 	public static Object getType(String type, String value) throws Exception {
-		Object obj = null;
+		Object obj;
 		switch (type) {
 			case "float": {
 				if (!"".equals(value))

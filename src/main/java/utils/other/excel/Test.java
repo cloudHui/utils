@@ -108,9 +108,9 @@ public class Test {
 	static Comparator<TypeNum> comparableNum = Comparator.comparingInt(TypeNum::getNum);
 
 	static class TypeNum {
-		private int type;
+		private final int type;
 
-		private int num;
+		private final int num;
 
 
 		public int getType() {
