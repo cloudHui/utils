@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 
-// modify by luoyi
 public class CommonInConditionEvent extends DistinctEvent {
 	protected String eventType;
 	/**
