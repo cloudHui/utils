@@ -115,7 +115,7 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 		long now = System.currentTimeMillis();
 
 
-		boolean keepChannel = handler.handler(this, handler.parser(data.length > 1 ? data[1] : null), ip);
+		boolean keepChannel = handler.handler(this, handler.parser(data.length > 1 ? data[1] : null));
 
 		now = System.currentTimeMillis() - now;
 		if (now > 1000L) {
@@ -142,7 +142,7 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 		}
 
 		long now = System.currentTimeMillis();
-		boolean keepChannel = handler.handler(this, handler.parser(getBody(request)), ip);
+		boolean keepChannel = handler.handler(this, handler.parser(getBody(request)));
 
 		now = System.currentTimeMillis() - now;
 		if (now > 1000L) {
@@ -170,7 +170,7 @@ public abstract class HttpDecoder extends ChannelInboundHandlerAdapter implement
 				Handler handler = getHandler(WEB_SOCKET);
 				if (null != handler) {
 					LOGGER.info("remote {}", channel.remoteAddress().toString().replace("/", "").split(":")[0]);
-					if (!handler.handler(this, handler.parser(new String(bytes, CharsetUtil.UTF_8)), ip)) {
+					if (!handler.handler(this, handler.parser(new String(bytes, CharsetUtil.UTF_8)))) {
 						LOGGER.info("[{}] process message return false", channel);
 						channel.close();
 					}
