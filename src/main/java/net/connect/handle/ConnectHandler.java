@@ -6,7 +6,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -187,12 +186,12 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 							LOGGER.debug("connect handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
 						}
 					} else {
-						LOGGER.error("[{}] ERROR! can not find handler for TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()));
+						LOGGER.error("[{}] ERROR! can not find handler for TCPMessage({})", ctx.channel(), Integer.toHexString(msg.getMessageId()));
 					}
 				}
 
 			} catch (Exception exception) {
-				LOGGER.error("[{}] ERROR! failed for process TCPMessage({})", ctx.channel(), String.format("0x%08x", msg.getMessageId()), exception);
+				LOGGER.error("[{}] ERROR! failed for process TCPMessage({})", ctx.channel(), Integer.toHexString(msg.getMessageId()), exception);
 			}
 		} else {
 			ctx.fireChannelRead(o);
