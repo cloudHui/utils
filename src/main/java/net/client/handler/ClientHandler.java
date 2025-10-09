@@ -209,8 +209,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 			}
 
 			channel.close();
-		} catch (Exception var4) {
-			logger.error("[{}] ERROR! failed for process message({})", channel, Integer.toHexString(tMsg.getMessageId()), var4);
+		} catch (Exception e) {
+			logger.error("[{}] ERROR! failed for process message({})", channel, Integer.toHexString(tMsg.getMessageId()), e);
 		}
 
 	}

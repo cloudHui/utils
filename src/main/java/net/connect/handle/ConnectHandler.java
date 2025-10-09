@@ -167,27 +167,29 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 					innerMsg = parser.parser(msg.getMessageId(), MSG_DEFAULT);
 				}
 
-
+				long now = System.currentTimeMillis();
 				if (msg.getSequence() != 0 && completerGroup != null) {
 					Completer completer = completerGroup.popCompleter(msg.getSequence());
 					if (null != completer) {
 						completer.msg = innerMsg;
 						ctx.channel().eventLoop().execute(completer);
+					} else {
+						return;
 					}
 				} else {
 					handler = handlers.getHandler(msg.getMessageId());
 					if (null != handler) {
-						long now = System.currentTimeMillis();
 						handler.handler(this, msg.getClientId(), innerMsg, msg.getMapId(), msg.getSequence());
-						now = System.currentTimeMillis() - now;
-						if (now > 1000L) {
-							LOGGER.error("connect handler:{} cost too long :{}ms", handler.getClass().getSimpleName(), now);
-						} else {
-							LOGGER.debug("connect handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
-						}
 					} else {
 						LOGGER.error("[{}] ERROR! can not find handler for TCPMessage({})", ctx.channel(), Integer.toHexString(msg.getMessageId()));
+						return;
 					}
+				}
+				now = System.currentTimeMillis() - now;
+				if (now > 1000L) {
+					LOGGER.error("connect msg:{} cost too long :{}ms", Integer.toHexString(msg.getMessageId()), now);
+				} else {
+					LOGGER.debug("connect msg:{} cost:{}ms", Integer.toHexString(msg.getMessageId()), now);
 				}
 
 			} catch (Exception exception) {

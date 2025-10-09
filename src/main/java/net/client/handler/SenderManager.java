@@ -35,7 +35,7 @@ public class SenderManager {
 			}
 
 			if (outId > 0) {
-				clientIds.remove(outId);
+				clientIds.remove((Integer) outId);
 			} else {
 				if (id < Integer.MAX_VALUE) {
 					outId = ++id;
