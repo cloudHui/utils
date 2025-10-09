@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import io.netty.channel.EventLoop;
 import org.slf4j.Logger;
@@ -16,7 +15,7 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 	private static final Throwable TIMEOUT = new RuntimeException("timeout");
 	private final Map<Long, Completer> completerMap = new ConcurrentHashMap<>(128);
 	private EventLoop executors;
-	private static final AtomicInteger sequence = new AtomicInteger(0);
+	private static int sequenceId = 0;
 	private static final Set<Runnable> runners = new ConcurrentSkipListSet<>((o1, o2) -> 0);
 	private static final Thread checker = new Thread(() -> {
 		long waitTime;
@@ -85,8 +84,11 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 		runners.add(this);
 	}
 
-	public int getSequence() {
-		return sequence.incrementAndGet();
+	public synchronized int getSequence() {
+		if (sequenceId >= Integer.MAX_VALUE) {
+			sequenceId = 1;
+		}
+		return ++sequenceId;
 	}
 
 	public void addCompleter(long sequence, Completer completer) {

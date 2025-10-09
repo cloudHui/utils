@@ -173,7 +173,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	private void processTCPMessage(TCPMessage tMsg) {
 		try {
 			if (!safe.isValid(tMsg.getMessageId())) {
-				logger.error("[{}] ERROR! {} is not safe message id", channel, String.format("0x%08x", tMsg.getMessageId()));
+				logger.error("[{}] ERROR! {} is not safe message id", channel, Integer.toHexString(tMsg.getMessageId()));
 				channel.close();
 				return;
 			}
@@ -192,7 +192,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 
 			Handler handler = handlers.getHandler(tMsg.getMessageId());
 			if (null == handler) {
-				logger.error("[{}] ERROR! can not find handler for message({})", channel, String.format("0x%08x", tMsg.getMessageId()));
+				logger.error("[{}] ERROR! can not find handler for message({})", channel, Integer.toHexString(tMsg.getMessageId()));
 				return;
 			}
 
@@ -210,7 +210,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 
 			channel.close();
 		} catch (Exception var4) {
-			logger.error("[{}] ERROR! failed for process message({})", channel, String.format("0x%08x", tMsg.getMessageId()), var4);
+			logger.error("[{}] ERROR! failed for process message({})", channel, Integer.toHexString(tMsg.getMessageId()), var4);
 		}
 
 	}

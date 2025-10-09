@@ -153,24 +153,24 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 
 	@Override
 	public void sendMessage(int msgId, Message msg, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(msgId, msg, sequence));
+		channel.writeAndFlush(maker.wrap(msgId, msg, sequence));
 	}
 
 	@Override
 	public void sendMessage(TCPMessage msg) {
-		this.channel.writeAndFlush(msg);
+		channel.writeAndFlush(msg);
 	}
 
 	@Override
 	public void sendMessage(int clientId, int msgId, int mapId, int resultId, Message msg, long sequence) {
-		this.channel.writeAndFlush(this.maker.wrap(clientId, msgId, mapId, resultId, msg, sequence));
+		channel.writeAndFlush(maker.wrap(clientId, msgId, mapId, resultId, msg, sequence));
 	}
 
 	private void processTCPMessage(TCPMessage tMsg) {
 		try {
-			if (!this.safe.isValid(tMsg.getMessageId())) {
-				logger.error("[{}] ERROR! {} is not safe message id", this.channel, String.format("0x%08x", tMsg.getMessageId()));
-				this.channel.close();
+			if (!safe.isValid(tMsg.getMessageId())) {
+				logger.error("[{}] ERROR! {} is not safe message id", channel, Integer.toHexString(tMsg.getMessageId()));
+				channel.close();
 				return;
 			}
 
@@ -188,7 +188,7 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 
 			Handler handler = this.handlers.getHandler(tMsg.getMessageId());
 			if (null == handler) {
-				logger.error("[{}] ERROR! can not find handler for message({})", this.channel, String.format("0x%08x", tMsg.getMessageId()));
+				logger.error("[{}] ERROR! can not find handler for message({})", channel, Integer.toHexString(tMsg.getMessageId()));
 				return;
 			}
 
@@ -206,7 +206,7 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 
 			this.channel.close();
 		} catch (Exception var4) {
-			logger.error("[{}] ERROR! failed for process message({})", this.channel, String.format("0x%08x", tMsg.getMessageId()), var4);
+			logger.error("[{}] ERROR! failed for process message({})", channel, Integer.toHexString(tMsg.getMessageId()), var4);
 		}
 
 	}
