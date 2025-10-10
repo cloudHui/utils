@@ -3,6 +3,7 @@ package net.connect;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
+import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -23,7 +24,9 @@ public class TCPConnect extends ConnectHandler {
 	private final EventLoopGroup eventLoopGroup;
 	private final SocketAddress socketAddress;
 
-	private RegisterCallback registerSuccessCallback = null;
+	/**
+	 * 是否有回调消息
+	 */
 	private CallParam callParam = null;
 
 	/**
@@ -70,31 +73,15 @@ public class TCPConnect extends ConnectHandler {
 		return "TCPConnect{" + "connectServer=" + getConnectServer() + ", localServer=" + getLocalServer() + '}';
 	}
 
-	/**
-	 * 注册成功回调接口
-	 */
-	@FunctionalInterface
-	public interface RegisterCallback {
-		void onRegisterSuccess(CallParam callParam);
+	public CallParam getCallParam() {
+		return callParam;
 	}
 
 	/**
 	 * 设置注册成功回调
 	 */
-	public void setRegisterSuccessCallback(RegisterCallback callback, CallParam callParam) {
-		this.registerSuccessCallback = callback;
+	public void setCallParam(CallParam callParam) {
 		this.callParam = callParam;
-	}
-
-	/**
-	 * 获取注册成功回调
-	 */
-	public RegisterCallback getRegisterSuccessCallback() {
-		return registerSuccessCallback;
-	}
-
-	public CallParam getCallParam() {
-		return callParam;
 	}
 
 	/**
@@ -103,11 +90,27 @@ public class TCPConnect extends ConnectHandler {
 	public static class CallParam {
 		public int messageId;
 
-		public Object message;
+		public Message message;
 
-		public CallParam(int messageId, Object message) {
+		public RegisterCallback callback = null;
+
+		public CallParam(int messageId, Message message) {
 			this.messageId = messageId;
 			this.message = message;
 		}
+
+		public CallParam(int messageId, Message message, RegisterCallback callback) {
+			this.messageId = messageId;
+			this.message = message;
+			this.callback = callback;
+		}
+	}
+
+	/**
+	 * 超时消息发送回调
+	 */
+	@FunctionalInterface
+	public interface RegisterCallback {
+		void handle(int msgId, Message message, ConnectHandler serverClient);
 	}
 }
