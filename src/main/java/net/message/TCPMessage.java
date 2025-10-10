@@ -113,4 +113,12 @@ public class TCPMessage {
 	public void setSequence(long sequence) {
 		this.sequence = sequence;
 	}
+
+	@Override
+	public String toString() {
+		return "TCPMessage{" +
+				"messageId=" + messageId +
+				", sequence=" + sequence +
+				'}';
+	}
 }

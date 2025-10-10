@@ -14,6 +14,7 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Completer.class);
 	private static final Throwable TIMEOUT = new RuntimeException("timeout");
 	private final Map<Long, Completer> completerMap = new ConcurrentHashMap<>(128);
+	private final Map<Long, CompleterTcpMsg> completerTcpMsgMap = new ConcurrentHashMap<>(128);
 	private EventLoop executors;
 	private static int sequenceId = 0;
 	private static final Set<Runnable> runners = new ConcurrentSkipListSet<>((o1, o2) -> 0);
@@ -99,6 +100,22 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 		return completerMap.remove(sequence);
 	}
 
+	public void addCompleterTcpMsg(long sequence, CompleterTcpMsg completer) {
+		completerTcpMsgMap.put(sequence, completer);
+	}
+
+	public CompleterTcpMsg popCompleterTcpMsg(long sequence) {
+		return completerTcpMsgMap.remove(sequence);
+	}
+
+	public Set<Long> getSequences() {
+		return completerMap.keySet();
+	}
+
+	public Set<Long> getTcpSequences() {
+		return completerTcpMsgMap.keySet();
+	}
+
 	public void destroy() {
 		runners.remove(this);
 
@@ -121,7 +138,19 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 				}
 			}
 		}
+		CompleterTcpMsg completerTcpMsg;
+		while (!completerTcpMsgMap.isEmpty()) {
+			Throwable ex = new RuntimeException("Unknown exception occurred！");
+			Set<Long> keys = completerTcpMsgMap.keySet();
 
+			for (Long id : keys) {
+				completerTcpMsg = completerTcpMsgMap.remove(id);
+				if (null != completerTcpMsg) {
+					completerTcpMsg.ex = ex;
+					executors.execute(completerTcpMsg);
+				}
+			}
+		}
 		executors = null;
 	}
 
@@ -141,6 +170,24 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 
 				for (Long id : seq) {
 					completer = completerMap.remove(id);
+					if (null != completer) {
+						completer.ex = TIMEOUT;
+						executors.execute(completer);
+					}
+				}
+			}
+
+			completerTcpMsgMap.forEach((k, o) -> {
+				if (o.isTimeout(nowTime)) {
+					seq.add(k);
+				}
+
+			});
+			if (!seq.isEmpty()) {
+				CompleterTcpMsg completer;
+
+				for (Long id : seq) {
+					completer = completerTcpMsgMap.remove(id);
 					if (null != completer) {
 						completer.ex = TIMEOUT;
 						executors.execute(completer);

@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,19 +23,33 @@ import net.safe.Safe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 客户端连接处理器，负责管理客户端连接、消息处理和发送
+ */
 public class ClientHandler extends ChannelInboundHandlerAdapter implements Sender {
 	private static final Logger logger = LoggerFactory.getLogger(ClientHandler.class);
 	private static final SenderManager SENDER_MANAGER;
+	private static final byte[] DEFAULT_DATA;
+
+	static {
+		SENDER_MANAGER = SenderManager.INSTANCE;
+		DEFAULT_DATA = "".getBytes();
+	}
+
+	// 核心组件
 	private final int id;
-	private Channel channel;
-	private Safe safe;
-	private final Transfer transfer;
 	private final Parser parser;
 	private final Handlers handlers;
+	private final Transfer transfer;
 	private final TCPMaker maker;
-	private static final byte[] DEFAULT_DATA;
+
+	// 连接状态
+	private Channel channel;
+	private Safe safe;
 	private EventHandle activeHandle;
 	private EventHandle closeEvent;
+
+	// ==================== 静态方法 ====================
 
 	public static ClientHandler getClient(int id) {
 		return (ClientHandler) SENDER_MANAGER.getClient(id);
@@ -48,6 +63,12 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 		}
 	}
 
+	public static Map<Integer, Sender> getAllClient() {
+		return new HashMap<>(SENDER_MANAGER.clientMap);
+	}
+
+	// ==================== 构造函数 ====================
+
 	public ClientHandler(Parser parser, Handlers handlers) {
 		this(parser, handlers, (t, msg) -> Transfer.DEFAULT(), TCPMaker.INSTANCE);
 	}
@@ -57,20 +78,18 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	}
 
 	public ClientHandler(Parser parser, Handlers handlers, Transfer transfer, TCPMaker maker) {
-		safe = (msgId) -> Safe.DEFAULT();
-		id = SENDER_MANAGER.getId();
+		this.safe = (msgId) -> Safe.DEFAULT();
+		this.id = SENDER_MANAGER.getId();
 		this.parser = parser;
 		this.handlers = handlers;
 		this.transfer = transfer;
 		this.maker = maker;
 	}
 
+	// ==================== 配置方法 ====================
+
 	public int getId() {
 		return id;
-	}
-
-	public static Map<Integer, Sender> getAllClient() {
-		return new HashMap<>(SENDER_MANAGER.clientMap);
 	}
 
 	public void setActiveEvent(EventHandle eventHandle) {
@@ -85,44 +104,35 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 		this.safe = safe;
 	}
 
+	// ==================== 网络事件处理 ====================
+
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) {
+		this.channel = ctx.channel();
+		ChannelAttr.setId(channel, getId());
+		SENDER_MANAGER.addClient(this);
+
 		if (null != activeHandle) {
 			try {
 				activeHandle.handle(this);
 			} catch (Exception e) {
-				logger.error("[{}] failed for register event", ctx.channel(), e);
+				logger.error("[{}] 注册事件失败", ctx.channel(), e);
 			}
 		}
-
-		channel = ctx.channel();
-		ChannelAttr.setId(channel, getId());
-		SENDER_MANAGER.addClient(this);
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) {
-		logger.error("[{}] close", ctx.channel());
+		logger.error("[{}] 连接关闭", ctx.channel());
 		SENDER_MANAGER.removeClient(this);
+
 		if (null != closeEvent) {
 			try {
 				closeEvent.handle(this);
 			} catch (Exception e) {
-				logger.error("[{}] failed for close event", ctx.channel(), e);
+				logger.error("[{}] 关闭事件处理失败", ctx.channel(), e);
 			}
 		}
-	}
-
-	public void closeChannel() {
-		SENDER_MANAGER.removeClient(this);
-		if (null != channel) {
-			try {
-				channel.close();
-			} catch (Exception e) {
-				logger.error("[{}] force close channel", channel, e);
-			}
-		}
-
 	}
 
 	@Override
@@ -131,16 +141,17 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 		if (channel.isActive()) {
 			channel.close();
 		}
-
 	}
 
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object event) {
 		if (event instanceof IdleStateEvent) {
-			logger.debug("[userEventTriggered:{}]", ((IdleStateEvent) event).state());
+			logger.debug("[心跳事件:{}]", ((IdleStateEvent) event).state());
 			ctx.channel().close();
 		}
 	}
+
+	// ==================== 消息处理 ====================
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object object) {
@@ -150,6 +161,89 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 			ctx.fireChannelRead(object);
 		}
 	}
+
+	/**
+	 * 处理TCP消息
+	 */
+	private void processTCPMessage(TCPMessage tcpMsg) {
+		try {
+			if (!validateMessageSafety(tcpMsg)) {
+				return;
+			}
+
+			if (transfer.isTransfer(this, tcpMsg)) {
+				return;
+			}
+
+			Message message = parseMessageContent(tcpMsg);
+			boolean shouldKeepChannelOpen = executeMessageHandler(tcpMsg, message);
+			if (tcpMsg.getMessageId() > 10) {
+				logger.error("processTCPMessage:{}", tcpMsg);
+			}
+			if (!shouldKeepChannelOpen) {
+				channel.close();
+			}
+		} catch (Exception e) {
+			logger.error("[{}] 处理消息({})失败", channel, Integer.toHexString(tcpMsg.getMessageId()), e);
+		}
+	}
+
+	/**
+	 * 验证消息安全性
+	 */
+	private boolean validateMessageSafety(TCPMessage tcpMsg) {
+		if (!safe.isValid(tcpMsg.getMessageId())) {
+			logger.error("[{}] 错误! {} 不是安全的消息ID", channel, Integer.toHexString(tcpMsg.getMessageId()));
+			channel.close();
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * 解析消息内容
+	 */
+	private Message parseMessageContent(TCPMessage tcpMsg) throws InvalidProtocolBufferException {
+		if (null != tcpMsg.getMessage() && tcpMsg.getMessage().length > 0) {
+			return parser.parser(tcpMsg.getMessageId(), tcpMsg.getMessage());
+		} else {
+			return parser.parser(tcpMsg.getMessageId(), DEFAULT_DATA);
+		}
+	}
+
+	/**
+	 * 执行消息处理器
+	 */
+	private boolean executeMessageHandler(TCPMessage tcpMsg, Message message) {
+		Handler handler = handlers.getHandler(tcpMsg.getMessageId());
+		if (null == handler) {
+			logger.error("[{}] 错误! 找不到消息({})的处理器", channel, Integer.toHexString(tcpMsg.getMessageId()));
+			return false;
+		}
+
+		long startTime = System.currentTimeMillis();
+		boolean shouldKeepChannelOpen = handler.handler(this, tcpMsg.getClientId(), message, tcpMsg.getMapId(),
+				tcpMsg.getSequence());
+		logHandlerPerformance(handler, startTime);
+
+		return shouldKeepChannelOpen;
+	}
+
+	/**
+	 * 记录处理器性能
+	 */
+	private void logHandlerPerformance(Handler handler, long startTime) {
+		long costTime = System.currentTimeMillis() - startTime;
+		String handlerName = handler.getClass().getSimpleName();
+
+		if (costTime > 1000L) {
+			logger.error("客户端处理器:{} 耗时过长:{}ms", handlerName, costTime);
+		} else {
+			logger.debug("客户端处理器:{} 耗时:{}ms", handlerName, costTime);
+		}
+	}
+
+	// ==================== 消息发送方法 ====================
 
 	@Override
 	public void sendMessage(int msgId, Message msg, long sequence) {
@@ -170,55 +264,19 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 		channel.writeAndFlush(maker.wrap(msgId, msg, 0));
 	}
 
-	private void processTCPMessage(TCPMessage tMsg) {
-		try {
-			if (!safe.isValid(tMsg.getMessageId())) {
-				logger.error("[{}] ERROR! {} is not safe message id", channel, Integer.toHexString(tMsg.getMessageId()));
+	// ==================== 连接管理 ====================
+
+	/**
+	 * 强制关闭通道
+	 */
+	public void closeChannel() {
+		SENDER_MANAGER.removeClient(this);
+		if (null != channel) {
+			try {
 				channel.close();
-				return;
+			} catch (Exception e) {
+				logger.error("[{}] 强制关闭通道失败", channel, e);
 			}
-
-			if (transfer.isTransfer(this, tMsg)) {
-				return;
-			}
-
-			Message msg;
-			if (null != tMsg.getMessage() && tMsg.getMessage().length > 0) {
-				msg = parser.parser(tMsg.getMessageId(), tMsg.getMessage());
-			} else {
-				msg = parser.parser(tMsg.getMessageId(), DEFAULT_DATA);
-			}
-
-
-			Handler handler = handlers.getHandler(tMsg.getMessageId());
-			if (null == handler) {
-				logger.error("[{}] ERROR! can not find handler for message({})", channel, Integer.toHexString(tMsg.getMessageId()));
-				return;
-			}
-
-			long now = System.currentTimeMillis();
-			boolean noCloseChannel = handler.handler(this, tMsg.getClientId(), msg, tMsg.getMapId(), tMsg.getSequence());
-			now = System.currentTimeMillis() - now;
-			if (now > 1000L) {
-				logger.error("client handler:{} cost too long:{}ms", handler.getClass().getSimpleName(), now);
-			} else {
-				logger.debug("client handler:{} cost:{}ms", handler.getClass().getSimpleName(), now);
-			}
-			if (noCloseChannel) {
-				return;
-			}
-
-			channel.close();
-		} catch (Exception e) {
-			logger.error("[{}] ERROR! failed for process message({})", channel, Integer.toHexString(tMsg.getMessageId()), e);
 		}
-
 	}
-
-	static {
-		SENDER_MANAGER = SenderManager.INSTANCE;
-		DEFAULT_DATA = "".getBytes();
-	}
-
-
 }
