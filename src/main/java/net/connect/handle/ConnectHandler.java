@@ -22,6 +22,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 import net.client.Sender;
 import net.client.event.EventHandle;
 import net.connect.ServerInfo;
+import net.connect.TCPConnect;
 import net.handler.Handler;
 import net.handler.Handlers;
 import net.message.Parser;
@@ -329,6 +330,10 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		Bootstrap bootstrap = createBootstrap(eventLoopGroup, channelInitializer);
 
 		try {
+			if (socketAddress == null && this instanceof TCPConnect) {
+				TCPConnect tcpConnect = (TCPConnect) this;
+				socketAddress = new InetSocketAddress(tcpConnect.getIP(), tcpConnect.getPort());
+			}
 			bootstrap.connect(socketAddress).addListener(createConnectListener(socketAddress, channelInitializer)).sync();
 		} catch (Exception e) {
 			LOGGER.error("连接失败:{}", connectServer, e);
