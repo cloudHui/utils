@@ -177,9 +177,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 
 			Message message = parseMessageContent(tcpMsg);
 			boolean shouldKeepChannelOpen = executeMessageHandler(tcpMsg, message);
-			if (tcpMsg.getMessageId() > 10) {
-				logger.error("processTCPMessage:{}", tcpMsg);
-			}
 			if (!shouldKeepChannelOpen) {
 				channel.close();
 			}

@@ -23,11 +23,23 @@ public class TCPConnect extends ConnectHandler {
 	private final EventLoopGroup eventLoopGroup;
 	private final SocketAddress socketAddress;
 
-	public TCPConnect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, Transfer transfer, Parser parser, Handlers handlers, EventHandle eventHandle, EventHandle close) {
+	private RegisterCallback registerSuccessCallback = null;
+	private CallParam callParam = null;
+
+	/**
+	 * Tcp链接器
+	 *
+	 * @param transfer 转发消息接口
+	 * @param parser   消息转化接口
+	 * @param handlers 消息处理接口
+	 * @param active   链接活跃处理器接口
+	 * @param close    链接关闭处理器接口
+	 */
+	public TCPConnect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, Transfer transfer, Parser parser, Handlers handlers, EventHandle active, EventHandle close) {
 		super(transfer, parser, handlers, TCPMaker.INSTANCE);
 		this.eventLoopGroup = eventLoopGroup;
 		this.socketAddress = socketAddress;
-		setActiveEvent(eventHandle);
+		setActiveEvent(active);
 		setCloseEvent(close);
 	}
 
@@ -56,5 +68,46 @@ public class TCPConnect extends ConnectHandler {
 	@Override
 	public String toString() {
 		return "TCPConnect{" + "connectServer=" + getConnectServer() + ", localServer=" + getLocalServer() + '}';
+	}
+
+	/**
+	 * 注册成功回调接口
+	 */
+	@FunctionalInterface
+	public interface RegisterCallback {
+		void onRegisterSuccess(CallParam callParam);
+	}
+
+	/**
+	 * 设置注册成功回调
+	 */
+	public void setRegisterSuccessCallback(RegisterCallback callback, CallParam callParam) {
+		this.registerSuccessCallback = callback;
+		this.callParam = callParam;
+	}
+
+	/**
+	 * 获取注册成功回调
+	 */
+	public RegisterCallback getRegisterSuccessCallback() {
+		return registerSuccessCallback;
+	}
+
+	public CallParam getCallParam() {
+		return callParam;
+	}
+
+	/**
+	 * 回调参数
+	 */
+	public static class CallParam {
+		public int messageId;
+
+		public Object message;
+
+		public CallParam(int messageId, Object message) {
+			this.messageId = messageId;
+			this.message = message;
+		}
 	}
 }
