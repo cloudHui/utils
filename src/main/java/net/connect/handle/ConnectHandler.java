@@ -10,6 +10,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -200,7 +201,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 			handleAsyncResponse(ctx, msg);
 		} else {
 			// 同步处理器处理
-			handleSyncMessage(ctx, msg);
+			handleSyncMessage(msg);
 		}
 
 		// 性能监控
@@ -237,7 +238,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		}
 	}
 
-	private void handleSyncMessage(ChannelHandlerContext ctx, TCPMessage msg) throws InvalidProtocolBufferException {
+	private void handleSyncMessage(TCPMessage msg) throws InvalidProtocolBufferException {
 		Handler handler = handlers.getHandler(msg.getMessageId());
 		if (null != handler) {
 			handler.handler(this, msg.getClientId(), parseMessage(msg), msg.getMapId(), msg.getSequence());
@@ -325,8 +326,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	/**
 	 * 建立网络连接
 	 */
-	public void connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress,
-						ChannelInitializer<SocketChannel> channelInitializer) {
+	public void connect(EventLoopGroup eventLoopGroup, SocketAddress socketAddress, ChannelInitializer<SocketChannel> channelInitializer) {
 		Bootstrap bootstrap = createBootstrap(eventLoopGroup, channelInitializer);
 
 		try {
@@ -340,8 +340,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		}
 	}
 
-	private Bootstrap createBootstrap(EventLoopGroup eventLoopGroup,
-									  ChannelInitializer<SocketChannel> channelInitializer) {
+	private Bootstrap createBootstrap(EventLoopGroup eventLoopGroup, ChannelInitializer<SocketChannel> channelInitializer) {
 		return new Bootstrap()
 				.group(eventLoopGroup)
 				.channel(NioSocketChannel.class)
@@ -350,8 +349,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 				.handler(channelInitializer);
 	}
 
-	private ChannelFutureListener createConnectListener(SocketAddress socketAddress,
-														ChannelInitializer<SocketChannel> channelInitializer) {
+	private ChannelFutureListener createConnectListener(SocketAddress socketAddress, ChannelInitializer<SocketChannel> channelInitializer) {
 		return future -> {
 			InetSocketAddress address = (InetSocketAddress) socketAddress;
 			String hostPort = address.getHostName() + ":" + address.getPort();
@@ -364,8 +362,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		};
 	}
 
-	private void handleConnectSuccess(io.netty.channel.ChannelFuture future, String hostPort,
-									  ChannelInitializer<SocketChannel> channelInitializer) {
+	private void handleConnectSuccess(ChannelFuture future, String hostPort, ChannelInitializer<SocketChannel> channelInitializer) {
 		if (diRetry) {
 			// 连接成功后启用断链重连
 			future.channel().closeFuture().addListener((ChannelFutureListener) closeFuture ->
@@ -377,8 +374,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		LOGGER.info("[连接 {} 成功!!!]", hostPort);
 	}
 
-	private void handleConnectFailure(io.netty.channel.ChannelFuture future, String hostPort,
-									  ChannelInitializer<SocketChannel> channelInitializer) {
+	private void handleConnectFailure(ChannelFuture future, String hostPort, ChannelInitializer<SocketChannel> channelInitializer) {
 		if (conRetry) {
 			// 连接失败后启用重连
 			future.channel().eventLoop().schedule(
