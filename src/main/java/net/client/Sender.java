@@ -8,5 +8,5 @@ public interface Sender {
 
 	void sendMessage(TCPMessage msg);
 
-	void sendMessage(int clientId, int msgId, int mapId, int resultId, Message msg, long sequence);
+	void sendMessage(int clientId, int msgId, int mapId, Message msg, long sequence);
 }

@@ -162,8 +162,8 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 	}
 
 	@Override
-	public void sendMessage(int clientId, int msgId, int mapId, int resultId, Message msg, long sequence) {
-		channel.writeAndFlush(maker.wrap(clientId, msgId, mapId, resultId, msg, sequence));
+	public void sendMessage(int clientId, int msgId, int mapId, Message msg, long sequence) {
+		channel.writeAndFlush(maker.wrap(clientId, msgId, mapId,  msg, sequence));
 	}
 
 	private void processTCPMessage(TCPMessage tMsg) {

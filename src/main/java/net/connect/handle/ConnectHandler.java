@@ -205,7 +205,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		}
 
 		// 性能监控
-		logProcessTime(startTime, msg.getMessageId());
+		logProcessTime(startTime, Integer.toHexString(msg.getMessageId()));
 	}
 
 	/**
@@ -247,10 +247,8 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		}
 	}
 
-	private void logProcessTime(long startTime, int messageId) {
+	private void logProcessTime(long startTime, String hexMsgId) {
 		long costTime = System.currentTimeMillis() - startTime;
-		String hexMsgId = Integer.toHexString(messageId);
-
 		if (costTime > 1000L) {
 			LOGGER.error("消息:{} 处理耗时过长:{}ms", hexMsgId, costTime);
 		} else {
@@ -271,8 +269,8 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 	@Override
-	public void sendMessage(int clientId, int msgId, int mapId, int resultId, Message msg, long sequence) {
-		channel.writeAndFlush(maker.wrap(clientId, msgId, mapId, resultId, msg, sequence));
+	public void sendMessage(int clientId, int msgId, int mapId, Message msg, long sequence) {
+		channel.writeAndFlush(maker.wrap(clientId, msgId, mapId,  msg, sequence));
 	}
 
 	public void sendMessage(int msgId, Message msg) {
@@ -298,18 +296,6 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 	/**
-	 * 发送TCP消息并等待响应（带超时）
-	 */
-	public CompletableFuture<Message> sendMessage(TCPMessage msg, int timeout) {
-		long sequence = completerGroup.getSequence();
-		msg.setSequence(sequence);
-		Completer completer = new Completer(timeout);
-		completerGroup.addCompleter(sequence, completer);
-		sendMessage(msg);
-		return completer;
-	}
-
-	/**
 	 * 发送TCP消息并等待TCP响应（带超时）
 	 */
 	public CompletableFuture<TCPMessage> sendTcpMessage(TCPMessage msg, int timeout) {
@@ -318,6 +304,17 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 		CompleterTcpMsg completer = new CompleterTcpMsg(timeout);
 		completerGroup.addCompleterTcpMsg(sequence, completer);
 		sendMessage(msg);
+		return completer;
+	}
+
+	/**
+	 * 发送TCP消息并等待TCP响应（带超时）
+	 */
+	public CompletableFuture<TCPMessage> sendMessageBackTcp(Message msg, int msgId, int timeout) {
+		long sequence = completerGroup.getSequence();
+		CompleterTcpMsg completer = new CompleterTcpMsg(timeout);
+		completerGroup.addCompleterTcpMsg(sequence, completer);
+		sendMessage(msgId, msg, sequence);
 		return completer;
 	}
 

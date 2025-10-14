@@ -6,7 +6,11 @@ public class TCPMessage {
 	private int clientId;
 	private int mapId;
 	private long sequence;
-	private byte[] message;
+	private byte[] message = null;
+
+	public static TCPMessage newInstance(int result) {
+		return new TCPMessage(result);
+	}
 
 	public static TCPMessage newInstance(int messageId, byte[] message, long sequence) {
 		return new TCPMessage(messageId, message, sequence);
@@ -26,6 +30,14 @@ public class TCPMessage {
 
 	public static TCPMessage newInstance(int result, int messageId, int clientId, byte[] message, int mapId, long sequence) {
 		return new TCPMessage(result, messageId, clientId, message, mapId, sequence);
+	}
+
+	public static TCPMessage newInstance(int messageId, int clientId, byte[] message, int mapId, long sequence) {
+		return new TCPMessage(messageId, clientId, message, mapId, sequence);
+	}
+
+	public TCPMessage(int result) {
+		this.result = result;
 	}
 
 	public TCPMessage(int messageId, byte[] message, long sequence) {
@@ -59,6 +71,15 @@ public class TCPMessage {
 
 	public TCPMessage(int result, int messageId, int clientId, byte[] message, int mapId, long sequence) {
 		this.result = result;
+		this.messageId = messageId;
+		this.clientId = clientId;
+		this.message = message;
+		this.mapId = mapId;
+		this.sequence = sequence;
+	}
+
+
+	public TCPMessage(int messageId, int clientId, byte[] message, int mapId, long sequence) {
 		this.messageId = messageId;
 		this.clientId = clientId;
 		this.message = message;
@@ -117,7 +138,8 @@ public class TCPMessage {
 	@Override
 	public String toString() {
 		return "TCPMessage{" +
-				"messageId=" + messageId +
+				"result=" + result +
+				", messageId=" + messageId +
 				", sequence=" + sequence +
 				'}';
 	}
