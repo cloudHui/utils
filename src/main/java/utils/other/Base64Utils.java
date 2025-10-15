@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
-import utils.other.test.BattleEventEnum;
-import utils.other.test.BattleEventListener;
 
 
 public class Base64Utils {
@@ -18,7 +16,6 @@ public class Base64Utils {
 		return (new BASE64Encoder()).encode(data);
 	}
 
-	@BattleEventListener(BattleEventEnum.ON_BE_HURT)
 	public static byte[] decoder(String data) {
 		try {
 			return (new BASE64Decoder()).decodeBuffer(data);
