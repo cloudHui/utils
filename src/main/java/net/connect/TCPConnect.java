@@ -92,6 +92,8 @@ public class TCPConnect extends ConnectHandler {
 
 		public Message message;
 
+		public Parser parser;
+
 		public RegisterCallback callback = null;
 
 		public CallParam(int messageId, Message message) {
@@ -99,10 +101,11 @@ public class TCPConnect extends ConnectHandler {
 			this.message = message;
 		}
 
-		public CallParam(int messageId, Message message, RegisterCallback callback) {
+		public CallParam(int messageId, Message message, RegisterCallback callback, Parser parser) {
 			this.messageId = messageId;
 			this.message = message;
 			this.callback = callback;
+			this.parser = parser;
 		}
 	}
 
@@ -111,6 +114,6 @@ public class TCPConnect extends ConnectHandler {
 	 */
 	@FunctionalInterface
 	public interface RegisterCallback {
-		void handle(int msgId, Message message, ConnectHandler serverClient);
+		void handle(int msgId, Message message, ConnectHandler serverClient, Parser parser);
 	}
 }
