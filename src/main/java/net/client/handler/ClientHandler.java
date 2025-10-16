@@ -219,8 +219,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 		}
 
 		long startTime = System.currentTimeMillis();
-		boolean shouldKeepChannelOpen = handler.handler(this, tcpMsg.getClientId(), message, tcpMsg.getMapId(),
-				tcpMsg.getSequence());
+		boolean shouldKeepChannelOpen = handler.handler(this, tcpMsg.getClientId(), message, tcpMsg.getMapId(), tcpMsg.getSequence());
 		logHandlerPerformance(handler, startTime);
 
 		return shouldKeepChannelOpen;
@@ -243,7 +242,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	// ==================== 消息发送方法 ====================
 
 	@Override
-	public void sendMessage(int msgId, Message msg, long sequence) {
+	public void sendMessage(int msgId, Message msg, int sequence) {
 		channel.writeAndFlush(maker.wrap(msgId, msg, sequence));
 	}
 
@@ -253,7 +252,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	}
 
 	@Override
-	public void sendMessage(int clientId, int msgId, int mapId, Message msg, long sequence) {
+	public void sendMessage(int clientId, int msgId, int mapId, Message msg, int sequence) {
 		channel.writeAndFlush(maker.wrap(clientId, msgId, mapId, msg, sequence));
 	}
 

@@ -19,7 +19,7 @@ public class TCPMessageEncoder extends MessageToByteEncoder<TCPMessage> {
 		out.writeIntLE(length);
 		out.writeIntLE(msg.getClientId());
 		out.writeIntLE(msg.getMapId());
-		out.writeLongLE(msg.getSequence());
+		out.writeIntLE(msg.getSequence());
 		if (length > 0) {
 			out.writeBytes(msg.getMessage());
 		}

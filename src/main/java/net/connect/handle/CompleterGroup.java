@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Completer.class);
 	private static final Throwable TIMEOUT = new RuntimeException("timeout");
-	private final Map<Long, Completer> completerMap = new ConcurrentHashMap<>(128);
-	private final Map<Long, CompleterTcpMsg> completerTcpMsgMap = new ConcurrentHashMap<>(128);
+	private final Map<Integer, Completer> completerMap = new ConcurrentHashMap<>(128);
+	private final Map<Integer, CompleterTcpMsg> completerTcpMsgMap = new ConcurrentHashMap<>(128);
 	private EventLoop executors;
 	private static int sequenceId = 0;
 	private static final Set<Runnable> runners = new ConcurrentSkipListSet<>((o1, o2) -> 0);
@@ -92,27 +92,27 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 		return ++sequenceId;
 	}
 
-	public void addCompleter(long sequence, Completer completer) {
+	public void addCompleter(Integer sequence, Completer completer) {
 		completerMap.put(sequence, completer);
 	}
 
-	public Completer popCompleter(long sequence) {
+	public Completer popCompleter(int sequence) {
 		return completerMap.remove(sequence);
 	}
 
-	public void addCompleterTcpMsg(long sequence, CompleterTcpMsg completer) {
+	public void addCompleterTcpMsg(int sequence, CompleterTcpMsg completer) {
 		completerTcpMsgMap.put(sequence, completer);
 	}
 
-	public CompleterTcpMsg popCompleterTcpMsg(long sequence) {
+	public CompleterTcpMsg popCompleterTcpMsg(Integer sequence) {
 		return completerTcpMsgMap.remove(sequence);
 	}
 
-	public Set<Long> getSequences() {
+	public Set<Integer> getSequences() {
 		return completerMap.keySet();
 	}
 
-	public Set<Long> getTcpSequences() {
+	public Set<Integer> getTcpSequences() {
 		return completerTcpMsgMap.keySet();
 	}
 
@@ -128,9 +128,9 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 
 		while (!completerMap.isEmpty()) {
 			Throwable ex = new RuntimeException("Unknown exception occurred！");
-			Set<Long> keys = completerMap.keySet();
+			Set<Integer> keys = completerMap.keySet();
 
-			for (Long id : keys) {
+			for (int id : keys) {
 				completer = completerMap.remove(id);
 				if (null != completer) {
 					completer.ex = ex;
@@ -141,9 +141,9 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 		CompleterTcpMsg completerTcpMsg;
 		while (!completerTcpMsgMap.isEmpty()) {
 			Throwable ex = new RuntimeException("Unknown exception occurred！");
-			Set<Long> keys = completerTcpMsgMap.keySet();
+			Set<Integer> keys = completerTcpMsgMap.keySet();
 
-			for (Long id : keys) {
+			for (int id : keys) {
 				completerTcpMsg = completerTcpMsgMap.remove(id);
 				if (null != completerTcpMsg) {
 					completerTcpMsg.ex = ex;
@@ -157,7 +157,7 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 	@Override
 	public void run() {
 		try {
-			Set<Long> seq = new HashSet<>();
+			Set<Integer> seq = new HashSet<>();
 			long nowTime = System.currentTimeMillis();
 			completerMap.forEach((k, o) -> {
 				if (o.isTimeout(nowTime)) {
@@ -168,7 +168,7 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 			if (!seq.isEmpty()) {
 				Completer completer;
 
-				for (Long id : seq) {
+				for (int id : seq) {
 					completer = completerMap.remove(id);
 					if (null != completer) {
 						completer.ex = TIMEOUT;
@@ -186,7 +186,7 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 			if (!seq.isEmpty()) {
 				CompleterTcpMsg completer;
 
-				for (Long id : seq) {
+				for (int id : seq) {
 					completer = completerTcpMsgMap.remove(id);
 					if (null != completer) {
 						completer.ex = TIMEOUT;

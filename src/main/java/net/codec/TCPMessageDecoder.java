@@ -69,7 +69,7 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 
 		int clientId = buf.readIntLE();
 		int mapId = buf.readIntLE();
-		long sequence = buf.readLongLE();
+		int sequence = buf.readIntLE();
 
 		// 读取数据部分
 		byte[] data = null;

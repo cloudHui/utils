@@ -259,7 +259,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	// ==================== 消息发送方法 ====================
 
 	@Override
-	public void sendMessage(int msgId, Message msg, long sequence) {
+	public void sendMessage(int msgId, Message msg, int sequence) {
 		channel.writeAndFlush(maker.wrap(msgId, msg, sequence));
 	}
 
@@ -269,8 +269,8 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	}
 
 	@Override
-	public void sendMessage(int clientId, int msgId, int mapId, Message msg, long sequence) {
-		channel.writeAndFlush(maker.wrap(clientId, msgId, mapId,  msg, sequence));
+	public void sendMessage(int clientId, int msgId, int mapId, Message msg, int sequence) {
+		channel.writeAndFlush(maker.wrap(clientId, msgId, mapId, msg, sequence));
 	}
 
 	public void sendMessage(int msgId, Message msg) {
@@ -288,7 +288,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	 * 发送消息并等待响应（带超时）
 	 */
 	public CompletableFuture<Message> sendMessage(Message msg, int msgId, int timeout) {
-		long sequence = completerGroup.getSequence();
+		int sequence = completerGroup.getSequence();
 		Completer completer = new Completer(timeout);
 		completerGroup.addCompleter(sequence, completer);
 		sendMessage(msgId, msg, sequence);
@@ -299,7 +299,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	 * 发送TCP消息并等待TCP响应（带超时）
 	 */
 	public CompletableFuture<TCPMessage> sendTcpMessage(TCPMessage msg, int timeout) {
-		long sequence = completerGroup.getSequence();
+		int sequence = completerGroup.getSequence();
 		msg.setSequence(sequence);
 		CompleterTcpMsg completer = new CompleterTcpMsg(timeout);
 		completerGroup.addCompleterTcpMsg(sequence, completer);
@@ -311,7 +311,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	 * 发送TCP消息并等待TCP响应（带超时）
 	 */
 	public CompletableFuture<TCPMessage> sendMessageBackTcp(Message msg, int msgId, int timeout) {
-		long sequence = completerGroup.getSequence();
+		int sequence = completerGroup.getSequence();
 		CompleterTcpMsg completer = new CompleterTcpMsg(timeout);
 		completerGroup.addCompleterTcpMsg(sequence, completer);
 		sendMessage(msgId, msg, sequence);

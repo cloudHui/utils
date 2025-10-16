@@ -4,5 +4,5 @@ import com.google.protobuf.Message;
 import net.client.Sender;
 
 public interface Handler {
-	boolean handler(Sender sender, int clientId, Message msg, int mapId, long sequence);
+	boolean handler(Sender sender, int clientId, Message msg, int mapId, int sequence);
 }

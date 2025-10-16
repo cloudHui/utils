@@ -5,14 +5,14 @@ public class TCPMessage {
 	private int messageId;
 	private int clientId;
 	private int mapId;
-	private long sequence;
+	private int sequence;
 	private byte[] message = null;
 
 	public static TCPMessage newInstance(int result) {
 		return new TCPMessage(result);
 	}
 
-	public static TCPMessage newInstance(int messageId, byte[] message, long sequence) {
+	public static TCPMessage newInstance(int messageId, byte[] message, int sequence) {
 		return new TCPMessage(messageId, message, sequence);
 	}
 
@@ -20,38 +20,26 @@ public class TCPMessage {
 		return new TCPMessage(result, messageId, clientId, message);
 	}
 
-	public static TCPMessage newInstance(int result, int messageId, int clientId, byte[] message, int mapId) {
-		return new TCPMessage(result, messageId, clientId, message, mapId);
-	}
-
-	public static TCPMessage newInstance(int result, int messageId, int clientId, byte[] message, long sequence) {
+	public static TCPMessage newInstance(int result, int messageId, int clientId, byte[] message, int sequence) {
 		return new TCPMessage(result, messageId, clientId, message, sequence);
 	}
 
-	public static TCPMessage newInstance(int result, int messageId, int clientId, byte[] message, int mapId, long sequence) {
+	public static TCPMessage newInstance(int result, int messageId, int clientId, byte[] message, int mapId, int sequence) {
 		return new TCPMessage(result, messageId, clientId, message, mapId, sequence);
 	}
 
-	public static TCPMessage newInstance(int messageId, int clientId, byte[] message, int mapId, long sequence) {
-		return new TCPMessage(messageId, clientId, message, mapId, sequence);
+	public static TCPMessage newInstance(int messageId, int clientId, byte[] message, int mapId, int sequence) {
+		return new TCPMessage(0,messageId, clientId, message, mapId, sequence);
 	}
 
 	public TCPMessage(int result) {
 		this.result = result;
 	}
 
-	public TCPMessage(int messageId, byte[] message, long sequence) {
+	public TCPMessage(int messageId, byte[] message, int sequence) {
 		this.messageId = messageId;
 		this.message = message;
 		this.sequence = sequence;
-	}
-
-	public TCPMessage(int result, int messageId, int clientId, byte[] message, int mapId) {
-		this.result = result;
-		this.messageId = messageId;
-		this.clientId = clientId;
-		this.message = message;
-		this.mapId = mapId;
 	}
 
 	public TCPMessage(int result, int messageId, int clientId, byte[] message) {
@@ -61,7 +49,7 @@ public class TCPMessage {
 		this.message = message;
 	}
 
-	public TCPMessage(int result, int messageId, int clientId, byte[] message, long sequence) {
+	public TCPMessage(int result, int messageId, int clientId, byte[] message, int sequence) {
 		this.result = result;
 		this.messageId = messageId;
 		this.clientId = clientId;
@@ -69,7 +57,7 @@ public class TCPMessage {
 		this.sequence = sequence;
 	}
 
-	public TCPMessage(int result, int messageId, int clientId, byte[] message, int mapId, long sequence) {
+	public TCPMessage(int result, int messageId, int clientId, byte[] message, int mapId, int sequence) {
 		this.result = result;
 		this.messageId = messageId;
 		this.clientId = clientId;
@@ -79,7 +67,7 @@ public class TCPMessage {
 	}
 
 
-	public TCPMessage(int messageId, int clientId, byte[] message, int mapId, long sequence) {
+	public TCPMessage(int messageId, int clientId, byte[] message, int mapId, int sequence) {
 		this.messageId = messageId;
 		this.clientId = clientId;
 		this.message = message;
@@ -127,11 +115,11 @@ public class TCPMessage {
 		this.mapId = mapId;
 	}
 
-	public long getSequence() {
+	public int getSequence() {
 		return sequence;
 	}
 
-	public void setSequence(long sequence) {
+	public void setSequence(int sequence) {
 		this.sequence = sequence;
 	}
 
