@@ -17,10 +17,10 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 		// maxFrameLength: 最大帧长度 2097152 (2MB)
 		// lengthFieldOffset: 长度域偏移量 8字节 (跳过result 4 + messageId 4)
 		// lengthFieldLength: 长度域长度 4字节
-		// lengthAdjustment: 长度调整值 16 (需要包含clientId 4 + mapId 4 + sequence 8)
+		// lengthAdjustment: 长度调整值 12 (需要包含clientId 4 + mapId 4 + sequence 4)
 		// initialBytesToStrip: 跳过的字节数 16 (跳过整个头部)
 		// failFast: 快速失败 true
-		super(ByteOrder.LITTLE_ENDIAN, 2097152, 8, 4, 16, 0, true);
+		super(ByteOrder.LITTLE_ENDIAN, 2097152, 8, 4, 12, 0, true);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 		}
 
 		// 验证剩余字节数是否足够
-		if (buf.readableBytes() < 16 + length) { // clientId 4 + mapId 4 + sequence 8 + data length
+		if (buf.readableBytes() < 12 + length) { // clientId 4 + mapId 4 + sequence 2 + data length
 			logger.error("数据不完整，期望:{}字节，实际:{}字节", 16 + length, buf.readableBytes());
 			return null;
 		}
