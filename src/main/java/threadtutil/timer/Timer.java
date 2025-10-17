@@ -1,112 +1,59 @@
 package threadtutil.timer;
 
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import threadtutil.lock.TimeSignal;
 import threadtutil.thread.ExecutorPool;
 import threadtutil.timer.model.SerialTimeNode;
 import threadtutil.timer.model.TimeNode;
 
-public class Timer implements Runnable {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Timer.class);
-	private final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
-	private final List<TimeNode> nodes = new LinkedList<>();
-	private final Lock lock = new ReentrantLock(false);
-	private final TimeSignal timeSignal = new TimeSignal();
-	private ExecutorPool runners;
-	private int loops = 0;
+/**
+ * 定时器实现
+ * 管理多个时间节点的执行，支持延迟执行、间隔执行和有限次执行
+ * 支持普通节点和串行节点的执行
+ */
+public class Timer extends AbstractTimer<ExecutorPool> {
 
 	public Timer() {
+		super(new LinkedList<>());
 	}
 
+	/**
+	 * 设置任务执行器
+	 *
+	 * @param runners 任务执行器实例
+	 * @return 当前Timer实例
+	 */
+	@Override
 	public Timer setRunners(ExecutorPool runners) {
-		this.exit();
+		exit();
 		this.runners = runners;
 		(new Thread(this)).start();
 		return this;
 	}
 
-	public <T> void register(long delay, long interval, int count, Runner<T> runner, T param) {
-		this.addNode(new TimeNode(this.ID_GENERATOR.incrementAndGet(), runner, param, delay, interval, count));
-	}
-
-	public <T> void registerSerial(int groupId, long delay, long interval, int count, Runner<T> runner, T param) {
-		this.addNode(new SerialTimeNode(groupId, this.ID_GENERATOR.incrementAndGet(), runner, param, delay, interval, count));
-	}
-
-	private void addNode(TimeNode timeNode) {
-		this.lock.lock();
-
-		try {
-			this.nodes.add(timeNode);
-		} finally {
-			this.lock.unlock();
-		}
-
-		this.timeSignal.notifySignal();
-	}
-
-	public void exit() {
-		++this.loops;
-	}
-
+	/**
+	 * 执行时间节点
+	 *
+	 * @param timeNode 要执行的时间节点
+	 * @return 任务的CompletableFuture
+	 */
 	@Override
-	public void run() {
-		long waitTime = 9223372036854775807L;
-		for (int loop = this.loops; loop == this.loops; this.timeSignal.waitSignal(waitTime)) {
-			waitTime = 180000L;
-			this.lock.lock();
-
-			try {
-				long now = System.currentTimeMillis();
-				Iterator it = this.nodes.iterator();
-
-				while (it.hasNext()) {
-					TimeNode timeNode = (TimeNode) it.next();
-					if (null == timeNode) {
-						it.remove();
-					} else {
-						long diff = timeNode.timeDifference(now);
-						if (diff > 0L) {
-							waitTime = Math.min(diff, waitTime);
-						} else {
-							it.remove();
-							CompletableFuture future;
-							if (timeNode instanceof SerialTimeNode) {
-								future = this.runners.serialExecute((SerialTimeNode) timeNode);
-							} else {
-								future = this.runners.run(timeNode);
-							}
-
-							if (null != future) {
-								future.whenComplete((n, t) -> {
-									if (n instanceof TimeNode) {
-										TimeNode node = (TimeNode) n;
-										if (node.unFinished()) {
-											node.refreshTriggerTime();
-											this.runners.run(() -> this.addNode(node));
-										}
-									}
-
-								});
-							}
-						}
-					}
-				}
-			} catch (Exception var12) {
-				LOGGER.error("Timer", var12);
-			} finally {
-				this.lock.unlock();
-			}
+	protected CompletableFuture<?> executeTimeNode(TimeNode<?> timeNode) {
+		if (timeNode instanceof SerialTimeNode) {
+			return runners.serialExecute((SerialTimeNode<?>) timeNode);
+		} else {
+			return runners.run(timeNode);
 		}
+	}
 
+	/**
+	 * 重新调度节点
+	 *
+	 * @param node 需要重新调度的节点
+	 */
+	@Override
+	protected void rescheduleNode(TimeNode<?> node) {
+		runners.run(() -> addNode(node));
 	}
 }

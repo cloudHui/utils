@@ -42,11 +42,11 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 
 	/**
 	 * 解码TCP消息
-	 * 消息格式: [result 4][messageId 4][length 4][clientId 4][mapId 4][sequence 8][data ?]
+	 * 消息格式: [result 4][messageId 4][length 4][clientId 4][mapId 4][sequence 4][data ?]
 	 */
 	private TCPMessage decodeTCPMessage(ByteBuf buf) {
 		// 验证可读字节数是否足够
-		if (buf.readableBytes() < 28) { // 头部固定28字节
+		if (buf.readableBytes() < 24) { // 头部固定28字节
 			logger.error("消息长度不足，期望至少28字节，实际:{}字节", buf.readableBytes());
 			return null;
 		}
@@ -56,8 +56,8 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 		int length = buf.readIntLE(); // 数据部分长度
 
 		// 验证数据长度是否合理
-		if (length < 0 || length > 2097152 - 28) {
-			logger.error("数据长度异常: {} (最大允许: {})", length, 2097152 - 28);
+		if (length < 0 || length > 2097152 - 24) {
+			logger.error("数据长度异常: {} (最大允许: {})", length, 2097152 - 24);
 			return null;
 		}
 

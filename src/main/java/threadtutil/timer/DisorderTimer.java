@@ -1,109 +1,98 @@
 package threadtutil.timer;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import threadtutil.lock.TimeSignal;
-import threadtutil.timer.model.SerialTimeNode;
 import threadtutil.timer.model.TimeNode;
 
-public class DisorderTimer implements Runnable {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DisorderTimer.class);
-	private final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
-	private final List<TimeNode<?>> nodes = new ArrayList<>();
-	private final Lock lock = new ReentrantLock(false);
-	private final TimeSignal timeSignal = new TimeSignal();
-	private Runners<Runnable> runners;
-	private int loops = 0;
+/**
+ * 无序定时器实现
+ * 管理多个时间节点的执行，支持延迟执行、间隔执行和有限次执行
+ */
+public class DisorderTimer extends AbstractTimer<DisorderTimer.Runners<Runnable>> {
 
 	public DisorderTimer() {
+		super(new ArrayList<>());
 	}
 
+	/**
+	 * 设置任务执行器
+	 *
+	 * @param runners 任务执行器实例
+	 * @return 当前DisorderTimer实例
+	 */
+	@Override
 	public DisorderTimer setRunners(Runners<Runnable> runners) {
-		this.exit();
+		exit();
 		this.runners = runners;
 		this.runners.run(this);
 		return this;
 	}
 
+	/**
+	 * 注册普通时间节点（以秒为单位）
+	 *
+	 * @param <T>      参数类型
+	 * @param delay    延迟时间（秒）
+	 * @param interval 执行间隔（秒）
+	 * @param count    执行次数（-1表示无限次）
+	 * @param runner   任务执行器
+	 * @param param    任务参数
+	 */
 	public <T> void register(int delay, int interval, int count, Runner<T> runner, T param) {
-		this.addNode(new TimeNode(this.ID_GENERATOR.incrementAndGet(), runner, param, delay * 1000L, interval * 1000L, count));
+		register(delay * 1000L, interval * 1000L, count, runner, param);
 	}
 
-	public <T> void registerSerial(int groupId, int delay, int interval, int count, Runner<T> runner, T param) {
-		this.addNode(new SerialTimeNode(groupId, this.ID_GENERATOR.incrementAndGet(), runner, param, delay * 1000L, interval * 1000L, count));
+	/**
+	 * 注册串行时间节点（以秒为单位）
+	 *
+	 * @param <T>      参数类型
+	 * @param groupId  组ID
+	 * @param delay    延迟时间（秒）
+	 * @param interval 执行间隔（秒）
+	 * @param count    执行次数（-1表示无限次）
+	 * @param runner   任务执行器
+	 * @param param    任务参数
+	 */
+	public <T> void registerSerial(int groupId, int delay, int interval, int count,
+								   Runner<T> runner, T param) {
+		registerSerial(groupId, delay * 1000L, interval * 1000L, count, runner, param);
 	}
 
-	private void addNode(TimeNode<?> timeNode) {
-		this.lock.lock();
-
-		try {
-			this.nodes.add(timeNode);
-		} finally {
-			this.lock.unlock();
-		}
-
-		this.timeSignal.notifySignal();
-	}
-
-	public void exit() {
-		++this.loops;
-	}
-
+	/**
+	 * 执行时间节点
+	 *
+	 * @param timeNode 要执行的时间节点
+	 * @return 任务的CompletableFuture
+	 */
 	@Override
-	public void run() {
-		long waitTime;
-		for (int loop = this.loops; loop == this.loops; this.timeSignal.waitSignal(waitTime)) {
-			waitTime = 9223372036854775807L;
-			this.lock.lock();
-
-			try {
-				long now = System.currentTimeMillis();
-				Iterator<TimeNode<?>> it = this.nodes.iterator();
-
-				while (it.hasNext()) {
-					TimeNode<?> timeNode = it.next();
-					if (null == timeNode) {
-						it.remove();
-					} else {
-						long diff = timeNode.timeDifference(now);
-						if (diff > 0L) {
-							waitTime = Math.min(diff, waitTime);
-						} else {
-							it.remove();
-							CompletableFuture<? extends Runnable> future = this.runners.run(timeNode);
-							if (null != future) {
-								future.whenComplete((n, t) -> {
-									if (n instanceof TimeNode) {
-										TimeNode<?> node = (TimeNode<?>) n;
-										if (node.unFinished()) {
-											node.refreshTriggerTime();
-											this.runners.run(() -> this.addNode(node));
-										}
-									}
-
-								});
-							}
-						}
-					}
-				}
-			} catch (Exception var12) {
-				LOGGER.error("Timer", var12);
-			} finally {
-				this.lock.unlock();
-			}
-		}
+	protected CompletableFuture<?> executeTimeNode(TimeNode<?> timeNode) {
+		return runners.run(timeNode);
 	}
 
+	/**
+	 * 重新调度节点
+	 *
+	 * @param node 需要重新调度的节点
+	 */
+	@Override
+	protected void rescheduleNode(TimeNode<?> node) {
+		runners.run(() -> addNode(node));
+	}
+
+	/**
+	 * 任务执行器接口
+	 *
+	 * @param <T> 任务类型，必须是Runnable的子类
+	 */
 	@FunctionalInterface
 	public interface Runners<T extends Runnable> {
-		CompletableFuture<T> run(T var1);
+		/**
+		 * 执行任务
+		 *
+		 * @param task 要执行的任务
+		 * @return 任务的CompletableFuture
+		 */
+		CompletableFuture<T> run(T task);
 	}
 }
