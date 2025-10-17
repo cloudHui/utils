@@ -18,7 +18,7 @@ public class TCPMessageDecoder extends LengthFieldBasedFrameDecoder {
 		// lengthFieldOffset: 长度域偏移量 8字节 (跳过result 4 + messageId 4)
 		// lengthFieldLength: 长度域长度 4字节
 		// lengthAdjustment: 长度调整值 12 (需要包含clientId 4 + mapId 4 + sequence 4)
-		// initialBytesToStrip: 跳过的字节数 16 (跳过整个头部)
+		// initialBytesToStrip: 跳过的字节数  (跳过整个头部)
 		// failFast: 快速失败 true
 		super(ByteOrder.LITTLE_ENDIAN, 2097152, 8, 4, 12, 0, true);
 	}
