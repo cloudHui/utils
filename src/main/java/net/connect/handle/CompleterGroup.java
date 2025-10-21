@@ -5,95 +5,46 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.netty.channel.EventLoop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Completer.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompleterGroup.class);
 	private static final Throwable TIMEOUT = new RuntimeException("timeout");
+	private static final Throwable UNKNOWN_EXCEPTION = new RuntimeException("Unknown exception occurred!");
+
 	private final Map<Integer, Completer> completerMap = new ConcurrentHashMap<>(128);
 	private final Map<Integer, CompleterTcpMsg> completerTcpMsgMap = new ConcurrentHashMap<>(128);
-	private EventLoop executors;
-	private static int sequenceId = 0;
-	private static final Set<Runnable> runners = new ConcurrentSkipListSet<>((o1, o2) -> 0);
-	private static final Thread checker = new Thread(() -> {
-		long waitTime;
+	private EventLoop executors; // 移除了final修饰符以允许在destroy中置null
 
-		while (true) {
-			while (true) {
-				waitTime = System.currentTimeMillis();
-				boolean check = false;
+	private static final AtomicInteger SEQUENCE_GENERATOR = new AtomicInteger(0);
+	private static final Set<CompleterGroup> RUNNER_GROUPS = new ConcurrentSkipListSet<>();
+	private static final Thread CHECKER_THREAD = createCheckerThread();
 
-				try {
-					check = true;
-					runners.forEach(Runnable::run);
-					check = false;
-					break;
-				} catch (Exception exception) {
-					LOGGER.error("", exception);
-					check = false;
-				} finally {
-					if (check) {
-						waitTime = 1000L - (System.currentTimeMillis() - waitTime);
-						if (waitTime > 10L) {
-							synchronized (runners) {
-								try {
-									runners.wait(waitTime);
-								} catch (Exception exception) {
-									LOGGER.error("", exception);
-								}
-							}
-						}
-
-					}
-				}
-
-				waitTime = 1000L - (System.currentTimeMillis() - waitTime);
-				if (waitTime > 10L) {
-					synchronized (runners) {
-						try {
-							runners.wait(waitTime);
-						} catch (Exception exception) {
-							LOGGER.error("", exception);
-						}
-					}
-				}
-			}
-
-			waitTime = 1000L - (System.currentTimeMillis() - waitTime);
-			if (waitTime > 10L) {
-				synchronized (runners) {
-					try {
-						runners.wait(waitTime);
-					} catch (Exception exception) {
-						LOGGER.error("", exception);
-					}
-				}
-			}
-		}
-	});
+	private volatile boolean destroyed = false;
 
 	@Override
-	public int compareTo(CompleterGroup o) {
-		return this.equals(o) ? 0 : 1;
+	public int compareTo(CompleterGroup other) {
+		return Integer.compare(this.hashCode(), other.hashCode());
 	}
 
 	public CompleterGroup(EventLoop eventExecutors) {
-		executors = eventExecutors;
-		runners.add(this);
+		this.executors = eventExecutors;
+		RUNNER_GROUPS.add(this);
 	}
 
-	public synchronized int getSequence() {
-		if (sequenceId >= Integer.MAX_VALUE) {
-			sequenceId = 1;
-		}
-		return ++sequenceId;
+	public int getSequence() {
+		return SEQUENCE_GENERATOR.updateAndGet(seq -> seq >= Integer.MAX_VALUE ? 1 : seq + 1);
 	}
 
 	public void addCompleter(Integer sequence, Completer completer) {
-		completerMap.put(sequence, completer);
+		if (!destroyed) {
+			completerMap.put(sequence, completer);
+		}
 	}
 
 	public Completer popCompleter(int sequence) {
@@ -101,7 +52,9 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 	}
 
 	public void addCompleterTcpMsg(int sequence, CompleterTcpMsg completer) {
-		completerTcpMsgMap.put(sequence, completer);
+		if (!destroyed) {
+			completerTcpMsgMap.put(sequence, completer);
+		}
 	}
 
 	public CompleterTcpMsg popCompleterTcpMsg(Integer sequence) {
@@ -109,97 +62,135 @@ public class CompleterGroup implements Runnable, Comparable<CompleterGroup> {
 	}
 
 	public Set<Integer> getSequences() {
-		return completerMap.keySet();
+		return new HashSet<>(completerMap.keySet());
 	}
 
 	public Set<Integer> getTcpSequences() {
-		return completerTcpMsgMap.keySet();
+		return new HashSet<>(completerTcpMsgMap.keySet());
 	}
 
 	public void destroy() {
-		runners.remove(this);
+		destroyed = true;
+		RUNNER_GROUPS.remove(this);
 
 		try {
-			Thread.sleep(3000L);
-		} catch (Exception ignored) {
+			TimeUnit.SECONDS.sleep(3);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			LOGGER.debug("Interrupted during destroy wait period", e);
 		}
 
-		Completer completer;
+		// 处理 Completer
+		processRemainingCompletes(completerMap);
+		// 处理 CompleterTcpMsg
+		processRemainingCompletes(completerTcpMsgMap);
 
-		while (!completerMap.isEmpty()) {
-			Throwable ex = new RuntimeException("Unknown exception occurred！");
-			Set<Integer> keys = completerMap.keySet();
-
-			for (int id : keys) {
-				completer = completerMap.remove(id);
-				if (null != completer) {
-					completer.ex = ex;
-					executors.execute(completer);
-				}
-			}
-		}
-		CompleterTcpMsg completerTcpMsg;
-		while (!completerTcpMsgMap.isEmpty()) {
-			Throwable ex = new RuntimeException("Unknown exception occurred！");
-			Set<Integer> keys = completerTcpMsgMap.keySet();
-
-			for (int id : keys) {
-				completerTcpMsg = completerTcpMsgMap.remove(id);
-				if (null != completerTcpMsg) {
-					completerTcpMsg.ex = ex;
-					executors.execute(completerTcpMsg);
-				}
-			}
-		}
 		executors = null;
 	}
 
 	@Override
 	public void run() {
-		try {
-			Set<Integer> seq = new HashSet<>();
-			long nowTime = System.currentTimeMillis();
-			completerMap.forEach((k, o) -> {
-				if (o.isTimeout(nowTime)) {
-					seq.add(k);
-				}
-
-			});
-			if (!seq.isEmpty()) {
-				Completer completer;
-
-				for (int id : seq) {
-					completer = completerMap.remove(id);
-					if (null != completer) {
-						completer.ex = TIMEOUT;
-						executors.execute(completer);
-					}
-				}
-			}
-
-			completerTcpMsgMap.forEach((k, o) -> {
-				if (o.isTimeout(nowTime)) {
-					seq.add(k);
-				}
-
-			});
-			if (!seq.isEmpty()) {
-				CompleterTcpMsg completer;
-
-				for (int id : seq) {
-					completer = completerTcpMsgMap.remove(id);
-					if (null != completer) {
-						completer.ex = TIMEOUT;
-						executors.execute(completer);
-					}
-				}
-			}
-		} catch (Exception ignored) {
+		if (destroyed || executors == null) {
+			return;
 		}
 
+		try {
+			long currentTime = System.currentTimeMillis();
+
+			// 处理超时的 Completer
+			processTimeoutItems(completerMap, currentTime);
+			// 处理超时的 CompleterTcpMsg
+			processTimeoutItems(completerTcpMsgMap, currentTime);
+
+		} catch (Exception e) {
+			LOGGER.debug("Exception during timeout check", e);
+		}
+	}
+
+	private <T extends CompleterBase> void processRemainingCompletes(Map<Integer, T> map) {
+		if (map.isEmpty()) {
+			return;
+		}
+
+		Set<Integer> keys = new HashSet<>(map.keySet());
+		for (Integer id : keys) {
+			T completer = map.remove(id);
+			if (completer != null && executors != null) {
+				completer.setEx(CompleterGroup.UNKNOWN_EXCEPTION);
+				executors.execute(completer);
+			}
+		}
+	}
+
+	private <T extends CompleterBase> void processTimeoutItems(Map<Integer, T> map, long currentTime) {
+
+		Set<Integer> timeoutKeys = new HashSet<>();
+		map.forEach((key, completer) -> {
+			if (completer.isTimeout(currentTime)) {
+				timeoutKeys.add(key);
+			}
+		});
+
+		if (!timeoutKeys.isEmpty()) {
+			for (Integer id : timeoutKeys) {
+				T completer = map.remove(id);
+				if (completer != null) {
+					completer.setEx(CompleterGroup.TIMEOUT);
+					executors.execute(completer);
+				}
+			}
+		}
+	}
+
+	private static Thread createCheckerThread() {
+		Thread thread = new Thread(() -> {
+			while (!Thread.currentThread().isInterrupted()) {
+				try {
+					long startTime = System.currentTimeMillis();
+
+					// 执行所有runner groups
+					for (CompleterGroup group : RUNNER_GROUPS) {
+						try {
+							group.run();
+						} catch (Exception e) {
+							LOGGER.error("Error executing completer group", e);
+						}
+					}
+
+					long elapsed = System.currentTimeMillis() - startTime;
+					long sleepTime = Math.max(10L, 1000L - elapsed);
+
+					TimeUnit.MILLISECONDS.sleep(sleepTime);
+
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					break;
+				} catch (Exception e) {
+					LOGGER.error("Unexpected error in checker thread", e);
+					try {
+						TimeUnit.MILLISECONDS.sleep(1000);
+					} catch (InterruptedException ie) {
+						Thread.currentThread().interrupt();
+						break;
+					}
+				}
+			}
+			LOGGER.info("Checker thread stopped");
+		});
+
+		thread.setDaemon(true);
+		thread.setName("CompleterGroup-Checker");
+		return thread;
+	}
+
+	public static void shutdown() {
+		if (CHECKER_THREAD.isAlive()) {
+			CHECKER_THREAD.interrupt();
+		}
 	}
 
 	static {
-		checker.start();
+		CHECKER_THREAD.start();
+		Runtime.getRuntime().addShutdownHook(new Thread(CompleterGroup::shutdown));
 	}
 }

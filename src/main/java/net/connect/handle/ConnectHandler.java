@@ -222,12 +222,12 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	private void handleAsyncResponse(ChannelHandlerContext ctx, TCPMessage msg) throws InvalidProtocolBufferException {
 		Completer completer = completerGroup.popCompleter(msg.getSequence());
 		if (null != completer) {
-			completer.msg = parseMessage(msg);
+			completer.setMsg(parseMessage(msg));
 			ctx.channel().eventLoop().execute(completer);
 		} else {
 			CompleterTcpMsg completerTcpMsg = completerGroup.popCompleterTcpMsg(msg.getSequence());
 			if (null != completerTcpMsg) {
-				completerTcpMsg.msg = msg;
+				completerTcpMsg.setMsg(msg);
 				ctx.channel().eventLoop().execute(completerTcpMsg);
 			} else {
 				LOGGER.error("找不到消息({})的超时和回调 sequence:{} msg:{} tcp:{}",

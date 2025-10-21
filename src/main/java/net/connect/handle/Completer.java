@@ -6,11 +6,11 @@ import com.google.protobuf.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Completer extends CompletableFuture<Message> implements Runnable {
+public class Completer extends CompletableFuture<Message> implements CompleterBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Completer.class);
 	private final long timeout;
-	public Throwable ex;
-	public Message msg;
+	private Throwable ex;
+	private Message msg;
 
 	public Completer(long timeout) {
 		this.timeout = timeout * 1000L + System.currentTimeMillis();
@@ -18,6 +18,15 @@ public class Completer extends CompletableFuture<Message> implements Runnable {
 
 	public boolean isTimeout(long time) {
 		return time >= timeout;
+	}
+
+	@Override
+	public void setEx(Throwable ex) {
+		this.ex = ex;
+	}
+
+	public void setMsg(Message msg) {
+		this.msg = msg;
 	}
 
 	@Override
@@ -29,8 +38,7 @@ public class Completer extends CompletableFuture<Message> implements Runnable {
 				complete(msg);
 			}
 		} catch (Exception exception) {
-			LOGGER.error("", exception);
+			LOGGER.error("Error completing future", exception);
 		}
-
 	}
 }
