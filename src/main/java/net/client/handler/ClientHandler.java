@@ -252,7 +252,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	}
 
 	@Override
-	public void sendMessage(int clientId, int msgId, int mapId, Message msg, int sequence) {
+	public void sendMessage(int clientId, int msgId, long mapId, Message msg, int sequence) {
 		channel.writeAndFlush(maker.wrap(clientId, msgId, mapId, msg, sequence));
 	}
 

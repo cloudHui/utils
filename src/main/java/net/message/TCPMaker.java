@@ -12,7 +12,7 @@ public class TCPMaker {
 		return TCPMessage.newInstance(msgId, msg.toByteArray(), sequence);
 	}
 
-	public TCPMessage wrap(int clientId, int msgId, int mapId, Message msg, int sequence) {
+	public TCPMessage wrap(int clientId, int msgId, long mapId, Message msg, int sequence) {
 		return TCPMessage.newInstance(msgId, clientId, msg.toByteArray(), mapId, sequence);
 	}
 }
