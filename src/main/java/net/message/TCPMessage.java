@@ -12,6 +12,10 @@ public class TCPMessage {
 		return new TCPMessage(result);
 	}
 
+	public static TCPMessage newInstance(int messageId, byte[] message) {
+		return new TCPMessage(messageId, message, 0);
+	}
+
 	public static TCPMessage newInstance(int messageId, byte[] message, int sequence) {
 		return new TCPMessage(messageId, message, sequence);
 	}
@@ -29,7 +33,7 @@ public class TCPMessage {
 	}
 
 	public static TCPMessage newInstance(int messageId, int clientId, byte[] message, int mapId, int sequence) {
-		return new TCPMessage(0,messageId, clientId, message, mapId, sequence);
+		return new TCPMessage(0, messageId, clientId, message, mapId, sequence);
 	}
 
 	public TCPMessage(int result) {
