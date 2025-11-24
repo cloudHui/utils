@@ -1,5 +1,21 @@
 package utils.other.excel;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,508 +26,406 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
+/**
+ * Excel工具类 - 支持xls和xlsx格式的读写操作
+ */
 public class ExcelUtil {
 
-	/**
-	 * 导出Excel
-	 *
-	 * @param sheetName sheet名称
-	 * @param title     标题
-	 * @param wb        HSSFWorkbook对象
-	 */
-	public static void setHSSFWorkbookTitle(String sheetName, String[] title, HSSFWorkbook wb) {
+    // 文件类型常量
+    private static final String XLSX_EXTENSION = "xlsx";
+    private static final String XLS_EXTENSION = "xls";
 
-		// 第一步，创建一个HSSFWorkbook，对应一个Excel文件
-		if (wb == null) {
-			wb = new HSSFWorkbook();
-		}
+    /**
+     * 创建Excel工作簿并设置标题
+     */
+    public static void setHSSFWorkbookTitle(String sheetName, String[] title, HSSFWorkbook wb) {
+        HSSFWorkbook workbook = (wb == null) ? new HSSFWorkbook() : wb;
+        HSSFSheet sheet = workbook.createSheet(sheetName);
+        HSSFRow row = sheet.createRow(0);
 
-		// 第二步，在workbook中添加一个sheet,对应Excel文件中的sheet
-		HSSFSheet sheet = wb.createSheet(sheetName);
+        HSSFCellStyle style = workbook.createCellStyle();
+        style.setAlignment(HorizontalAlignment.CENTER);
 
-		// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制
-		HSSFRow row = sheet.createRow(0);
-		// 第四步，创建单元格，并设置值表头 设置表头居中
-		HSSFCellStyle style = wb.createCellStyle();
-		style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式
+        for (int i = 0; i < title.length; i++) {
+            HSSFCell cell = row.createCell(i);
+            cell.setCellValue(title[i]);
+            cell.setCellStyle(style);
+        }
+    }
 
-		//声明列对象
-		HSSFCell cell;
+    /**
+     * 向Sheet中添加内容
+     */
+    public static void addContent(HSSFSheet sheet, String[][] values) {
+        int lastRowNum = sheet.getLastRowNum();
 
-		//创建标题
-		for (int i = 0; i < title.length; i++) {
-			cell = row.createCell(i);
-			cell.setCellValue(title[i]);
-			cell.setCellStyle(style);
-		}
-	}
+        for (int i = 0; i < values.length; i++) {
+            HSSFRow rowContent = sheet.createRow(lastRowNum + i + 1);
+            for (int j = 0; j < values[i].length; j++) {
+                rowContent.createCell(j).setCellValue(values[i][j]);
+            }
+        }
+    }
 
-	/**
-	 * 添加内容
-	 *
-	 * @param sheet  一个sheet
-	 * @param values 内容
-	 */
-	public static void addContent(HSSFSheet sheet, String[][] values) {
-		HSSFRow rowContent;
-		int last = sheet.getLastRowNum();
-		//创建内容
-		for (int i = last, begin = 0; i < last + values.length; i++, begin++) {
-			rowContent = sheet.createRow(i + 1);
-			for (int j = 0; j < values[begin].length; j++) {
-				//将内容按顺序赋给对应的列对象
-				rowContent.createCell(j).setCellValue(values[begin][j]);
-			}
-		}
-	}
+    /**
+     * 输出Excel文件
+     */
+    public static void outFile(HSSFWorkbook workbook, String path) {
+        try (OutputStream os = new FileOutputStream(path)) {
+            workbook.write(os);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * 文件输出
-	 *
-	 * @param workbook 填充好的workbook
-	 * @param path     存放的位置
-	 * @author LiQuanhui
-	 * @date 2017年11月24日 下午5:26:23
-	 */
-	public static void outFile(HSSFWorkbook workbook, String path) {
-		OutputStream os = null;
-		try {
-			os = new FileOutputStream(path);
-			workbook.write(os);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			assert os != null;
-			os.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * 读取Excel并生成Java类头文件
+     */
+    public static void readExcelCreateJavaHead(String fileName, String path) {
+        String fileExtension = getFileExtension(fileName);
+        String javaName = ExcelToJavaGenerator.capitalize(fileName.split("\\.")[0]);
 
-	/**
-	 * 读取Excel文件的内容
-	 *
-	 * @return 以List返回excel中内容
-	 */
-	public static List<Map<String, String>> readExcel(String fileName) {
-		//读取 xls格式的文件需要使用 HSSFWorkbook；
-		//读取 xlsx 格式的文件需要使用 XSSFWorkbook；
-		String last = fileName.substring(fileName.indexOf(".") + 1);
-		List<Map<String, String>> list = new ArrayList<>();
-		InputStream inputStream;
-		if (last.equals("xlsx")) {
-			try {
-				inputStream = new FileInputStream(fileName);
-				//定义工作簿
-				XSSFWorkbook xssfWorkbook = null;
-				try {
-					xssfWorkbook = new XSSFWorkbook(inputStream);
-				} catch (Exception e) {
-					System.out.println("Excel data file cannot be found!");
-				}
-				if (xssfWorkbook != null) {
-					//定义工作表
-					XSSFSheet xssfSheet;
-					xssfSheet = xssfWorkbook.getSheetAt(0);
-					if (xssfSheet != null) {
-						//定义行
-						//默认第一行为标题行，index = 0
-						XSSFRow titleRow = xssfSheet.getRow(0);
-						//循环取每行的数据
-						for (int rowIndex = 1; rowIndex < xssfSheet.getPhysicalNumberOfRows(); rowIndex++) {
-							XSSFRow xssfRow = xssfSheet.getRow(rowIndex);
-							if (xssfRow != null) {
-								Map<String, String> map = new LinkedHashMap<>();
-								//循环取每个单元格(cell)的数据
-								for (int cellIndex = 0; cellIndex < xssfRow.getPhysicalNumberOfCells(); cellIndex++) {
-									XSSFCell titleCell = titleRow.getCell(cellIndex);
-									XSSFCell xssfCell = xssfRow.getCell(cellIndex);
-									map.put(getString(titleCell), getString(xssfCell));
-								}
-								list.add(map);
-							}
-						}
-					}
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-		} else if (last.equals("xls")) {
-			try {
-				inputStream = new FileInputStream(fileName);
-				//定义工作簿
-				HSSFWorkbook xssfWorkbook = null;
-				try {
-					xssfWorkbook = new HSSFWorkbook(inputStream);
-				} catch (Exception e) {
-					System.out.println("Excel data file cannot be found!");
-				}
-				if (xssfWorkbook != null) {
-					//定义工作表
-					HSSFSheet xssfSheet;
-					xssfSheet = xssfWorkbook.getSheetAt(0);
-					if (xssfSheet != null) {
-						//定义行
-						//默认第一行为标题行，index = 0
-						HSSFRow titleRow = xssfSheet.getRow(0);
-						//循环取每行的数据
-						for (int rowIndex = 1; rowIndex < xssfSheet.getPhysicalNumberOfRows(); rowIndex++) {
-							HSSFRow xssfRow = xssfSheet.getRow(rowIndex);
-							if (xssfRow != null) {
-								Map<String, String> map = new LinkedHashMap<>();
-								//循环取每个单元格(cell)的数据
-								for (int cellIndex = 0; cellIndex < xssfRow.getPhysicalNumberOfCells(); cellIndex++) {
-									HSSFCell titleCell = titleRow.getCell(cellIndex);
-									HSSFCell xssfCell = xssfRow.getCell(cellIndex);
-									map.put(getString(titleCell), getString(xssfCell));
-								}
-								list.add(map);
-							}
-						}
-					}
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-		return list;
-	}
+        if (XLSX_EXTENSION.equals(fileExtension)) {
+            processExcelForJavaHead(fileName, path, javaName, WorkbookType.XSSF);
+        } else if (XLS_EXTENSION.equals(fileExtension)) {
+            processExcelForJavaHead(fileName, path, javaName, WorkbookType.HSSF);
+        }
+    }
 
-	/**
-	 * 把单元格的内容转为字符串
-	 *
-	 * @param xssfCell 单元格
-	 * @return 字符串
-	 */
-	private static String getString(XSSFCell xssfCell) {
-		if (xssfCell == null) {
-			return "";
-		}
-		if (xssfCell.getCellType() == CellType.NUMERIC) {
-			return String.valueOf(xssfCell.getNumericCellValue());
-		} else if (xssfCell.getCellType() == CellType.BOOLEAN) {
-			return String.valueOf(xssfCell.getBooleanCellValue());
-		} else {
-			return xssfCell.getStringCellValue();
-		}
-	}
+    /**
+     * 读取Excel并生成Java对象数据
+     */
+    public static void readExcelJavaValue(String fileName) {
+        String fileExtension = getFileExtension(fileName);
+        String javaName = ExcelToJavaGenerator.capitalize(fileName.split("\\.")[0]);
 
-	/**
-	 * 把单元格的内容转为字符串
-	 *
-	 * @param xssfCell 单元格
-	 * @return 字符串
-	 */
-	private static String getString(HSSFCell xssfCell) {
-		if (xssfCell == null) {
-			return "";
-		}
-		if (xssfCell.getCellType() == CellType.NUMERIC) {
-			return String.valueOf(xssfCell.getNumericCellValue());
-		} else if (xssfCell.getCellType() == CellType.BOOLEAN) {
-			return String.valueOf(xssfCell.getBooleanCellValue());
-		} else {
-			return xssfCell.getStringCellValue();
-		}
-	}
+        if (XLSX_EXTENSION.equals(fileExtension)) {
+            processExcelForJavaValue(fileName, javaName, WorkbookType.XSSF);
+        } else if (XLS_EXTENSION.equals(fileExtension)) {
+            processExcelForJavaValue(fileName, javaName, WorkbookType.HSSF);
+        }
+    }
 
-	/**
-	 * 把内容写入Excel
-	 *
-	 * @param list         传入要写的内容，此处以一个List内容为例，先把要写的内容放到一个list中
-	 * @param outputStream 把输出流怼到要写入的Excel上，准备往里面写数据
-	 */
-	public static void writeExcel(List<List> list, OutputStream outputStream) {
-		//创建工作簿
-		XSSFWorkbook xssfWorkbook;
-		xssfWorkbook = new XSSFWorkbook();
+    /**
+     * 写入数据到Excel
+     */
+    public static void writeExcel(List<List> list, OutputStream outputStream) {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet();
 
-		//创建工作表
-		XSSFSheet xssfSheet;
-		xssfSheet = xssfWorkbook.createSheet();
+            for (int i = 0; i < list.size(); i++) {
+                XSSFRow row = sheet.createRow(i);
+                List<String> subList = list.get(i);
 
-		//创建行
-		XSSFRow xssfRow;
+                for (int j = 0; j < subList.size(); j++) {
+                    row.createCell(j).setCellValue(subList.get(j));
+                }
+            }
 
-		//创建列，即单元格Cell
-		XSSFCell xssfCell;
+            workbook.write(outputStream);
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-		//把List里面的数据写到excel中
-		for (int i = 0; i < list.size(); i++) {
-			//从第一行开始写入
-			xssfRow = xssfSheet.createRow(i);
-			//创建每个单元格Cell，即列的数据
-			List sub_list = list.get(i);
-			for (int j = 0; j < sub_list.size(); j++) {
-				xssfCell = xssfRow.createCell(j); //创建单元格
-				xssfCell.setCellValue((String) sub_list.get(j)); //设置单元格内容
-			}
-		}
+    // ================ 私有方法 ================
 
-		//用输出流写到excel
-		try {
-			xssfWorkbook.write(outputStream);
-			outputStream.flush();
-			outputStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * 处理Excel生成Java头文件
+     */
+    private static void processExcelForJavaHead(File fileName, String path, String javaName, WorkbookType type) {
+        try (InputStream inputStream = new FileInputStream(fileName)) {
+            Workbook webHook = create(inputStream, type);
+            if (webHook != null) {
+                processForJavaHead(path, javaName, webHook);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * 读取Excel文件的内容 创建文件
-	 *
-	 * @return 以List返回excel中内容
-	 */
-	public static void readExcelCreateJavaHead(String fileName, String path) {
-		//读取 xls格式的文件需要使用 HSSFWorkbook;
-		//读取 xlsx 格式的文件需要使用 XSSFWorkbook;
-		String javaName = ExcelToJavaGenerator.capitalize(fileName.split("\\.")[0]);
-		String last = fileName.substring(fileName.indexOf(".") + 1);
-		InputStream inputStream;
-		if (last.equals("xlsx")) {
-			try {
-				inputStream = ExcelUtil.class.getClassLoader().getResourceAsStream("xml/" + fileName);
-				//定义工作簿
-				XSSFWorkbook xssfWorkbook = null;
-				try {
-					xssfWorkbook = new XSSFWorkbook(inputStream);
-				} catch (Exception e) {
-					System.out.println("Excel data file cannot be found!");
-				}
-				if (xssfWorkbook != null) {
-					//定义工作表
-					XSSFSheet xssfSheet;
-					xssfSheet = xssfWorkbook.getSheetAt(0);
-					if (xssfSheet != null) {
-						//定义行
-						//默认第一行为标题行，index = 0
-						XSSFRow propertyName = xssfSheet.getRow(0);
-						XSSFRow propertyType = xssfSheet.getRow(1);
-						XSSFRow desc = xssfSheet.getRow(2);
-						//循环取每行的数据
-						List<Title> titleList = new ArrayList<>();
-						//循环取每个单元格(cell)的数据
-						for (int cellIndex = 0; cellIndex < propertyName.getPhysicalNumberOfCells(); cellIndex++) {
-							XSSFCell name = propertyName.getCell(cellIndex);
-							XSSFCell type = propertyType.getCell(cellIndex);
-							XSSFCell des = desc.getCell(cellIndex);
-							titleList.add(new Title(getString(name), getString(type), getString(des)));
-						}
-						ExcelToJavaGenerator.write(javaName, path, titleList);
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} else if (last.equals("xls")) {
-			try {
-				inputStream = new FileInputStream(fileName);
-				//定义工作簿
-				HSSFWorkbook xssfWorkbook = null;
-				try {
-					xssfWorkbook = new HSSFWorkbook(inputStream);
-				} catch (Exception e) {
-					System.out.println("Excel data file cannot be found!");
-				}
-				if (xssfWorkbook != null) {
-					//定义工作表
-					HSSFSheet xssfSheet;
-					xssfSheet = xssfWorkbook.getSheetAt(0);
-					if (xssfSheet != null) {
-						//定义行
-						//默认第一行为标题行，index = 0
-						HSSFRow propertyName = xssfSheet.getRow(0);
-						HSSFRow propertyType = xssfSheet.getRow(1);
-						HSSFRow desc = xssfSheet.getRow(2);
-						//循环取每行的数据
-						List<Title> titleList = new ArrayList<>();
-						//循环取每个单元格(cell)的数据
-						for (int cellIndex = 0; cellIndex < propertyName.getPhysicalNumberOfCells(); cellIndex++) {
-							HSSFCell name = propertyName.getCell(cellIndex);
-							HSSFCell type = propertyType.getCell(cellIndex);
-							HSSFCell des = desc.getCell(cellIndex);
-							titleList.add(new Title(getString(name), getString(type), getString(des)));
-						}
-						ExcelToJavaGenerator.write(javaName, path, titleList);
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    public static void main(String[] args) {
+        readExcelCreateJavaHead("TableModel.xlsx", ".");
+    }
 
-	/**
-	 * 读取Excel文件的内容 生成数据
-	 *
-	 * @return 以List返回excel中内容
-	 */
-	public static void readExcelJavaValue(String fileName, List<Object> prperties) {
-		//读取 xls格式的文件需要使用 HSSFWorkbook;
-		//读取 xlsx 格式的文件需要使用 XSSFWorkbook;
-		String javaName = ExcelToJavaGenerator.capitalize(fileName.split("\\.")[0]);
-		String last = fileName.substring(fileName.indexOf(".") + 1);
-		InputStream inputStream;
-		if (last.equals("xlsx")) {
-			try {
-				inputStream = ExcelUtil.class.getClassLoader().getResourceAsStream("xml/" + fileName);
-				//定义工作簿
-				XSSFWorkbook xssfWorkbook = null;
-				try {
-					xssfWorkbook = new XSSFWorkbook(inputStream);
-				} catch (Exception e) {
-					System.out.println("Excel data file cannot be found!");
-				}
-				if (xssfWorkbook != null) {
-					//定义工作表
-					XSSFSheet xssfSheet;
-					xssfSheet = xssfWorkbook.getSheetAt(0);
-					if (xssfSheet != null) {
-						//定义行
-						XSSFRow propertyName = xssfSheet.getRow(0);
-						XSSFRow propertyType = xssfSheet.getRow(1);
-						//默认第四行是数据
-						//循环取每行的数据
-						for (int rowIndex = 3; rowIndex < xssfSheet.getPhysicalNumberOfRows(); rowIndex++) {
-							XSSFRow xssfRow = xssfSheet.getRow(rowIndex);
-							if (xssfRow != null) {
-								Object obj = createObjectByName("model." + javaName);
-								//循环取每个单元格(cell)的数据
-								for (int cellIndex = 0; cellIndex < xssfRow.getPhysicalNumberOfCells(); cellIndex++) {
-									XSSFCell value = xssfRow.getCell(cellIndex);
-									XSSFCell name = propertyName.getCell(cellIndex);
-									XSSFCell type = propertyType.getCell(cellIndex);
-									invokeSetter(obj, getString(name), ExcelToJavaGenerator.getType(getString(type), getString(value)));
-								}
-								prperties.add(obj);
-							}
-						}
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} else if (last.equals("xls")) {
-			try {
-				inputStream = new FileInputStream(fileName);
-				//定义工作簿
-				HSSFWorkbook xssfWorkbook = null;
-				try {
-					xssfWorkbook = new HSSFWorkbook(inputStream);
-				} catch (Exception e) {
-					System.out.println("Excel data file cannot be found!");
-				}
-				if (xssfWorkbook != null) {
-					//定义工作表
-					HSSFSheet xssfSheet;
-					xssfSheet = xssfWorkbook.getSheetAt(0);
-					if (xssfSheet != null) {
+    /**
+     * 应用程序是否为虚拟机启动
+     */
+    public static boolean runJar() {
+        File fromFile = new File(ExcelUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        return fromFile.isFile() && fromFile.getName().endsWith(".jar");
+    }
 
-						//定义行
-						HSSFRow propertyName = xssfSheet.getRow(0);
-						HSSFRow propertyType = xssfSheet.getRow(1);
-						//默认第四行是数据
-						//循环取每行的数据
-						for (int rowIndex = 3; rowIndex < xssfSheet.getPhysicalNumberOfRows(); rowIndex++) {
-							HSSFRow xssfRow = xssfSheet.getRow(rowIndex);
-							if (xssfRow != null) {
-								Object obj = createObjectByName("model." + javaName);
-								//循环取每个单元格(cell)的数据
-								for (int cellIndex = 0; cellIndex < xssfRow.getPhysicalNumberOfCells(); cellIndex++) {
-									HSSFCell value = xssfRow.getCell(cellIndex);
-									HSSFCell name = propertyName.getCell(cellIndex);
-									HSSFCell type = propertyType.getCell(cellIndex);
-									invokeSetter(obj, getString(name), ExcelToJavaGenerator.getType(getString(type), getString(value)));
-								}
-								prperties.add(obj);
-							}
-						}
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    /**
+     * 处理Excel生成Java头文件
+     */
+    private static void processExcelForJavaHead(String fileName, String path, String javaName, WorkbookType type) {
+        try (InputStream inputStream = getInputStream(fileName)) {
+            Workbook processor = create(inputStream, type);
+            if (processor != null) {
+                processForJavaHead(path, javaName, processor);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * 根据属性名调用对象的setter方法
-	 *
-	 * @param obj          对象实例
-	 * @param propertyName 属性名
-	 * @param value        要设置的值
-	 * @throws Exception 反射操作可能抛出的异常
-	 */
-	public static void invokeSetter(Object obj, String propertyName, Object value) throws Exception {
-		// 获取对象的类
-		Class<?> clazz = obj.getClass();
+    /**
+     * 处理Excel生成Java对象值
+     */
+    private static void processExcelForJavaValue(String fileName, String javaName, WorkbookType type) {
+        try (InputStream inputStream = getInputStream(fileName)) {
+            Workbook processor = create(inputStream, type);
+            if (processor != null) {
+                processForJavaValue(javaName, processor);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-		// 构造setter方法名，假设它遵循Java Bean规范，即"set" + 首字母大写的属性名
-		String methodName = "set" + ExcelToJavaGenerator.capitalize(propertyName);
+    /**
+     * 获取文件输入流
+     */
+    private static InputStream getInputStream(String fileName) throws FileNotFoundException {
+        if (runJar()) {
+            return new FileInputStream(fileName);
+        } else {
+            return new FileInputStream(System.getProperty("user.dir") + "\\src\\main\\resources\\xml\\" + fileName);
+        }
+    }
 
-		// 获取方法对象
-		Method method = clazz.getMethod(methodName, getUnboxedTypeGeneric(value));
+    /**
+     * 获取文件扩展名
+     */
+    private static String getFileExtension(String fileName) {
+        return fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+    }
 
-		// 检查方法是否存在
-		// 调用setter方法
-		method.invoke(obj, value);
-	}
+    /**
+     * 单元格内容转为字符串
+     */
+    private static String getCellValue(Object cell) {
+        if (cell == null) {
+            return "";
+        }
 
-	/**
-	 * 获取开箱类型
-	 */
-	public static Class<?> getUnboxedTypeGeneric(Object wrappedInstance) {
-		if (wrappedInstance == null) {
-			throw new IllegalArgumentException("Wrapped instance cannot be null.");
-		}
+        CellType cellType;
+        Object cellValue;
 
-		try {
-			Field typeField = wrappedInstance.getClass().getField("TYPE");
-			return (Class<?>) typeField.get(null);
-		} catch (NoSuchFieldException | IllegalAccessException e) {
-			return wrappedInstance.getClass();
-		}
-	}
+        if (cell instanceof XSSFCell) {
+            XSSFCell xssfCell = (XSSFCell)cell;
+            cellType = xssfCell.getCellType();
+            cellValue = xssfCell;
+        } else if (cell instanceof HSSFCell) {
+            HSSFCell hssfCell = (HSSFCell)cell;
+            cellType = hssfCell.getCellType();
+            cellValue = hssfCell;
+        } else {
+            return "";
+        }
 
-	/**
-	 * 根据类的全限定名创建对象实例
-	 *
-	 * @param className 类的全限定名，如"java.util.ArrayList"
-	 * @return 新创建的对象实例，如果没有找到类则返回null
-	 */
-	public static Object createObjectByName(String className) {
-		try {
-			// 获取类的Class对象
-			Class<?> clazz = Class.forName(className);
+        return convertCellValue(cellType, cellValue);
+    }
 
-			// 获取无参构造器
-			Constructor<?> constructor = clazz.getConstructor();
+    /**
+     * 根据单元格类型转换值
+     */
+    private static String convertCellValue(CellType cellType, Object cell) {
+        switch (cellType) {
+            case NUMERIC:
+                return String.valueOf(getNumericValue(cell));
+            case BOOLEAN:
+                return String.valueOf(getBooleanValue(cell));
+            default:
+                return getStringValue(cell);
+        }
+    }
 
-			// 使用构造器创建实例
-			return constructor.newInstance();
-		} catch (Exception e) {
-			System.err.println("Failed to create object for class: " + className);
-			e.printStackTrace();
-			return null;
-		}
-	}
+    // 数值获取方法
+    private static double getNumericValue(Object cell) {
+        if (cell instanceof XSSFCell)
+            return ((XSSFCell)cell).getNumericCellValue();
+        if (cell instanceof HSSFCell)
+            return ((HSSFCell)cell).getNumericCellValue();
+        return 0;
+    }
 
+    // 布尔值获取方法
+    private static boolean getBooleanValue(Object cell) {
+        if (cell instanceof XSSFCell)
+            return ((XSSFCell)cell).getBooleanCellValue();
+        if (cell instanceof HSSFCell)
+            return ((HSSFCell)cell).getBooleanCellValue();
+        return false;
+    }
+
+    // 字符串值获取方法
+    private static String getStringValue(Object cell) {
+        if (cell instanceof XSSFCell)
+            return ((XSSFCell)cell).getStringCellValue();
+        if (cell instanceof HSSFCell)
+            return ((HSSFCell)cell).getStringCellValue();
+        return "";
+    }
+
+    // ================ 反射相关方法 ================
+
+    /**
+     * 调用对象的setter方法
+     */
+    public static void invokeSetter(Object obj, String propertyName, Object value) throws Exception {
+        Class<?> clazz = obj.getClass();
+        String methodName = "set" + ExcelToJavaGenerator.capitalize(propertyName);
+        Method method = clazz.getMethod(methodName, getUnboxedTypeGeneric(value));
+        method.invoke(obj, value);
+    }
+
+    /**
+     * 获取基本类型
+     */
+    public static Class<?> getUnboxedTypeGeneric(Object wrappedInstance) {
+        if (wrappedInstance == null) {
+            throw new IllegalArgumentException("Wrapped instance cannot be null.");
+        }
+
+        try {
+            Field typeField = wrappedInstance.getClass().getField("TYPE");
+            return (Class<?>)typeField.get(null);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            return wrappedInstance.getClass();
+        }
+    }
+
+    /**
+     * 根据类名创建对象实例
+     */
+    public static Object createObjectByName(String className) {
+        try {
+            Class<?> clazz = Class.forName(className);
+            Constructor<?> constructor = clazz.getConstructor();
+            return constructor.newInstance();
+        } catch (Exception e) {
+            System.err.println("Failed to create object for class: " + className);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String getJavaName(String sheetName, String javaName) {
+        if (!sheetName.contains("sheet")) {
+            return sheetName.substring(0, 1).toUpperCase() + sheetName.substring(1);
+        }
+        return javaName;
+    }
+
+    // ================ 内部枚举和类 ================
+
+    /**
+     * 工作簿类型枚举
+     */
+    private enum WorkbookType {
+        XSSF, HSSF
+    }
+
+    /**
+     * 工作簿处理器抽象类
+     */
+    public static Workbook create(InputStream inputStream, WorkbookType type) {
+        try {
+            switch (type) {
+                case XSSF:
+                    return new XSSFWorkbook(inputStream);
+                case HSSF:
+                    return new HSSFWorkbook(inputStream);
+                default:
+                    return null;
+            }
+        } catch (IOException e) {
+            System.out.println("Excel data file cannot be found!");
+            return null;
+        }
+    }
+
+    public static void processSheetForJavaHead(Sheet sheet, String path, String javaName) {
+        Row propertyName = sheet.getRow(0);
+        Row propertyType = sheet.getRow(1);
+        Row desc = sheet.getRow(2);
+
+        List<Title> titleList = new ArrayList<>();
+        for (int cellIndex = 0; cellIndex < propertyName.getPhysicalNumberOfCells(); cellIndex++) {
+            String name = getCellValue(propertyName.getCell(cellIndex));
+            String type = getCellValue(propertyType.getCell(cellIndex));
+            String description = getCellValue(desc.getCell(cellIndex));
+            titleList.add(new Title(name, type, description));
+        }
+
+        String finalJavaName = getJavaName(sheet.getSheetName(), javaName);
+
+        try {
+            ExcelToJavaGenerator.write(finalJavaName, path, titleList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void readData(Workbook workbook) {
+        for (int index = 0; index < workbook.getNumberOfSheets(); index++) {
+            Sheet sheet = workbook.getSheetAt(0);
+
+            if (sheet != null) {
+                Row titleRow = sheet.getRow(0);
+
+                for (int rowIndex = 1; rowIndex < sheet.getPhysicalNumberOfRows(); rowIndex++) {
+                    Row row = sheet.getRow(rowIndex);
+                    if (row != null) {
+                        for (int cellIndex = 0; cellIndex < row.getPhysicalNumberOfCells(); cellIndex++) {
+                            String title = getCellValue(titleRow.getCell(cellIndex));
+                            String value = getCellValue(row.getCell(cellIndex));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static void processForJavaHead(String path, String javaName, Workbook workbook) {
+        for (int index = 0; index < workbook.getNumberOfSheets(); index++) {
+            Sheet sheet = workbook.getSheetAt(index);
+            if (sheet != null) {
+                processSheetForJavaHead(sheet, path, javaName);
+            }
+        }
+    }
+
+    public static void processForJavaValue(String javaName, Workbook workbook) {
+        for (int index = 0; index < workbook.getNumberOfSheets(); index++) {
+            Sheet sheet = workbook.getSheetAt(index);
+            if (sheet != null) {
+                Row propertyName = sheet.getRow(0);
+                Row propertyType = sheet.getRow(1);
+                Object obj;
+                for (int rowIndex = 3; rowIndex < sheet.getPhysicalNumberOfRows(); rowIndex++) {
+                    Row row = sheet.getRow(rowIndex);
+                    if (row != null) {
+                        obj = createObjectByName("model." + getJavaName(sheet.getSheetName(), javaName));
+                        for (int cellIndex = 0; cellIndex < row.getPhysicalNumberOfCells(); cellIndex++) {
+                            String name = getCellValue(propertyName.getCell(cellIndex));
+                            String type = getCellValue(propertyType.getCell(cellIndex));
+                            String value = getCellValue(row.getCell(cellIndex));
+
+                            try {
+                                invokeSetter(obj, name, ExcelToJavaGenerator.getType(type, value));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
