@@ -1,12 +1,18 @@
 package utils.other;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.net.JarURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -184,6 +190,48 @@ public class ClazzUtil {
 			}
 		}
 		return allSubclass;
+	}
+
+	/**
+	 * 从jar包中获取指定文件名的txt文件，返回文件名和内容
+	 *
+	 * @param jarFile jar文件对象
+	 * @param fileName 指定的文件名（如果为null或空字符串则返回所有txt文件）
+	 * @return Map，key为文件名，value为文件内容
+	 * @throws Exception 读取文件时可能抛出的异常
+	 */
+	public static Map<String, String> getTxtFilesWithContentFromJarFile(JarFile jarFile, String fileName) throws Exception {
+		Map<String, String> txtFilesWithContent = new HashMap<>();
+		Enumeration entries = jarFile.entries();
+		while (entries.hasMoreElements()) {
+			JarEntry entry = (JarEntry) entries.nextElement();
+			String name = entry.getName();
+			if (name.endsWith(".txt")) {
+				// 如果指定了文件名，则只处理匹配的文件
+				if (fileName != null && !fileName.isEmpty()) {
+					// 支持完整路径匹配或仅文件名匹配
+					if (!name.equals(fileName) && !name.endsWith("/" + fileName)) {
+						continue;
+					}
+				}
+				// 读取文件内容
+				InputStream inputStream = jarFile.getInputStream(entry);
+				StringBuilder content = new StringBuilder();
+				try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,
+					StandardCharsets.UTF_8))) {
+					String line;
+					while ((line = reader.readLine()) != null) {
+						content.append(line).append("\n");
+					}
+				}
+				// 移除最后一个换行符
+				if (content.length() > 0 && content.charAt(content.length() - 1) == '\n') {
+					content.setLength(content.length() - 1);
+				}
+				txtFilesWithContent.put(name, content.toString());
+			}
+		}
+		return txtFilesWithContent;
 	}
 
 }

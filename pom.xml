@@ -166,4 +166,39 @@
         </plugins>
     </build>
 
+
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <artifactId>maven-assembly-plugin</artifactId>-->
+<!--                <version>2.4</version>-->
+<!--                <configuration>-->
+<!--                    <descriptorRefs>-->
+<!--                        <descriptorRef>jar-with-dependencies</descriptorRef>-->
+<!--                    </descriptorRefs>-->
+<!--                    <finalName>GenTools</finalName>-->
+<!--                    &lt;!&ndash; 设置为 false 以在最终文件名中不包含 assembly 插件自动添加的标识（如 'jar-with-dependencies'） &ndash;&gt;-->
+<!--                    <appendAssemblyId>false</appendAssemblyId>-->
+<!--                    <archive>-->
+<!--                        <manifest>-->
+<!--                            <mainClass>com.gamer.data.util.ModelEnumGenUtils</mainClass>-->
+<!--                        </manifest>-->
+<!--                    </archive>-->
+<!--                    <outputDirectory>-->
+<!--                        ../-->
+<!--                    </outputDirectory>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>make-assembly</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>single</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+<!--    </build>-->
+
 </project>
