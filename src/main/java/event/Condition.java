@@ -2,7 +2,7 @@ package event;
 
 import java.util.Objects;
 
-public class CommonInConditionObject {
+public class Condition {
 	private int conditionType;
 	private double conditionValue;
 
@@ -26,7 +26,7 @@ public class CommonInConditionObject {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		CommonInConditionObject that = (CommonInConditionObject) o;
+		Condition that = (Condition) o;
 		return conditionType == that.conditionType &&
 				Double.compare(that.conditionValue, conditionValue) == 0;
 	}
@@ -41,7 +41,7 @@ public class CommonInConditionObject {
 	 */
 	public boolean checkLess(Object o) {
 		if (o == null || getClass() != o.getClass()) return false;
-		CommonInConditionObject that = (CommonInConditionObject) o;
+		Condition that = (Condition) o;
 		return conditionType == that.conditionType && Double.compare(conditionValue, that.conditionValue) < 0;
 	}
 
@@ -50,7 +50,7 @@ public class CommonInConditionObject {
 	 */
 	public boolean checkMore(Object o) {
 		if (o == null || getClass() != o.getClass()) return false;
-		CommonInConditionObject that = (CommonInConditionObject) o;
+		Condition that = (Condition) o;
 		return conditionType == that.conditionType && Double.compare(conditionValue, that.conditionValue) > 0;
 	}
 

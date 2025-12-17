@@ -6,26 +6,26 @@ import java.util.List;
 import java.util.Set;
 
 
-public class CommonInConditionEvent extends DistinctEvent {
+public class ConditionEvent extends DistinctEvent {
 	protected String eventType;
 	/**
 	 * 当前注册事件的条件
 	 */
-	private List<CommonInConditionObject> registerEventConditions = new ArrayList<>();
+	private List<Condition> registerEventConditions = new ArrayList<>();
 	private int accumulativeTotal;
 
-	public CommonInConditionEvent() {
+	public ConditionEvent() {
 	}
 
-	public CommonInConditionEvent(int accumulativeTotal) {
+	public ConditionEvent(int accumulativeTotal) {
 		this.accumulativeTotal = accumulativeTotal;
 	}
 
-	public List<CommonInConditionObject> getConditionData() {
+	public List<Condition> getConditionData() {
 		return registerEventConditions;
 	}
 
-	public void setConditionData(List<CommonInConditionObject> conditionData) {
+	public void setConditionData(List<Condition> conditionData) {
 		this.registerEventConditions = conditionData;
 	}
 
@@ -44,7 +44,7 @@ public class CommonInConditionEvent extends DistinctEvent {
 		if (registerEventConditions == null || registerEventConditions.size() < 1) {
 			return true;
 		}
-		return dealCommonInConditionEvent(((CommonInConditionEvent) sendEvent).getConditionData());
+		return dealCommonInConditionEvent(((ConditionEvent) sendEvent).getConditionData());
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class CommonInConditionEvent extends DistinctEvent {
 	 * @param comeTrues 真实发生的事件条件
 	 * @return 是否满足注册事件的条件
 	 */
-	private boolean dealCommonInConditionEvent(List<CommonInConditionObject> comeTrues) {
+	private boolean dealCommonInConditionEvent(List<Condition> comeTrues) {
 		// 如果注册的事件没有条件 就是满足条件的
 		if (registerEventConditions == null || registerEventConditions.size() <= 0) {
 			return true;
@@ -67,14 +67,14 @@ public class CommonInConditionEvent extends DistinctEvent {
 		// 只要满足 注册事件相同的条件的其中之一就行 所以 注册条件每个条件是或的关系
 		Set<Integer> registerEventConditionSet = new HashSet<>();
 		int conditionType;
-		for (CommonInConditionObject registerCondition : registerEventConditions) {
+		for (Condition registerCondition : registerEventConditions) {
 			conditionType = registerCondition.getConditionType();
 			registerEventConditionSet.add(conditionType);
 		}
 
 		// 注册事件条件 遍历 真实事件条件是否满足
 		// 现在只要满足 注册事件相同的条件的其中之一就行 所以 注册相同条件每个条件是或的关系
-		for (CommonInConditionObject register : registerEventConditions) {
+		for (Condition register : registerEventConditions) {
 			conditionType = register.getConditionType();
 			if (registerEventConditionSet.contains(conditionType) && comeTrueFitRegister(comeTrues, register)) {
 				registerEventConditionSet.remove(conditionType);
@@ -90,13 +90,13 @@ public class CommonInConditionEvent extends DistinctEvent {
 	 * @param registers 注册事件的条件
 	 * @return 是否满足条件
 	 */
-	private boolean comeTrueFitRegister(List<CommonInConditionObject> comeTrues, CommonInConditionObject registers) {
+	private boolean comeTrueFitRegister(List<Condition> comeTrues, Condition registers) {
 		int conditionType = registers.getConditionType();
 		boolean less = ConditionTypes.lessTypeSet.contains(conditionType);
 		boolean more = ConditionTypes.moreTypeSet.contains(conditionType);
 		boolean same = ConditionTypes.sameTypeSet.contains(conditionType);
 
-		for (CommonInConditionObject comeTrue : comeTrues) {
+		for (Condition comeTrue : comeTrues) {
 			if (less && comeTrue.checkLess(registers)) {
 				return true;
 			}
@@ -124,7 +124,7 @@ public class CommonInConditionEvent extends DistinctEvent {
 		}
 
 		int conditionType;
-		CommonInConditionObject object;
+		Condition object;
 		for (int[] ints : condition) {
 			if (ints.length < 1 || ints.length > 2) {
 				logger.info("condition of the {} parameter setting error that eventId:{}", eventType, eventId);
@@ -135,7 +135,7 @@ public class CommonInConditionEvent extends DistinctEvent {
 			if (!ConditionTypes.lessTypeSet.contains(conditionType) && !ConditionTypes.moreTypeSet.contains(conditionType) && !ConditionTypes.sameTypeSet.contains(conditionType)) {
 				throw new Exception(eventType + "Some conditions for code configuration are empty. eventId" + eventId + " conditionType: " + conditionType);
 			}
-			object = new CommonInConditionObject();
+			object = new Condition();
 			object.setConditionType(conditionType);
 			object.setConditionValue(ints[1]);
 			this.registerEventConditions.add(object);
