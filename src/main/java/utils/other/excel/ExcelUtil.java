@@ -97,14 +97,14 @@ public class ExcelUtil {
     /**
      * 读取Excel并生成Java对象数据
      */
-    public static void readExcelJavaValue(String fileName) {
+    public static void readExcelJavaValue(String fileName, List<Object> properties) {
         String fileExtension = getFileExtension(fileName);
         String javaName = ExcelToJavaGenerator.capitalize(fileName.split("\\.")[0]);
 
         if (XLSX_EXTENSION.equals(fileExtension)) {
-            processExcelForJavaValue(fileName, javaName, WorkbookType.XSSF);
+            processExcelForJavaValue(fileName, javaName, WorkbookType.XSSF, properties);
         } else if (XLS_EXTENSION.equals(fileExtension)) {
-            processExcelForJavaValue(fileName, javaName, WorkbookType.HSSF);
+            processExcelForJavaValue(fileName, javaName, WorkbookType.HSSF, properties);
         }
     }
 
@@ -176,11 +176,11 @@ public class ExcelUtil {
     /**
      * 处理Excel生成Java对象值
      */
-    private static void processExcelForJavaValue(String fileName, String javaName, WorkbookType type) {
+    private static void processExcelForJavaValue(String fileName, String javaName, WorkbookType type, List<Object> properties) {
         try (InputStream inputStream = getInputStream(fileName)) {
             Workbook processor = create(inputStream, type);
             if (processor != null) {
-                processForJavaValue(javaName, processor);
+                processForJavaValue(javaName, processor, properties);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -217,11 +217,11 @@ public class ExcelUtil {
         Object cellValue;
 
         if (cell instanceof XSSFCell) {
-            XSSFCell xssfCell = (XSSFCell)cell;
+            XSSFCell xssfCell = (XSSFCell) cell;
             cellType = xssfCell.getCellType();
             cellValue = xssfCell;
         } else if (cell instanceof HSSFCell) {
-            HSSFCell hssfCell = (HSSFCell)cell;
+            HSSFCell hssfCell = (HSSFCell) cell;
             cellType = hssfCell.getCellType();
             cellValue = hssfCell;
         } else {
@@ -248,27 +248,27 @@ public class ExcelUtil {
     // 数值获取方法
     private static double getNumericValue(Object cell) {
         if (cell instanceof XSSFCell)
-            return ((XSSFCell)cell).getNumericCellValue();
+            return ((XSSFCell) cell).getNumericCellValue();
         if (cell instanceof HSSFCell)
-            return ((HSSFCell)cell).getNumericCellValue();
+            return ((HSSFCell) cell).getNumericCellValue();
         return 0;
     }
 
     // 布尔值获取方法
     private static boolean getBooleanValue(Object cell) {
         if (cell instanceof XSSFCell)
-            return ((XSSFCell)cell).getBooleanCellValue();
+            return ((XSSFCell) cell).getBooleanCellValue();
         if (cell instanceof HSSFCell)
-            return ((HSSFCell)cell).getBooleanCellValue();
+            return ((HSSFCell) cell).getBooleanCellValue();
         return false;
     }
 
     // 字符串值获取方法
     private static String getStringValue(Object cell) {
         if (cell instanceof XSSFCell)
-            return ((XSSFCell)cell).getStringCellValue();
+            return ((XSSFCell) cell).getStringCellValue();
         if (cell instanceof HSSFCell)
-            return ((HSSFCell)cell).getStringCellValue();
+            return ((HSSFCell) cell).getStringCellValue();
         return "";
     }
 
@@ -294,7 +294,7 @@ public class ExcelUtil {
 
         try {
             Field typeField = wrappedInstance.getClass().getField("TYPE");
-            return (Class<?>)typeField.get(null);
+            return (Class<?>) typeField.get(null);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             return wrappedInstance.getClass();
         }
@@ -372,25 +372,6 @@ public class ExcelUtil {
         }
     }
 
-    public void readData(Workbook workbook) {
-        for (int index = 0; index < workbook.getNumberOfSheets(); index++) {
-            Sheet sheet = workbook.getSheetAt(0);
-
-            if (sheet != null) {
-                Row titleRow = sheet.getRow(0);
-
-                for (int rowIndex = 1; rowIndex < sheet.getPhysicalNumberOfRows(); rowIndex++) {
-                    Row row = sheet.getRow(rowIndex);
-                    if (row != null) {
-                        for (int cellIndex = 0; cellIndex < row.getPhysicalNumberOfCells(); cellIndex++) {
-                            String title = getCellValue(titleRow.getCell(cellIndex));
-                            String value = getCellValue(row.getCell(cellIndex));
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     public static void processForJavaHead(String path, String javaName, Workbook workbook) {
         for (int index = 0; index < workbook.getNumberOfSheets(); index++) {
@@ -401,7 +382,7 @@ public class ExcelUtil {
         }
     }
 
-    public static void processForJavaValue(String javaName, Workbook workbook) {
+    public static void processForJavaValue(String javaName, Workbook workbook, List<Object> properties) {
         for (int index = 0; index < workbook.getNumberOfSheets(); index++) {
             Sheet sheet = workbook.getSheetAt(index);
             if (sheet != null) {
@@ -412,6 +393,10 @@ public class ExcelUtil {
                     Row row = sheet.getRow(rowIndex);
                     if (row != null) {
                         obj = createObjectByName("model." + getJavaName(sheet.getSheetName(), javaName));
+                        if (obj == null) {
+                            System.err.println("processForJavaValue error " + javaName);
+                            continue;
+                        }
                         for (int cellIndex = 0; cellIndex < row.getPhysicalNumberOfCells(); cellIndex++) {
                             String name = getCellValue(propertyName.getCell(cellIndex));
                             String type = getCellValue(propertyType.getCell(cellIndex));
@@ -423,6 +408,7 @@ public class ExcelUtil {
                                 e.printStackTrace();
                             }
                         }
+                        properties.add(obj);
                     }
                 }
             }
