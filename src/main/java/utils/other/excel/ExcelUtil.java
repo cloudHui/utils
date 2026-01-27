@@ -17,7 +17,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +24,8 @@ import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class ExcelUtil {
      * 输出Excel文件
      */
     public static void outFile(HSSFWorkbook workbook, String path) {
-        try (OutputStream os = new FileOutputStream(path)) {
+        try (OutputStream os = Files.newOutputStream(Paths.get(path))) {
             workbook.write(os);
         } catch (IOException e) {
             e.printStackTrace();
@@ -83,35 +84,35 @@ public class ExcelUtil {
     /**
      * 读取Excel并生成Java类头文件
      */
-    public static void readExcelCreateJavaHead(String fileName, String path) {
+    public static void readExcelCreateJavaHead(String fileName, String path, Class aclass) {
         String fileExtension = getFileExtension(fileName);
         String javaName = ExcelToJavaGenerator.capitalize(fileName.split("\\.")[0]);
 
         if (XLSX_EXTENSION.equals(fileExtension)) {
-            processExcelForJavaHead(fileName, path, javaName, WorkbookType.XSSF);
+            processExcelForJavaHead(fileName, path, javaName, WorkbookType.XSSF, aclass);
         } else if (XLS_EXTENSION.equals(fileExtension)) {
-            processExcelForJavaHead(fileName, path, javaName, WorkbookType.HSSF);
+            processExcelForJavaHead(fileName, path, javaName, WorkbookType.HSSF, aclass);
         }
     }
 
     /**
      * 读取Excel并生成Java对象数据
      */
-    public static void readExcelJavaValue(String fileName, List<Object> properties) {
+    public static void readExcelJavaValue(String fileName, List<Object> properties, Class aclass) {
         String fileExtension = getFileExtension(fileName);
         String javaName = ExcelToJavaGenerator.capitalize(fileName.split("\\.")[0]);
 
         if (XLSX_EXTENSION.equals(fileExtension)) {
-            processExcelForJavaValue(fileName, javaName, WorkbookType.XSSF, properties);
+            processExcelForJavaValue(fileName, javaName, WorkbookType.XSSF, properties, aclass);
         } else if (XLS_EXTENSION.equals(fileExtension)) {
-            processExcelForJavaValue(fileName, javaName, WorkbookType.HSSF, properties);
+            processExcelForJavaValue(fileName, javaName, WorkbookType.HSSF, properties, aclass);
         }
     }
 
     /**
      * 写入数据到Excel
      */
-    public static void writeExcel(List<List> list, OutputStream outputStream) {
+    public static void writeExcel(List<List<String>> list, OutputStream outputStream) {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet = workbook.createSheet();
 
@@ -137,7 +138,7 @@ public class ExcelUtil {
      * 处理Excel生成Java头文件
      */
     private static void processExcelForJavaHead(File fileName, String path, String javaName, WorkbookType type) {
-        try (InputStream inputStream = new FileInputStream(fileName)) {
+        try (InputStream inputStream = Files.newInputStream(fileName.toPath())) {
             Workbook webHook = create(inputStream, type);
             if (webHook != null) {
                 processForJavaHead(path, javaName, webHook);
@@ -148,22 +149,22 @@ public class ExcelUtil {
     }
 
     public static void main(String[] args) {
-        readExcelCreateJavaHead("TableModel.xlsx", ".");
+        readExcelCreateJavaHead("TableModel.xlsx", ".", ExcelUtil.class);
     }
 
     /**
      * 应用程序是否为虚拟机启动
      */
-    public static boolean runJar() {
-        File fromFile = new File(ExcelUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+    public static boolean runJar(Class aclass) {
+        File fromFile = new File(aclass.getProtectionDomain().getCodeSource().getLocation().getPath());
         return fromFile.isFile() && fromFile.getName().endsWith(".jar");
     }
 
     /**
      * 处理Excel生成Java头文件
      */
-    private static void processExcelForJavaHead(String fileName, String path, String javaName, WorkbookType type) {
-        try (InputStream inputStream = getInputStream(fileName)) {
+    private static void processExcelForJavaHead(String fileName, String path, String javaName, WorkbookType type, Class aclass) {
+        try (InputStream inputStream = getInputStream(fileName, aclass)) {
             Workbook processor = create(inputStream, type);
             if (processor != null) {
                 processForJavaHead(path, javaName, processor);
@@ -176,8 +177,8 @@ public class ExcelUtil {
     /**
      * 处理Excel生成Java对象值
      */
-    private static void processExcelForJavaValue(String fileName, String javaName, WorkbookType type, List<Object> properties) {
-        try (InputStream inputStream = getInputStream(fileName)) {
+    private static void processExcelForJavaValue(String fileName, String javaName, WorkbookType type, List<Object> properties, Class aclass) {
+        try (InputStream inputStream = getInputStream(fileName, aclass)) {
             Workbook processor = create(inputStream, type);
             if (processor != null) {
                 processForJavaValue(javaName, processor, properties);
@@ -190,11 +191,11 @@ public class ExcelUtil {
     /**
      * 获取文件输入流
      */
-    private static InputStream getInputStream(String fileName) throws FileNotFoundException {
-        if (runJar()) {
-            return new FileInputStream(fileName);
+    private static InputStream getInputStream(String fileName, Class aclass) throws Exception {
+        if (runJar(aclass)) {
+            return Files.newInputStream(Paths.get(fileName));
         } else {
-            return new FileInputStream(System.getProperty("user.dir") + "\\src\\main\\resources\\xml\\" + fileName);
+            return Files.newInputStream(Paths.get(System.getProperty("user.dir") + "\\src\\main\\resources\\xml\\" + fileName));
         }
     }
 
