@@ -9,6 +9,7 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,8 +36,6 @@ public class MusicDownloaderGUI extends JFrame {
     public static final String BASE = "https://www.hifini.com.cn/";
     public static final String HEAD = "https://www.hifini.com.cn/search-";
     public static final String PATH = "D:/BaiduNetdiskDownload/music/";
-
-    public static final String FILE_END = ".m4a";
 
     private static final int BUFFER_SIZE = 8192;
     // 颜色定义
@@ -165,7 +164,7 @@ public class MusicDownloaderGUI extends JFrame {
         // 搜索面板
         JPanel searchPanel = new JPanel(new BorderLayout(10, 0));
         searchPanel.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 1, 0, new Color(230, 230, 230)),
-            new EmptyBorder(15, 15, 15, 15)));
+                new EmptyBorder(15, 15, 15, 15)));
         searchPanel.setBackground(PANEL_BG);
 
         JPanel searchInputPanel = new JPanel(new BorderLayout(5, 0));
@@ -194,7 +193,7 @@ public class MusicDownloaderGUI extends JFrame {
         // 状态面板
         JPanel statusPanel = new JPanel(new BorderLayout(10, 0));
         statusPanel.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(1, 0, 0, 0, new Color(230, 230, 230)),
-            new EmptyBorder(10, 15, 10, 15)));
+                new EmptyBorder(10, 15, 10, 15)));
         statusPanel.setBackground(PANEL_BG);
         statusPanel.add(progressBar, BorderLayout.CENTER);
         statusPanel.add(statusLabel, BorderLayout.EAST);
@@ -214,11 +213,11 @@ public class MusicDownloaderGUI extends JFrame {
     private void applyStyles() {
         // 设置字体
         titleLabel.setFont(TITLE_FONT);
-        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setForeground(Color.BLACK);
 
         searchField.setFont(LABEL_FONT);
         searchField.setBorder(BorderFactory.createCompoundBorder(new LineBorder(new Color(200, 200, 200), 1, true),
-            new EmptyBorder(8, 10, 8, 10)));
+                new EmptyBorder(8, 10, 8, 10)));
 
         // 设置按钮样式
         styleButton(searchButton, PRIMARY_COLOR);
@@ -235,7 +234,7 @@ public class MusicDownloaderGUI extends JFrame {
         resultTable.getTableHeader().setBackground(new Color(250, 250, 250));
         resultTable.getTableHeader().setForeground(new Color(80, 80, 80));
         resultTable.getTableHeader().setBorder(BorderFactory
-            .createCompoundBorder(new MatteBorder(0, 0, 2, 0, PRIMARY_COLOR), new EmptyBorder(5, 5, 5, 5)));
+                .createCompoundBorder(new MatteBorder(0, 0, 2, 0, PRIMARY_COLOR), new EmptyBorder(5, 5, 5, 5)));
         resultTable.setSelectionBackground(new Color(220, 240, 255));
         resultTable.setSelectionForeground(Color.BLACK);
 
@@ -255,9 +254,10 @@ public class MusicDownloaderGUI extends JFrame {
     private void styleButton(JButton button, Color bgColor) {
         button.setFont(BUTTON_FONT);
         button.setBackground(bgColor);
-        button.setForeground(Color.WHITE);
+        // 修改这里：默认状态用黑色文字
+        button.setForeground(Color.BLACK);  // 改为黑色文字
         button.setBorder(
-            BorderFactory.createCompoundBorder(new LineBorder(bgColor.darker(), 1), new EmptyBorder(8, 20, 8, 20)));
+                BorderFactory.createCompoundBorder(new LineBorder(bgColor.darker(), 1), new EmptyBorder(8, 20, 8, 20)));
         button.setFocusPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -306,41 +306,46 @@ public class MusicDownloaderGUI extends JFrame {
         clearAllButton.addActionListener(e -> clearAll());
 
         // 表格复选框事件
-        resultTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = resultTable.rowAtPoint(e.getPoint());
-                int col = resultTable.columnAtPoint(e.getPoint());
-
-                if (col == 0 && row >= 0 && row < musicList.size()) {
-                    HifiniMusic music = musicList.get(row);
-                    boolean isSelected = (Boolean)tableModel.getValueAt(row, 0);
-
-                    if (isSelected) {
-                        selectedMusics.add(music);
-                    } else {
-                        selectedMusics.remove(music);
-                    }
-
-                    updateStatus();
-                }
-            }
-        });
+        resultTable.addMouseListener(mouseListener);
 
         // 双击行查看详情
-        resultTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    int row = resultTable.getSelectedRow();
-                    if (row >= 0 && row < musicList.size()) {
-                        HifiniMusic music = musicList.get(row);
-                        showMusicDetail(music);
-                    }
+        resultTable.addMouseListener(mouseAdapter);
+    }
+
+
+    private final MouseListener mouseListener = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            int row = resultTable.rowAtPoint(e.getPoint());
+            int col = resultTable.columnAtPoint(e.getPoint());
+
+            if (col == 0 && row >= 0 && row < musicList.size()) {
+                HifiniMusic music = musicList.get(row);
+                boolean isSelected = (Boolean) tableModel.getValueAt(row, 0);
+
+                if (isSelected) {
+                    selectedMusics.add(music);
+                } else {
+                    selectedMusics.remove(music);
+                }
+
+                updateStatus();
+            }
+        }
+    };
+
+    private final MouseAdapter mouseAdapter = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 2) {
+                int row = resultTable.getSelectedRow();
+                if (row >= 0 && row < musicList.size()) {
+                    HifiniMusic music = musicList.get(row);
+                    showMusicDetail(music);
                 }
             }
-        });
-    }
+        }
+    };
 
     /**
      * 显示音乐详情
@@ -411,18 +416,15 @@ public class MusicDownloaderGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "请输入搜索关键词", "提示", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
         // 清空旧数据
         clearTable();
         musicList.clear();
         selectedMusics.clear();
-
         // 在新线程中执行搜索
         SwingWorker<Void, HifiniMusic> worker = new SwingWorker<Void, HifiniMusic>() {
             @Override
             protected Void doInBackground() {
                 updateStatus("正在搜索: " + keyword);
-
                 String curr;
                 try {
                     curr = java.net.URLEncoder.encode(keyword, "UTF-8");
@@ -430,42 +432,31 @@ public class MusicDownloaderGUI extends JFrame {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-
                 String downLoadUrl = HEAD + curr + ".htm";
                 String page = downPage(downLoadUrl);
-
                 if (page.isEmpty()) {
                     updateStatus("搜索: " + keyword + " 失败,未找到歌曲");
                     return null;
                 }
-
                 List<String> matcher = extractSubstringBetweenChars(page, "<a", "/a>");
-                List<String> result;
-                String name;
-
                 int count = 0;
                 for (String value : matcher) {
                     if (value.contains(keyword)) {
-                        result = extractSubstringBetweenChars(value, "\"", "\"");
+                        List<String> result = extractSubstringBetweenChars(value, "\"", "\"");
                         if (!result.isEmpty()) {
-                            name = extractChinese(value);
+                            String name = extractChinese(value);
                             downLoadUrl = result.get(1).replace("\"", "");
-
                             if (downLoadUrl.contains("htm")) {
                                 if (!downLoadUrl.contains("http")) {
                                     downLoadUrl = BASE + downLoadUrl;
                                 }
-
-                                HifiniMusic music = new HifiniMusic(name, downLoadUrl, PATH + name + FILE_END);
-
-                                // 获取真实下载地址
-                                try {
+                                downLoadUrl = BASE + downLoadUrl;
+                                HifiniMusic music = new HifiniMusic(name, downLoadUrl, PATH + name + downLoadUrl.substring(downLoadUrl.indexOf(".")));
+                                try {// 获取真实下载地址
                                     saveMusicInfo(music);
                                     publish(music);
                                     count++;
-
-                                    // 限制搜索结果数量
-                                    if (count >= 50) {
+                                    if (count >= 50) { // 限制搜索结果数量
                                         break;
                                     }
                                 } catch (Exception e) {
@@ -482,7 +473,7 @@ public class MusicDownloaderGUI extends JFrame {
             protected void process(List<HifiniMusic> chunks) {
                 for (HifiniMusic music : chunks) {
                     musicList.add(music);
-                    tableModel.addRow(new Object[] {false, music.getName(), shortenUrl(music.getDownUrl()), "待下载"});
+                    tableModel.addRow(new Object[]{false, music.getName(), shortenUrl(music.getDownUrl()), "待下载"});
                 }
             }
 
@@ -491,13 +482,12 @@ public class MusicDownloaderGUI extends JFrame {
                 if (musicList.isEmpty()) {
                     updateStatus("未找到相关歌曲");
                     JOptionPane.showMessageDialog(MusicDownloaderGUI.this, "未找到相关歌曲", "提示",
-                        JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     updateStatus("找到 " + musicList.size() + " 首歌曲");
                 }
             }
         };
-
         worker.execute();
     }
 
@@ -585,7 +575,7 @@ public class MusicDownloaderGUI extends JFrame {
                 int processed = chunks.get(chunks.size() - 1);
                 progressBar.setValue(processed);
                 updateStatus(
-                    "下载中: " + processed + "/" + selectedMusics.size() + " (成功:" + completed + " 失败:" + failed + ")");
+                        "下载中: " + processed + "/" + selectedMusics.size() + " (成功:" + completed + " 失败:" + failed + ")");
 
                 // 更新表格状态
                 for (int i = 0; i < tableModel.getRowCount(); i++) {
@@ -627,8 +617,9 @@ public class MusicDownloaderGUI extends JFrame {
 
                 gbc.gridy = 1;
                 JLabel textLabel = new JLabel(
-                    "<html><center>下载完成!<br>成功: " + completed + " 首<br>失败: " + failed + " 首</center></html>");
+                        "下载完成!成功: " + completed + " 首失败: " + failed + " 首");
                 textLabel.setFont(new Font("Microsoft YaHei", Font.PLAIN, 14));
+                textLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 panel.add(textLabel, gbc);
 
                 JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -737,12 +728,9 @@ public class MusicDownloaderGUI extends JFrame {
     /**
      * 提取从startChar到endChar之间的内容
      *
-     * @param input
-     *            总内容
-     * @param startChar
-     *            字符开头
-     * @param endChar
-     *            字符结尾
+     * @param input     总内容
+     * @param startChar 字符开头
+     * @param endChar   字符结尾
      */
     public List<String> extractSubstringBetweenChars(String input, String startChar, String endChar) {
         List<String> array = new ArrayList<>();
@@ -760,8 +748,7 @@ public class MusicDownloaderGUI extends JFrame {
     /**
      * 提取中文
      *
-     * @param input
-     *            总内容
+     * @param input 总内容
      */
     public String extractChinese(String input) {
         StringBuilder sb = new StringBuilder();
@@ -791,15 +778,14 @@ public class MusicDownloaderGUI extends JFrame {
     /**
      * 从地址 urlString 下载文件保存成String
      *
-     * @param urlString
-     *            下载地址
+     * @param urlString 下载地址
      */
     public String downloadWebPage(String urlString) throws IOException {
         StringBuilder contentBuilder = new StringBuilder();
 
         URL url = new URL(urlString);
         try (BufferedReader reader =
-            new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
+                     new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 contentBuilder.append(line).append(System.lineSeparator());
@@ -840,7 +826,7 @@ public class MusicDownloaderGUI extends JFrame {
             byte[] buf = new byte[BUFFER_SIZE];
             int size;
             url = new URL(destUrl);
-            httpURLConnection = (HttpURLConnection)url.openConnection();
+            httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.connect();
             bis = new BufferedInputStream(httpURLConnection.getInputStream());
             fos = new FileOutputStream(fileName);
@@ -888,7 +874,7 @@ public class MusicDownloaderGUI extends JFrame {
 
         private String downUrl;
 
-        private String savePath;
+        private final String savePath;
 
         public HifiniMusic(String name, String downUrl, String savePath) {
             this.name = name;
@@ -916,14 +902,10 @@ public class MusicDownloaderGUI extends JFrame {
             this.downUrl = downUrl;
         }
 
-        public void setSavePath(String savePath) {
-            this.savePath = savePath;
-        }
-
         @Override
         public String toString() {
             return "HifiniMusic{" + "author='" + name + '\'' + ", downUrl='" + downUrl + '\'' + ", savePath='"
-                + savePath + '\'' + '}';
+                    + savePath + '\'' + '}';
         }
 
         @Override
@@ -932,7 +914,7 @@ public class MusicDownloaderGUI extends JFrame {
                 return true;
             if (o == null || getClass() != o.getClass())
                 return false;
-            HifiniMusic music = (HifiniMusic)o;
+            HifiniMusic music = (HifiniMusic) o;
             return Objects.equals(name, music.name);
         }
 
