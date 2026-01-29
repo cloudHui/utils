@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="MusicDownloader" default="jar" basedir=".">
+
+	<!-- 项目配置 -->
+	<property name="src.dir" value="."/>
+	<property name="build.dir" value="build"/>
+	<property name="dist.dir" value="dist"/>
+	<property name="jar.name" value="MusicDownloader.jar"/>
+	<property name="main.class" value="music.MusicDownloader"/>
+
+	<!-- 清理 -->
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>
+	</target>
+
+	<!-- 初始化 -->
+	<target name="init">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+	</target>
+
+	<!-- 编译 -->
+	<target name="compile" depends="init">
+		<javac
+				srcdir="${src.dir}"
+				destdir="${build.dir}"
+				includeantruntime="false"
+				encoding="UTF-8">
+		</javac>
+	</target>
+
+	<!-- 创建JAR -->
+	<target name="build" depends="compile">
+		<jar destfile="${dist.dir}/${jar.name}" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="${main.class}"/>
+			</manifest>
+		</jar>
+	</target>
+</project>
