@@ -9,11 +9,18 @@ import java.util.List;
 
 import utils.other.TableUtils;
 
+/**
+ * ExcelToJavaGenerator
+ * 将Excel文件转换为Java文件
+ * @author cloud
+ * @date 2026-05-03
+ * @version 1.0
+ * @since 1.0
+ */
 public class ExcelToJavaGenerator {
 
-
-	private static void doWrite(String javaName, String path, String content) {
-		String subDirectoryName = path + "/src/main/java/model"; // 子目录名称
+	private static void doWrite(String javaName, String path, String packageSegment, String content) {
+		String subDirectoryName = path + "/src/main/java/model/" + packageSegment;
 		String fileName = javaName + ".java"; // 文件名
 		Path directoryPath = Paths.get(subDirectoryName);
 
@@ -52,9 +59,9 @@ public class ExcelToJavaGenerator {
 	/**
 	 * 写成java 文件
 	 */
-	public static void write(String javaName, String path, List<Title> titleList) throws Exception {
+	public static void write(String javaName, String path, String packageSegment, List<Title> titleList) throws Exception {
 		StringBuilder sb = new StringBuilder();
-		sb.append("package model;");
+		sb.append("package model.").append(packageSegment).append(";");
 		sb.append(" \n").append(" \n").append(" \n");
 		sb.append("public class ").append(javaName).append(" {\n");
 
@@ -78,7 +85,7 @@ public class ExcelToJavaGenerator {
 		sb.append("\n");
 		sb.append(" }\n");
 		// 写入到Java文件
-		doWrite(javaName, path, sb.toString());
+		doWrite(javaName, path, packageSegment, sb.toString());
 		System.out.println(javaName + ".java 文件已生成。");
 	}
 
