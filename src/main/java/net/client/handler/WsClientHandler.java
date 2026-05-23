@@ -1,6 +1,7 @@
 package net.client.handler;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 
 import com.google.protobuf.Message;
 import io.netty.channel.Channel;
@@ -12,6 +13,8 @@ import io.netty.handler.timeout.IdleStateEvent;
 import net.channel.ChannelAttr;
 import net.client.Sender;
 import net.client.event.EventHandle;
+import net.connect.handle.CompleterGroup;
+import net.connect.handle.CompleterTcpMsg;
 import net.handler.Handler;
 import net.handler.Handlers;
 import net.message.Parser;
@@ -35,6 +38,7 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 	private static final byte[] DEFAULT_DATA;
 	private EventHandle activeHandle;
 	private EventHandle closeEvent;
+	private CompleterGroup completerGroup;
 
 	public static WsClientHandler getClient(long id) {
 		return (WsClientHandler) clientManager.getClient((int) id);
@@ -83,6 +87,11 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) {
+		this.channel = ctx.channel();
+		this.completerGroup = new CompleterGroup(channel.eventLoop());
+		ChannelAttr.setId(this.channel, this.getId());
+		clientManager.addClient(this);
+
 		if (null != this.activeHandle) {
 			try {
 				this.activeHandle.handle(this);
@@ -90,10 +99,6 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 				logger.error("[{}] failed for register event", ctx.channel(), e);
 			}
 		}
-
-		this.channel = ctx.channel();
-		ChannelAttr.setId(this.channel, this.getId());
-		clientManager.addClient(this);
 	}
 
 	@Override
@@ -109,6 +114,10 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) {
 		logger.error("[{}] close", ctx.channel());
+		if (completerGroup != null) {
+			completerGroup.destroy();
+			completerGroup = null;
+		}
 		if (null != this.closeEvent) {
 			try {
 				this.closeEvent.handle(this);
@@ -164,6 +173,25 @@ public class WsClientHandler extends SimpleChannelInboundHandler<WebSocketFrame>
 	@Override
 	public void sendMessage(int clientId, int msgId, long mapId, Message msg, int sequence) {
 		channel.writeAndFlush(maker.wrap(clientId, msgId, mapId, msg, sequence));
+	}
+
+	@Override
+	public CompletableFuture<TCPMessage> sendMessageBackTcp(Message msg, int msgId, int timeout) {
+		int sequence = completerGroup.getSequence();
+		CompleterTcpMsg completer = new CompleterTcpMsg(timeout);
+		completerGroup.addCompleterTcpMsg(sequence, completer);
+		sendMessage(msgId, msg, sequence);
+		return completer;
+	}
+
+	@Override
+	public CompletableFuture<TCPMessage> sendTcpMessage(TCPMessage msg, int timeout) {
+		int sequence = completerGroup.getSequence();
+		msg.setSequence(sequence);
+		CompleterTcpMsg completer = new CompleterTcpMsg(timeout);
+		completerGroup.addCompleterTcpMsg(sequence, completer);
+		sendMessage(msg);
+		return completer;
 	}
 
 	private void processTCPMessage(TCPMessage tMsg) {

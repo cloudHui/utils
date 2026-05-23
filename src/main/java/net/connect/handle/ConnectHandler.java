@@ -298,6 +298,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	/**
 	 * 发送TCP消息并等待TCP响应（带超时）
 	 */
+	@Override
 	public CompletableFuture<TCPMessage> sendTcpMessage(TCPMessage msg, int timeout) {
 		int sequence = completerGroup.getSequence();
 		msg.setSequence(sequence);
@@ -310,6 +311,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter implements Send
 	/**
 	 * 发送TCP消息并等待TCP响应（带超时）
 	 */
+	@Override
 	public CompletableFuture<TCPMessage> sendMessageBackTcp(Message msg, int msgId, int timeout) {
 		int sequence = completerGroup.getSequence();
 		CompleterTcpMsg completer = new CompleterTcpMsg(timeout);

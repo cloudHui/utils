@@ -3,6 +3,7 @@ package net.client.handler;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
@@ -13,6 +14,8 @@ import io.netty.handler.timeout.IdleStateEvent;
 import net.channel.ChannelAttr;
 import net.client.Sender;
 import net.client.event.EventHandle;
+import net.connect.handle.CompleterGroup;
+import net.connect.handle.CompleterTcpMsg;
 import net.handler.Handler;
 import net.handler.Handlers;
 import net.message.Parser;
@@ -48,6 +51,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	private Safe safe;
 	private EventHandle activeHandle;
 	private EventHandle closeEvent;
+	private CompleterGroup completerGroup;
 
 	// ==================== 静态方法 ====================
 
@@ -109,6 +113,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) {
 		this.channel = ctx.channel();
+		this.completerGroup = new CompleterGroup(channel.eventLoop());
 		ChannelAttr.setId(channel, getId());
 		SENDER_MANAGER.addClient(this);
 
@@ -124,6 +129,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) {
 		logger.error("[{}] 连接关闭", ctx.channel());
+		if (completerGroup != null) {
+			completerGroup.destroy();
+			completerGroup = null;
+		}
 		SENDER_MANAGER.removeClient(this);
 
 		if (null != closeEvent) {
@@ -258,6 +267,25 @@ public class ClientHandler extends ChannelInboundHandlerAdapter implements Sende
 
 	public void sendMessage(int msgId, Message msg) {
 		channel.writeAndFlush(maker.wrap(msgId, msg, 0));
+	}
+
+	@Override
+	public CompletableFuture<TCPMessage> sendMessageBackTcp(Message msg, int msgId, int timeout) {
+		int sequence = completerGroup.getSequence();
+		CompleterTcpMsg completer = new CompleterTcpMsg(timeout);
+		completerGroup.addCompleterTcpMsg(sequence, completer);
+		sendMessage(msgId, msg, sequence);
+		return completer;
+	}
+
+	@Override
+	public CompletableFuture<TCPMessage> sendTcpMessage(TCPMessage msg, int timeout) {
+		int sequence = completerGroup.getSequence();
+		msg.setSequence(sequence);
+		CompleterTcpMsg completer = new CompleterTcpMsg(timeout);
+		completerGroup.addCompleterTcpMsg(sequence, completer);
+		sendMessage(msg);
+		return completer;
 	}
 
 	// ==================== 连接管理 ====================
